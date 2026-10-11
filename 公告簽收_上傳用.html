@@ -1,0 +1,1288 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<style>body{margin:0}[hidden]{display:none!important}</style>
+<title>倚盟公告簽收</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&family=Noto+Serif+TC:wght@700;900&display=swap">
+<style>
+/* 版面：手機優先的單欄閱讀流程（一次一條、條列重點），後台為較寬的名冊表與左右對照的編輯區。
+   顏色有固定意思：綠＝要做、紅＝不可以、黃＝後果、藍＝說明。 */
+:root{
+  --bg:#EDF1EF; --surface:#FFFFFF; --surface-2:#F4F7F5; --ink:#14251F; --muted:#586962; --line:#D3DCD7;
+  --accent:#0E6A5B; --accent-ink:#FFFFFF; --accent-soft:#DCEDE8;
+  --seal:#BF3A2B; --seal-soft:#F8E3DF;
+  --ok:#1C7448; --ok-soft:#DDF1E5; --info:#1F5FA8; --info-soft:#DEE9F7; --warn:#8A5A00; --warn-soft:#FAEDCB;
+  --sign-paper:#FFFFFF; --sign-ink:#14251F;
+  --display:"Noto Serif TC","Songti TC","PMingLiU",serif;
+  --body:"Noto Sans TC","PingFang TC","Microsoft JhengHei",system-ui,sans-serif;
+  --r:10px;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#0E1513; --surface:#17201D; --surface-2:#1D2824; --ink:#E6EEEA; --muted:#9AABA4; --line:#2C3934;
+    --accent:#4DBFAB; --accent-ink:#06211C; --accent-soft:#16332D;
+    --seal:#F07363; --seal-soft:#3A1C18;
+    --ok:#5BC98D; --ok-soft:#15301F; --info:#84B6F0; --info-soft:#17283E; --warn:#E6B54E; --warn-soft:#382C10;
+    --sign-paper:#FFFFFF; --sign-ink:#14251F; color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0E1513; --surface:#17201D; --surface-2:#1D2824; --ink:#E6EEEA; --muted:#9AABA4; --line:#2C3934;
+  --accent:#4DBFAB; --accent-ink:#06211C; --accent-soft:#16332D;
+  --seal:#F07363; --seal-soft:#3A1C18;
+  --ok:#5BC98D; --ok-soft:#15301F; --info:#84B6F0; --info-soft:#17283E; --warn:#E6B54E; --warn-soft:#382C10;
+  --sign-paper:#FFFFFF; --sign-ink:#14251F; color-scheme:dark;
+}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--body);font-size:16px;line-height:1.7}
+.app{max-width:1080px;margin:0 auto;padding-inline:16px;padding-block:16px 48px;display:flex;flex-direction:column;gap:16px}
+.top{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:12px}
+.brand{display:flex;align-items:baseline;gap:10px;min-width:0}
+.brand b{font-family:var(--display);font-weight:900;font-size:20px;letter-spacing:.04em}
+.brand span{color:var(--muted);font-size:13px}
+.switch{display:flex;border:1px solid var(--line);border-radius:999px;padding:3px;background:var(--surface)}
+.switch button{border:0;background:transparent;color:var(--muted);font:inherit;font-size:14px;padding:6px 14px;border-radius:999px;cursor:pointer}
+.switch button[aria-pressed="true"]{background:var(--accent);color:var(--accent-ink);font-weight:700}
+.note{font-size:13px;color:var(--warn);background:var(--warn-soft);border-radius:var(--r);padding:8px 12px}
+button:focus-visible,select:focus-visible,canvas:focus-visible,input:focus-visible,textarea:focus-visible,summary:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+
+.narrow{max-width:560px;width:100%;margin:0 auto;display:flex;flex-direction:column;gap:16px}
+h1{font-family:var(--display);font-weight:900;font-size:26px;line-height:1.35;margin:0;text-wrap:balance}
+h2{font-family:var(--display);font-weight:700;font-size:19px;margin:0;text-wrap:balance}
+.eyebrow{font-size:13px;letter-spacing:.12em;color:var(--accent);font-weight:700}
+.muted{color:var(--muted)}
+.small{font-size:13px}
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:20px;display:flex;flex-direction:column;gap:14px;min-width:0}
+
+.btn{font:inherit;font-weight:700;font-size:16px;border-radius:var(--r);border:1px solid var(--accent);background:var(--accent);color:var(--accent-ink);padding:13px 18px;cursor:pointer;min-height:50px}
+.btn.ghost{background:transparent;color:var(--accent)}
+.btn.quiet{background:transparent;color:var(--muted);border-color:var(--line);font-weight:500}
+.btn:disabled{background:var(--surface-2);border-color:var(--line);color:var(--muted);cursor:not-allowed}
+.btn.sm{min-height:0;padding:7px 12px;font-size:14px}
+.row{display:flex;gap:10px;flex-wrap:wrap}
+.row .grow{flex:1 1 160px}
+
+.pick{display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:10px}
+.pick button{font:inherit;font-size:17px;font-weight:500;padding:14px 8px;border-radius:var(--r);border:1px solid var(--line);background:var(--surface);color:var(--ink);cursor:pointer}
+.pick button[aria-pressed="true"]{border-color:var(--accent);background:var(--accent-soft);color:var(--accent);font-weight:700}
+
+.who{flex-direction:row;justify-content:space-between;align-items:center;flex-wrap:wrap}
+.who b{font-size:18px}
+.ann{display:flex;flex-direction:column;gap:10px}
+.meta{display:flex;gap:10px;align-items:center;flex-wrap:wrap;font-size:13px;color:var(--muted)}
+.pill{display:inline-flex;align-items:center;gap:6px;font-size:13px;font-weight:700;border-radius:999px;padding:2px 10px;white-space:nowrap}
+.pill.todo{background:var(--seal-soft);color:var(--seal)}
+.pill.doing{background:var(--warn-soft);color:var(--warn)}
+.pill.done{background:var(--ok-soft);color:var(--ok)}
+.pill.tag{background:var(--accent-soft);color:var(--accent)}
+.pill.draft{background:var(--surface-2);color:var(--muted);border:1px solid var(--line)}
+
+.steps{display:flex;gap:4px;align-items:center}
+.steps i{flex:1;height:6px;border-radius:3px;background:var(--line)}
+.steps i.on{background:var(--accent)}
+.steps i.wide{flex:2}
+.stepline{display:flex;justify-content:space-between;gap:12px;font-size:13px;color:var(--muted)}
+
+/* 條文卡：標籤、標題、條列重點 */
+.clause{padding:22px 20px;gap:16px}
+.chead{display:flex;align-items:center;gap:10px}
+.clause .tag{font-family:var(--display);font-weight:900;font-size:15px;color:var(--accent-ink);background:var(--accent);padding:2px 12px;border-radius:4px;letter-spacing:.1em}
+.items{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:14px}
+.it{display:flex;gap:12px;align-items:flex-start;font-size:19px;line-height:1.65}
+.it .ic{flex:none;width:26px;height:26px;margin-top:3px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:700;line-height:1}
+.it .tx{min-width:0}
+.k-ok .ic{background:var(--ok-soft);color:var(--ok)}
+.k-no .ic{background:var(--seal-soft);color:var(--seal)}
+.k-warn .ic{background:var(--warn-soft);color:var(--warn)}
+.k-dot .ic{background:var(--info-soft);color:var(--info)}
+mark{background:none;font-weight:700;padding:0 1px}
+.k-ok mark{color:var(--ok);background:linear-gradient(transparent 64%,var(--ok-soft) 0)}
+.k-no mark{color:var(--seal);background:linear-gradient(transparent 64%,var(--seal-soft) 0)}
+.k-warn mark{color:var(--warn);background:linear-gradient(transparent 64%,var(--warn-soft) 0)}
+.k-dot mark,.q mark{color:var(--info);background:linear-gradient(transparent 64%,var(--info-soft) 0)}
+details.law{border-top:1px solid var(--line);padding-top:10px;font-size:14px;color:var(--muted)}
+details.law summary{cursor:pointer}
+details.law p{margin:8px 0 0}
+.cex{background:var(--surface-2);border-radius:var(--r);padding:12px 14px;font-size:15px;line-height:1.9;overflow-wrap:anywhere}
+.cex-sep{font-size:0;line-height:0;border-top:2px dashed var(--line);margin:10px 0}
+.cex-t{font-weight:700;font-size:1.05em;margin-bottom:2px}
+.cex-top{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:4px}
+.cex-copy{font:inherit;font-size:13px;font-weight:700;border:1px solid var(--accent);background:transparent;color:var(--accent);border-radius:999px;padding:2px 12px;cursor:pointer;white-space:nowrap}
+ol.croute{list-style:none;margin:0;padding:0;counter-reset:r;display:flex;flex-direction:column}
+ol.croute li{counter-increment:r;display:grid;grid-template-columns:32px minmax(0,1fr);gap:12px;align-items:start;padding:7px 0;font-size:18px;line-height:1.6;position:relative}
+ol.croute li::before{content:counter(r);width:32px;height:32px;border-radius:50%;background:var(--accent);color:var(--accent-ink);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:15px;position:relative;z-index:1}
+ol.croute li:not(:last-child)::after{content:"";position:absolute;left:15px;top:39px;bottom:-7px;width:2px;background:var(--line)}
+ol.croute li span{padding-top:2px}
+.prev ol.croute li{font-size:15px}
+.cex-h{font-size:13px;letter-spacing:.12em;color:var(--muted)}
+.prev .cex{font-size:13px}
+.cnote{margin:0;font-size:14px;line-height:1.7;color:var(--muted)}
+.prev .cnote{font-size:13px}
+.legend{display:flex;gap:14px;flex-wrap:wrap;font-size:13px;color:var(--muted);justify-content:center}
+.legend span{display:inline-flex;align-items:center;gap:6px}
+.legend .it{font-size:13px;gap:0}
+.legend .ic{width:18px;height:18px;font-size:11px;margin-top:0}
+
+.opts{display:flex;flex-direction:column;gap:10px}
+.opts button{font:inherit;font-size:17px;text-align:left;line-height:1.6;padding:13px 14px;border-radius:var(--r);border:1px solid var(--line);background:var(--surface);color:var(--ink);cursor:pointer;display:flex;gap:12px;align-items:flex-start}
+.opts .ab{flex:none;width:28px;height:28px;border-radius:6px;background:var(--surface-2);color:var(--muted);font-weight:700;font-size:15px;display:flex;align-items:center;justify-content:center}
+.opts button[aria-pressed="true"]{border-color:var(--accent);background:var(--accent-soft)}
+.opts button[aria-pressed="true"] .ab{background:var(--accent);color:var(--accent-ink)}
+.opts button.right{border-color:var(--ok);background:var(--ok-soft);color:var(--ok);font-weight:700}
+.q{font-size:20px;font-weight:700;line-height:1.7;margin:0}
+
+.fail{border-color:var(--seal)}
+.fail h2{color:var(--seal)}
+
+.signbox{background:var(--sign-paper);border:1px dashed var(--line);border-radius:var(--r);position:relative}
+.signbox canvas{display:block;width:100%;height:170px;touch-action:none;border-radius:var(--r);cursor:crosshair}
+@media (min-width:700px){.signbox canvas{height:220px}}
+.signbox .hint{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:#9aa5a1;pointer-events:none;font-size:15px}
+.declare{font-size:17px;line-height:1.9;margin:0}
+
+.receipt{position:relative;overflow:hidden}
+.receipt dl{display:grid;grid-template-columns:auto 1fr;gap:6px 16px;margin:0}
+.receipt dt{color:var(--muted);font-size:14px}
+.receipt dd{margin:0;font-weight:500;font-variant-numeric:tabular-nums}
+.stamp{position:absolute;right:16px;top:16px;font-family:var(--display);font-weight:900;font-size:22px;letter-spacing:.2em;color:var(--seal);border:3px solid var(--seal);border-radius:6px;padding:4px 6px 4px 10px;transform:rotate(-8deg);animation:stamp .35s ease-out}
+@keyframes stamp{from{transform:rotate(-8deg) scale(1.8);opacity:0}to{transform:rotate(-8deg) scale(1);opacity:1}}
+@media (prefers-reduced-motion: reduce){.stamp{animation:none}}
+.sigimg{background:var(--sign-paper);border-radius:6px;border:1px solid var(--line);max-width:100%;height:auto}
+
+/* 後台 */
+.tabs{display:flex;gap:20px;border-bottom:1px solid var(--line);overflow-x:auto}
+.tabs button{font:inherit;font-size:16px;background:none;border:0;border-bottom:3px solid transparent;color:var(--muted);padding:8px 2px;cursor:pointer;white-space:nowrap}
+.tabs button[aria-selected="true"]{color:var(--ink);font-weight:700;border-bottom-color:var(--accent)}
+.sum{display:flex;gap:24px;flex-wrap:wrap;align-items:flex-end}
+.sum .big{font-family:var(--display);font-weight:900;font-size:40px;line-height:1;font-variant-numeric:tabular-nums}
+.sum .big small{font-size:18px;color:var(--muted);font-family:var(--body);font-weight:500}
+.bar{height:10px;border-radius:5px;background:var(--line);overflow:hidden}
+.bar i{display:block;height:100%;background:var(--accent)}
+.scroll{overflow-x:auto}
+table{border-collapse:collapse;width:100%;min-width:600px;font-size:15px}
+th,td{text-align:left;padding:10px 12px;border-bottom:1px solid var(--line);vertical-align:middle}
+th{font-size:13px;color:var(--muted);font-weight:500;letter-spacing:.06em;white-space:nowrap}
+td.num{font-variant-numeric:tabular-nums;white-space:nowrap}
+tr.store td{background:var(--surface-2);font-weight:700;font-size:14px}
+td .sigimg{height:34px;width:auto;display:block}
+.copyout{width:100%;min-height:120px}
+input[type=text],input[type=date],select,textarea{font:inherit;font-size:16px;color:var(--ink);background:var(--surface-2);border:1px solid var(--line);border-radius:8px;padding:9px 11px;width:100%;min-width:0}
+textarea{line-height:1.75;resize:vertical}
+label.f{display:flex;flex-direction:column;gap:4px;font-size:13px;color:var(--muted);flex:1 1 130px;min-width:0}
+label.f.wide{flex-basis:100%}
+
+/* 編輯公告：左邊打字、右邊預覽 */
+.edgrid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:16px;align-items:start}
+@media (max-width:820px){.edgrid{grid-template-columns:minmax(0,1fr)}}
+.ins{gap:6px}
+.ins button{font:inherit;font-size:14px;border:1px solid var(--line);background:var(--surface);color:var(--ink);border-radius:999px;padding:4px 12px;cursor:pointer}
+.prev{display:flex;flex-direction:column;gap:12px;min-width:0}
+.prev .clause{padding:16px}
+.prev .clause h1{font-size:20px}
+.prev .it{font-size:16px;gap:10px}
+.prev .it .ic{width:22px;height:22px;font-size:13px;margin-top:2px}
+.prev .items{gap:8px}
+.checks{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:6px;font-size:14px}
+.checks li{display:flex;gap:8px}
+.checks .e{color:var(--seal);font-weight:700}
+.checks .w{color:var(--warn)}
+.checks .g{color:var(--ok)}
+.pq{border-top:1px solid var(--line);padding-top:10px;display:flex;flex-direction:column;gap:4px;font-size:15px}
+.pq:first-of-type{border-top:0;padding-top:0}
+.pq b{font-size:16px}
+.pq .a{color:var(--ok);font-weight:700}
+.pq .x{color:var(--muted)}
+.howto{font-size:13px;color:var(--muted);background:var(--surface-2);border-radius:8px;padding:10px 12px;line-height:1.8}
+.howto code{font-family:inherit;color:var(--ink);font-weight:700}
+
+/* 起草公告：訪談指令、AI 訪談流程圖、起草紀錄 */
+.w-boss{--c:var(--warn);--cs:var(--warn-soft)}
+.w-ai{--c:var(--info);--cs:var(--info-soft)}
+.dwrap{display:grid;grid-template-columns:minmax(0,1fr);grid-template-areas:"hero" "chart" "rec";gap:16px;max-width:720px}
+@media (min-width:960px){.dwrap{max-width:none;grid-template-columns:minmax(0,1fr) minmax(0,1.3fr);grid-template-areas:"hero chart" "rec chart";grid-template-rows:auto 1fr;align-items:start}}
+.dhero{grid-area:hero}
+.dchart{grid-area:chart;display:flex;flex-direction:column;gap:12px;min-width:0}
+.drec{grid-area:rec}
+.dhero ol.croute li{font-size:16px}
+.fql{list-style:none;margin:8px 0 0;padding:0;counter-reset:q;display:flex;flex-direction:column;gap:6px}
+.fql li{counter-increment:q;display:grid;grid-template-columns:26px minmax(0,1fr);gap:0 8px;background:var(--surface);border-radius:8px;padding:7px 10px;font-size:14px;line-height:1.55}
+.fql li::before{content:counter(q);grid-row:1 / span 2;width:24px;height:24px;border-radius:50%;border:2px solid var(--c);color:var(--c);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px;margin-top:2px}
+.fql b{font-size:15px}
+.fql span{grid-column:2;color:var(--muted)}
+.dex{font-size:14px}
+.dex summary{cursor:pointer}
+.dex summary b{color:var(--accent)}
+.dsa{white-space:pre-wrap;font-size:14px;margin:8px 0 0;background:var(--surface-2);border-radius:8px;padding:10px 12px}
+.drow{display:flex;justify-content:space-between;gap:10px;align-items:flex-start;border-top:1px solid var(--line);padding-top:12px}
+.drow details{flex:1;min-width:0}
+.drow .btn{flex:none;white-space:nowrap}
+/* 發布流程：流程圖。顏色＝這一步由誰做；紅色箭頭＝還不能往下走 */
+.w-gm{--c:var(--warn);--cs:var(--warn-soft)}
+.w-hq{--c:var(--accent);--cs:var(--accent-soft)}
+.w-sv,.w-all{--c:var(--info);--cs:var(--info-soft)}
+.w-back{--c:var(--seal);--cs:var(--seal-soft)}
+.flowwrap{display:grid;grid-template-columns:minmax(0,1fr);grid-template-areas:"head" "legend" "flow" "fork";gap:16px}
+.fhead{grid-area:head;display:flex;flex-direction:column;gap:4px}
+.fhead p{margin:0}
+@media (min-width:960px){.flowwrap{grid-template-columns:minmax(0,1.45fr) minmax(0,1fr);grid-template-areas:"head head" "flow legend" "flow fork";grid-template-rows:auto auto 1fr;align-items:start}}
+.flegend{grid-area:legend}
+.flow{grid-area:flow;display:flex;flex-direction:column;min-width:0}
+.ffork{grid-area:fork}
+.flegend ul{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:8px;font-size:15px}
+.flegend li{display:grid;grid-template-columns:44px minmax(0,1fr);gap:10px;align-items:center}
+.fsw{justify-self:center;width:26px;height:26px;border-radius:6px;background:var(--cs);border-left:6px solid var(--c)}
+.flegend .fa{min-height:0;padding:0;justify-self:center}
+.flegend .fa i{min-height:10px}
+.flegend .fdia{justify-self:center;margin:0}
+.felb{justify-self:center;color:var(--seal);display:flex}
+.fphase{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:14px;display:flex;flex-direction:column}
+.fphase>h3{font-family:var(--display);font-weight:700;font-size:17px;margin:0 0 10px;display:flex;gap:10px;align-items:baseline;flex-wrap:wrap}
+.fphase>h3 small{font-family:var(--body);font-weight:700;font-size:12px;letter-spacing:.1em;color:var(--muted)}
+.fnode{display:grid;grid-template-columns:32px minmax(0,1fr);gap:12px;padding:12px;border-radius:var(--r);background:var(--cs);border-left:6px solid var(--c)}
+.fnum{width:32px;height:32px;border-radius:50%;background:var(--c);color:var(--surface);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:16px}
+.fh{display:flex;gap:8px;align-items:center;flex-wrap:wrap;min-height:32px}
+.fh b{font-size:17px;line-height:1.4}
+.fwho{font-size:12px;font-weight:700;border-radius:999px;padding:1px 9px;background:var(--surface);color:var(--c);border:1px solid var(--c);white-space:nowrap}
+.fbody{min-width:0}
+.fbody p{margin:4px 0 0;font-size:15px}
+.fq{display:flex;gap:8px;align-items:flex-start;margin-top:8px;padding:8px 10px;background:var(--surface);border:2px dashed var(--c);border-radius:8px;font-weight:700;font-size:15px;line-height:1.6}
+.fdia{flex:none;width:12px;height:12px;background:var(--c);transform:rotate(45deg);margin:6px 3px 0}
+.fd{margin-top:6px;font-size:14px}
+.fd summary{cursor:pointer;color:var(--c);font-weight:700;width:fit-content}
+.fd p{font-size:14px}
+.fcon,.fbr{display:grid;grid-template-columns:32px minmax(0,1fr);gap:12px;padding-left:18px;align-items:stretch}
+.flow>.fcon,.flow>.fbr{padding-left:33px;padding-right:15px}
+.fa{display:flex;flex-direction:column;align-items:center;color:var(--c);min-height:48px;padding:3px 0}
+.fa i{flex:1;width:8px;background:currentColor;min-height:16px}
+.fa::after{content:"";border-left:12px solid transparent;border-right:12px solid transparent;border-top:15px solid currentColor}
+.flab{align-self:center;justify-self:start;font-size:14px;font-weight:700;color:var(--c);background:var(--cs);border-radius:999px;padding:2px 12px}
+.fbrc{display:flex;flex-direction:column;gap:8px;padding:0 0 8px;min-width:0}
+.fbrc .flab{align-self:flex-start}
+.fno{display:grid;grid-template-columns:34px minmax(0,1fr);gap:6px;align-items:start;color:var(--seal)}
+.fno svg{display:block}
+.fside{margin-top:6px;border:2px solid var(--seal);background:var(--seal-soft);border-radius:8px;padding:7px 10px;font-size:14px;line-height:1.6;color:var(--ink);display:flex;flex-direction:column;gap:2px}
+.fside b{color:var(--seal)}
+.fside em{font-style:normal;font-weight:700;color:var(--seal)}
+.fend{align-self:flex-start;margin:0 0 0 18px;font-size:14px;font-weight:700;color:var(--muted);border:1px solid var(--line);border-radius:999px;padding:2px 14px;background:var(--surface-2)}
+.fk{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;align-items:start}
+.fkc{display:flex;flex-direction:column;min-width:0}
+.fkc .fa{align-self:center;min-height:40px}
+.fcond{align-self:center;text-align:center;font-size:14px;font-weight:700;border:2px dashed var(--muted);border-radius:8px;padding:6px 10px}
+.fmini{border-left:6px solid var(--c);background:var(--cs);border-radius:8px;padding:8px 10px;font-weight:700;font-size:15px;line-height:1.5;display:flex;flex-direction:column;gap:2px}
+.fmini small{font-weight:700;font-size:12px;color:var(--c)}
+.fkc .fend{align-self:center;margin:0}
+.syncbar{position:sticky;top:8px;z-index:5;color:var(--ink);background:var(--surface-2);border:1px solid var(--line)}
+.syncbar.ok{color:var(--ok);background:var(--ok-soft);border-color:transparent}
+.syncbar.bad{color:var(--seal);background:var(--seal-soft);border-color:transparent;font-weight:700}
+.gmsign{border-top:1px solid var(--line);padding-top:14px;display:flex;flex-direction:column;gap:10px}
+.gmsign .sigimg{max-width:320px;align-self:flex-start}
+.gmsign label.f{flex:none}
+.gmsign input{max-width:260px}
+.poster img{display:block;width:100%;max-width:520px;height:auto;border:1px solid var(--line);border-radius:6px;margin:0 auto}
+</style>
+</head>
+<body>
+<div class="app">
+  <header class="top">
+    <div class="brand"><b>倚盟公告簽收</b><span>逐條閱讀・問答・簽名</span></div>
+    <div class="switch" role="group" aria-label="切換畫面">
+      <button id="nav-staff" data-act="nav" data-to="home" aria-pressed="true">同仁入口</button>
+      <button id="nav-admin" data-act="nav" data-to="admin" aria-pressed="false">管理後台</button>
+    </div>
+  </header>
+  <div class="note" id="demo-note">這是操作樣板。公告內容和簽收紀錄目前只存在這台裝置的瀏覽器，還不會同步給其他人。</div>
+  <div class="note syncbar" id="syncbar" hidden></div>
+  <main id="view"></main>
+</div>
+
+<script>
+(function(){
+"use strict";
+
+var STORES = [];
+
+/* 預設公告：內容就是「編輯公告」裡打字的格式 */
+var SEED_TITLE = "";
+var SEED_SRC = "";
+
+var SEED_QSRC = "";
+
+var SEED2_TITLE = "";
+var SEED2_SRC = "";
+var SEED2_QSRC = "";
+var SEED2_REC = "";
+function seed2(){ return {id:"2026-10-10-open", date:"2026-10-10", level:"重大公告", by:"營運管理部", no:"115-002", title:SEED2_TITLE, src:SEED2_SRC, qsrc:SEED2_QSRC, version:1, status:"published", updatedAt:0}; }
+function seedAnns(){ return []; }
+
+/* 正式上線時，把 Apps Script 的網址填在這裡。空白＝樣板模式，資料只存在這台裝置 */
+var API = "https://script.google.com/macros/s/AKfycbxLgpyHU21twksogFIhsp7vTU1lIAk5uu4HfR99TWoPUaeyxM5agNR9jnXMHdkIQBHSqQ/exec";
+var LIVE = !!API;
+var DEFAULT_STORES = STORES;
+var KEY = "ym-ack-v2", LKEY = "ym-ack-live";
+var L = {code:"", me:null, outbox:[]};
+var mem = {records:{}, me:null, anns:seedAnns(), seedRev:20};
+function load(){
+  try{
+    if(LIVE){ var t = localStorage.getItem(LKEY); if(t){ var x = JSON.parse(t); if(x){ L.code=x.code||""; L.me=x.me||null; L.outbox=x.outbox||[]; } } return; }
+    var s = localStorage.getItem(KEY); if(s){ var d = JSON.parse(s); if(d && d.records && d.anns && d.anns.length) mem = d; }
+  }catch(e){}
+}
+function save(){ try{ if(LIVE){ L.me=mem.me; localStorage.setItem(LKEY, JSON.stringify(L)); } else localStorage.setItem(KEY, JSON.stringify(mem)); }catch(e){} }
+load();
+if(LIVE){ STORES=[]; mem={records:{}, me:L.me, anns:[], drafts:[], gm:null, seedRev:999, rec2:1}; }
+var SEED_REV=20;
+(function(){ if((mem.seedRev||1)<SEED_REV){ mem.anns.forEach(function(a){ if(a.id==="2026-10-09-cancel"){ a.src=SEED_SRC; a.qsrc=SEED_QSRC; a.title=SEED_TITLE; } }); if(!mem.anns.some(function(a){ return a.id==="2026-10-10-open"; })) mem.anns.push(seed2()); mem.seedRev=SEED_REV; save(); } })();
+(function(){ if(!mem.drafts) mem.drafts=[]; if(!mem.rec2){ mem.drafts.unshift({id:"d-open-1010", at:Date.now(), title:"門市準時開門與全店出勤", text:SEED2_REC}); mem.rec2=1; save(); } })();
+function rocYear(d){ var y=Number(String(d||"").slice(0,4)); return (y||new Date().getFullYear())-1911; }
+function nextNo(){ return rocYear(today())+"-"+("00"+(mem.anns.length+1)).slice(-3); }
+(function(){ var n=0; mem.anns.slice().reverse().forEach(function(a){ n++; if(a.by==="總經理"||a.by==="管理部") a.by="營運管理部"; if(!a.no) a.no=rocYear(a.date)+"-"+("00"+n).slice(-3); }); })();
+
+/* ---------- 把打字內容轉成條文與題目 ---------- */
+var RX = {
+  ok:/^(?:[✓✔○]|[OoＯ]\s)\s*/, no:/^(?:[✕✖✗×]|[XxＸ]\s)\s*/, warn:/^(?:⚠️?|[!！])\s*/, dot:/^[•・·\-－]\s*/
+};
+function parseClauses(src){
+  var out=[], cur=null;
+  String(src||"").split(/\r?\n/).forEach(function(line){
+    var s=line.trim(), m; if(!s) return;
+    if((m=s.match(/^條[：:]\s*(.*)$/))){
+      var parts=m[1].split(/[｜|]/);
+      cur={tag: parts.length>1?parts[0].trim():"", title:(parts.length>1?parts.slice(1).join("｜"):parts[0]).trim()||"（還沒寫標題）", items:[], law:"", note:"", ex:[], route:[]};
+      out.push(cur); return;
+    }
+    if(!cur){ cur={tag:"", title:"（還沒寫標題）", items:[], law:"", note:"", ex:[], route:[]}; out.push(cur); }
+    if((m=s.match(/^原文[：:]\s*(.*)$/))){ cur.law=m[1]; return; }
+    if((m=s.match(/^途徑[：:]\s*(.*)$/))){ cur.route=m[1].split(/\s*(?:→|->|＞)\s*/).filter(function(x){return x;}); return; }
+    if((m=s.match(/^例[：:]\s*(.*)$/))){ if(m[1]) cur.ex.push(m[1]); return; }
+    if((m=s.match(/^(?:註|備註)[：:]\s*(.*)$/))){ cur.note=(cur.note?cur.note+" ":"")+m[1]; return; }
+    var k="dot";
+    if(RX.ok.test(s)){ k="ok"; s=s.replace(RX.ok,""); }
+    else if(RX.no.test(s)){ k="no"; s=s.replace(RX.no,""); }
+    else if(RX.warn.test(s)){ k="warn"; s=s.replace(RX.warn,""); }
+    else if(RX.dot.test(s)){ s=s.replace(RX.dot,""); }
+    if(s) cur.items.push({k:k, t:s});
+  });
+  return out;
+}
+function parseQuiz(src){
+  var out=[], cur=null;
+  String(src||"").split(/\r?\n/).forEach(function(line){
+    var s=line.trim(), m; if(!s) return;
+    if((m=s.match(/^題[：:]\s*(.*)$/))){ cur={q:m[1], ok:[], wrong:[], c:null}; out.push(cur); return; }
+    if(!cur) return;
+    if((m=s.match(/^對[：:]\s*(.*)$/))){ if(m[1]) cur.ok.push(m[1]); }
+    else if((m=s.match(/^錯[：:]\s*(.*)$/))){ if(m[1]) cur.wrong.push(m[1]); }
+    else if((m=s.match(/^條[：:]\s*第?\s*(\d+)/))){ cur.c=Number(m[1])-1; }
+  });
+  return out;
+}
+function check(clauses, quiz){
+  var e=[], w=[];
+  if(!clauses.length) e.push("還沒有條文。用「條：」開頭寫第一條。");
+  clauses.forEach(function(c,i){
+    if(!c.items.length) e.push("第 "+(i+1)+" 條沒有重點。");
+    if(c.items.length>4) w.push("第 "+(i+1)+" 條有 "+c.items.length+" 個重點，建議拆成兩條。");
+    if(c.items.length && !c.items.some(function(it){return /【.+?】/.test(it.t);})) w.push("第 "+(i+1)+" 條沒有用【】標出重點字。");
+  });
+  if(!quiz.length) e.push("還沒有題目。用「題：」開頭寫第一題。");
+  quiz.forEach(function(q,i){
+    var n="第 "+(i+1)+" 題";
+    if(!q.q) e.push(n+"沒有題目文字。");
+    if(q.ok.length!==1) e.push(n+"要有剛好 1 個「對：」，現在有 "+q.ok.length+" 個。");
+    if(q.wrong.length<2) e.push(n+"至少要有 2 個「錯：」。");
+    if(q.c===null) e.push(n+"沒寫「條：」，答錯時無法告訴同仁答案在哪一條。");
+    else if(q.c<0||q.c>=clauses.length) e.push(n+"寫的「條："+(q.c+1)+"」不存在。");
+  });
+  if(quiz.length && quiz.length!==10) w.push("題目現在有 "+quiz.length+" 題，公司的標準是 10 題。");
+  clauses.forEach(function(c,i){ if(quiz.length && !(c.route&&c.route.length) && !quiz.some(function(q){return q.c===i;})) w.push("第 "+(i+1)+" 條沒有對應的題目。"); });
+  return {e:e, w:w};
+}
+function compile(raw){
+  var a={}; for(var k in raw) a[k]=raw[k];
+  a.clauses=parseClauses(raw.src); a.quiz=parseQuiz(raw.qsrc); return a;
+}
+function rawAnn(id){ for(var i=0;i<mem.anns.length;i++) if(mem.anns[i].id===id) return mem.anns[i]; return null; }
+function ann(id){ var r=rawAnn(id)||mem.anns[0]; return compile(r); }
+function published(){ return mem.anns.filter(function(a){return a.status==="published";}); }
+
+var S = {view:"home", pickStore:null, pickName:null, noScroll:false, A:null, ci:0, seen:-1, order:[], qi:0, pick:null, locked:false,
+         attempts:1, startedAt:null, failQ:null, adminTab:"status", adminAnn:null, copyText:null, copyMsg:"", hasInk:false, ed:null, msg:""};
+var timer = null;
+var view = document.getElementById("view");
+
+function esc(s){ return String(s).replace(/[&<>"']/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c];}); }
+function hl(s){ return esc(s).replace(/【(.+?)】/g,"<mark>$1</mark>"); }
+function plain(s){ return String(s).replace(/[【】]/g,""); }
+function pid(storeId,name){ return storeId+":"+name; }
+function rec(annId,p){ return (mem.records[annId]||{})[p] || null; }
+function isDone(a,r){ return !!(r && r.status==="done" && r.version===a.version); }
+function setRec(annId,p,r){ if(!mem.records[annId]) mem.records[annId]={}; mem.records[annId][p]=r; save(); }
+function storeOf(id){ for(var i=0;i<STORES.length;i++) if(STORES[i].id===id) return STORES[i]; return null; }
+function totalStaff(){ var n=0; STORES.forEach(function(s){n+=s.staff.length;}); return n; }
+function fmt(ts){ var d=new Date(ts); function p(n){return (n<10?"0":"")+n;} return (d.getMonth()+1)+"/"+d.getDate()+" "+p(d.getHours())+":"+p(d.getMinutes()); }
+function fmtDate(s){ var a=String(s||"").split("-"); return a.length===3 ? a[0]+"/"+Number(a[1])+"/"+Number(a[2]) : "未定"; }
+function today(){ var d=new Date(); function p(n){return (n<10?"0":"")+n;} return d.getFullYear()+"-"+p(d.getMonth()+1)+"-"+p(d.getDate()); }
+function shuffle(a){ a=a.slice(); for(var i=a.length-1;i>0;i--){ var j=Math.floor(Math.random()*(i+1)); var t=a[i];a[i]=a[j];a[j]=t; } return a; }
+function dwell(c){ var n=(c.note||"").length+(c.route||[]).join("").length; c.items.forEach(function(it){ n+=plain(it.t).length; }); return Math.min(9, Math.max(4, Math.round(n/9))); }
+var ICON = {ok:"✓", no:"✕", warn:"!", dot:"•"};
+
+function clauseHtml(c, idx, withLaw){
+  var h='<div class="panel clause"><div class="chead">'+(c.tag?'<span class="tag">'+esc(c.tag)+'</span>':'')+'<span class="small muted">第 '+(idx+1)+' 條</span></div><h1>'+esc(c.title)+'</h1><ul class="items">';
+  c.items.forEach(function(it){ h+='<li class="it k-'+it.k+'"><span class="ic" aria-hidden="true">'+ICON[it.k]+'</span><span class="tx">'+hl(it.t)+'</span></li>'; });
+  h+='</ul>';
+  if(c.route && c.route.length){ h+='<ol class="croute">'; c.route.forEach(function(t){ h+='<li><span>'+esc(t)+'</span></li>'; }); h+='</ol>'; }
+  if(c.ex && c.ex.length){ h+='<div class="cex"><div class="cex-top"><div class="cex-h">範例</div><button class="cex-copy" data-act="copyEx">複製空白格式</button></div>'; c.ex.forEach(function(t){ var cl = /^[-－—–┈\s]+$/.test(t) ? " cex-sep" : (t.charAt(0)==="【" ? " cex-t" : ""); h+='<div class="cex-l'+cl+'">'+esc(t)+'</div>'; }); h+='</div>'; }
+  if(c.note) h+='<p class="cnote">註：'+esc(plain(c.note))+'</p>';
+  if(withLaw && c.law) h+='<details class="law"><summary>看公告原文</summary><p>'+esc(c.law)+'</p></details>';
+  return h+'</div>';
+}
+var LEGEND = '<div class="legend"><span><span class="it k-ok"><span class="ic">✓</span></span>要做</span><span><span class="it k-no"><span class="ic">✕</span></span>不可以</span><span><span class="it k-warn"><span class="ic">!</span></span>後果</span><span><span class="it k-dot"><span class="ic">•</span></span>說明</span></div>';
+
+function buildQuiz(a){
+  return shuffle(a.quiz.map(function(q,i){ return i; })).map(function(i){
+    var q=a.quiz[i];
+    return {i:i, opts:shuffle([{t:q.ok[0], ok:true}].concat(q.wrong.map(function(t){ return {t:t, ok:false}; })))};
+  });
+}
+function stepsHtml(a, phase){
+  var n=a.clauses.length, h='<div class="steps" aria-hidden="true">';
+  for(var i=0;i<n;i++){ var on = phase==="quiz"||phase==="sign"|| i<=phase; h+='<i class="'+(on?"on":"")+'"></i>'; }
+  h+='<i class="wide '+(phase==="quiz"||phase==="sign"?"on":"")+'"></i><i class="wide '+(phase==="sign"?"on":"")+'"></i></div>';
+  return h;
+}
+
+/* ---------- 同仁入口 ---------- */
+function vHome(){
+  var h;
+  if(!mem.me){
+    h='<div class="narrow"><div><div class="eyebrow">簽收人</div><h1>請選擇你的門市和姓名</h1></div>';
+    h+='<div class="panel"><b>1　門市</b><div class="pick">';
+    STORES.forEach(function(s){ h+='<button id="st-'+s.id+'" data-act="pickStore" data-id="'+s.id+'" aria-pressed="'+(S.pickStore===s.id)+'">'+esc(s.name)+'</button>'; });
+    h+='</div></div>';
+    if(S.pickStore){
+      var st0=storeOf(S.pickStore);
+      h+='<div class="panel"><b>2　姓名</b><div class="pick">';
+      st0.staff.forEach(function(nm,i){ h+='<button id="nm-'+st0.id+'-'+i+'" data-act="pickName" data-name="'+esc(nm)+'" aria-pressed="'+(S.pickName===nm)+'">'+esc(nm)+'</button>'; });
+      h+='</div><div class="small muted">簽收紀錄會記在你選的姓名底下，請確認是本人。</div></div>';
+    }
+    h+='<button id="btn-start-me" class="btn" data-act="confirmMe"'+(S.pickStore&&S.pickName?"":" disabled")+'>'+(S.pickStore&&S.pickName?esc(storeOf(S.pickStore).name)+'　'+esc(S.pickName)+'，開始':'開始')+'</button>';
+    return h+'</div>';
+  }
+  var me=mem.me, st=storeOf(me.store);
+  h='<div class="narrow"><div class="panel who"><div><div class="small muted">簽收人</div><b>'+esc(me.name)+'</b>　<span class="muted">'+esc(st.name)+'</span></div><button id="btn-switch" class="btn quiet sm" data-act="switchUser">重新選擇</button></div>';
+  h+='<h2>你的公告</h2>';
+  var list=published().slice().sort(function(x,y){ return String(y.date).localeCompare(String(x.date)); });
+  if(!list.length) h+='<div class="panel muted">目前沒有需要簽收的公告。</div>';
+  list.forEach(function(raw){
+    var a=compile(raw), r=rec(a.id,pid(me.store,me.name)), done=isDone(a,r);
+    var redo = r && r.status==="done" && !done;
+    var pill = done ? '<span class="pill done">已簽收 '+fmt(r.finishedAt)+'</span>'
+             : redo ? '<span class="pill todo">內容已改版，請重新簽收</span>'
+             : r ? '<span class="pill doing">閱讀中</span>' : '<span class="pill todo">尚未閱讀</span>';
+    h+='<div class="panel ann"><div class="meta"><span class="pill tag">'+esc(a.level)+'</span><span>'+fmtDate(a.date)+' 發布</span>'+pill+'</div>';
+    h+='<h2>'+esc(a.title)+'</h2>';
+    h+='<div class="small muted">共 '+a.clauses.length+' 條，讀完回答 '+a.quiz.length+' 題，全對後簽名。大約 5 分鐘。</div>';
+    if(done) h+='<button id="open-'+a.id+'" class="btn ghost" data-act="receipt" data-id="'+a.id+'">查看簽收單</button>';
+    else h+='<button id="open-'+a.id+'" class="btn" data-act="start" data-id="'+a.id+'">'+(r&&!redo?"繼續閱讀":"開始閱讀")+'</button>';
+    h+='</div>';
+  });
+  return h+'</div>';
+}
+
+function vRead(){
+  var a=S.A, c=a.clauses[S.ci], n=a.clauses.length, isNew = S.ci > S.seen, last = S.ci===n-1;
+  var h='<div class="narrow">'+stepsHtml(a,S.ci);
+  h+='<div class="stepline"><span>第 '+(S.ci+1)+' 條，共 '+n+' 條</span><span>'+esc(a.title)+'</span></div>';
+  h+=clauseHtml(c,S.ci,true)+LEGEND;
+  h+='<div class="row">';
+  if(S.ci>0) h+='<button id="btn-prev" class="btn quiet" data-act="prev">上一條</button>';
+  h+='<button id="btn-next" class="btn grow" data-act="next"'+(isNew?" disabled":"")+'>'+(isNew?"請先讀完這一條":(last?"我看懂了，開始問答":"我看懂了，下一條"))+'</button></div></div>';
+  return h;
+}
+function startDwell(){
+  var a=S.A, c=a.clauses[S.ci];
+  if(S.ci<=S.seen) return;
+  var left=dwell(c), btn=document.getElementById("btn-next"), last=S.ci===a.clauses.length-1;
+  function paint(){ if(btn) btn.textContent="請先讀完這一條（"+left+"）"; }
+  paint();
+  timer=setInterval(function(){
+    left--;
+    if(left<=0){
+      clearInterval(timer); timer=null; S.seen=S.ci;
+      if(btn){ btn.disabled=false; btn.textContent= last?"我看懂了，開始問答":"我看懂了，下一條"; }
+    } else paint();
+  },1000);
+}
+
+function vQuiz(){
+  var a=S.A, item=S.order[S.qi], q=a.quiz[item.i];
+  var h='<div class="narrow">'+stepsHtml(a,"quiz");
+  h+='<div class="stepline"><span>第 '+(S.qi+1)+' 題，共 '+S.order.length+' 題</span><span>要全部答對</span></div>';
+  h+='<div class="panel"><p class="q">'+hl(q.q)+'</p><div class="opts">';
+  item.opts.forEach(function(o,k){
+    var cls = S.locked && o.ok ? ' class="right"' : "";
+    h+='<button id="opt-'+k+'" data-act="opt" data-k="'+k+'" aria-pressed="'+(S.pick===k)+'"'+cls+(S.locked?" disabled":"")+'><span class="ab">'+"ABCDEF".charAt(k)+'</span><span>'+esc(o.t)+'</span></button>';
+  });
+  h+='</div></div>';
+  h+='<button id="btn-answer" class="btn" data-act="answer"'+(S.pick===null||S.locked?" disabled":"")+'>'+(S.locked?"答對了":"確定作答")+'</button></div>';
+  return h;
+}
+function vFail(){
+  var a=S.A, q=a.quiz[S.failQ], c=a.clauses[q.c];
+  var h='<div class="narrow"><div class="panel fail"><h2>這一題答錯了</h2><p class="q">'+hl(q.q)+'</p>';
+  h+='<p style="margin:0">答案在第 '+(q.c+1)+' 條「'+esc(c.title)+'」。這則公告要全部答對才能簽收，請從第 1 條重新閱讀。</p>';
+  h+='<div class="small muted">這是你的第 '+(S.attempts-1)+' 次作答，系統會記錄作答次數。</div></div>';
+  h+='<button id="btn-retry" class="btn" data-act="retry">從第 1 條重新閱讀</button></div>';
+  return h;
+}
+function vSign(){
+  var a=S.A, me=mem.me, st=storeOf(me.store);
+  var h='<div class="narrow">'+stepsHtml(a,"sign");
+  h+='<div class="stepline"><span>'+a.quiz.length+' 題全部答對</span><span>最後一步：簽名</span></div>';
+  h+='<div class="panel"><h2>簽收確認</h2>';
+  h+='<p class="declare">本人 <b>'+esc(me.name)+'</b>（'+esc(st.name)+'）已逐條閱讀「'+esc(a.title)+'」共 '+a.clauses.length+' 條，並通過 '+a.quiz.length+' 題問答，了解內容並願意遵守。</p>';
+  h+='<div class="signbox"><canvas id="sig" tabindex="0" aria-label="簽名區"></canvas><div class="hint" id="sig-hint">請用觸控筆或手指在這裡簽名</div></div>';
+  h+='<div class="row"><button id="btn-clear" class="btn quiet" data-act="clearSig">清除重簽</button><button id="btn-sign" class="btn grow" data-act="sign" disabled>確認簽收</button></div><div id="sign-msg" class="small" style="color:var(--seal);font-weight:700" hidden></div></div></div>';
+  return h;
+}
+function vDone(){
+  var a=S.A, me=mem.me, st=storeOf(me.store), r=rec(a.id,pid(me.store,me.name));
+  var h='<div class="narrow"><div class="panel receipt"><div class="stamp">已簽收</div><div class="eyebrow">簽收單</div><h2 style="padding-right:110px">'+esc(a.title)+'</h2>';
+  h+='<dl><dt>姓名</dt><dd>'+esc(me.name)+'</dd><dt>店別</dt><dd>'+esc(st.name)+'</dd><dt>公告</dt><dd>'+fmtDate(a.date)+' 發布，第 '+a.version+' 版</dd><dt>簽收時間</dt><dd>'+fmt(r.finishedAt)+'</dd><dt>作答次數</dt><dd>第 '+r.attempts+' 次全對</dd></dl>';
+  if(r.sig) h+='<img class="sigimg" alt="簽名" src="'+r.sig+'">';
+  h+='</div><button id="btn-home" class="btn ghost" data-act="nav" data-to="home">回到公告列表</button></div>';
+  return h;
+}
+
+/* ---------- 管理後台 ---------- */
+function countDone(a){ var n=0; STORES.forEach(function(s){ s.staff.forEach(function(nm){ if(isDone(a,rec(a.id,pid(s.id,nm)))) n++; }); }); return n; }
+function unreadText(a){
+  var lines=["【尚未簽收】"+a.title+"（"+fmtDate(a.date)+" 發布）"];
+  STORES.forEach(function(s){
+    var names=s.staff.filter(function(nm){ return !isDone(a,rec(a.id,pid(s.id,nm))); });
+    if(names.length) lines.push(s.name+"："+names.join("、"));
+  });
+  lines.push("請今天內完成閱讀與簽收。");
+  return lines.join("\n");
+}
+var TABS=[["status","簽收狀況"],["log","公告紀錄"],["draft","起草公告"],["edit","編輯公告"],["sop","發布流程"]];
+
+function vAdmin(){
+  var h='<div><h1 style="margin-bottom:12px">管理後台</h1><div class="tabs" role="tablist">';
+  TABS.forEach(function(t){ h+='<button id="tab-'+t[0]+'" role="tab" data-act="tab" data-tab="'+t[0]+'" aria-selected="'+(S.adminTab===t[0])+'">'+t[1]+'</button>'; });
+  h+='</div></div>';
+  if(S.msg){ h+='<div class="note" style="color:var(--ok);background:var(--ok-soft)">'+esc(S.msg)+'</div>'; }
+  if(S.adminTab==="log") return h+vLog();
+  if(S.adminTab==="edit") return h+vEdit();
+  if(S.adminTab==="sop") return h+vSop();
+  if(S.adminTab==="draft") return h+vDraft();
+  return h+vStatus();
+}
+
+function vStatus(){
+  var list=published(), total=totalStaff(), h="";
+  if(!list.length) return '<div class="panel muted">還沒有已發布的公告。到「編輯公告」寫一則並發布。</div>';
+  if(!S.adminAnn || !list.some(function(a){return a.id===S.adminAnn;})) S.adminAnn=list[0].id;
+  var a=ann(S.adminAnn), done=countDone(a);
+  h+=posterHtml(a);
+  h+='<div class="panel">';
+  if(list.length>1){ h+='<label class="f wide">選擇公告<select id="sel-ann" data-chg="adminAnn">'; list.forEach(function(x){ h+='<option value="'+x.id+'"'+(x.id===a.id?" selected":"")+'>'+fmtDate(x.date)+'　'+esc(x.title)+'</option>'; }); h+='</select></label>'; }
+  h+='<div class="ann"><div class="meta"><span class="pill tag">'+esc(a.level)+'</span><span>'+fmtDate(a.date)+' 發布</span><span>公告 '+esc(a.no||"")+' 號</span><span>發布單位：'+esc(a.by)+'</span><span>總經理核定</span><span>第 '+a.version+' 版</span></div><h2>'+esc(a.title)+'</h2></div>';
+  h+='<div class="sum"><div><div class="small muted">已簽收</div><div class="big">'+done+' <small>/ '+total+' 人</small></div></div><div><div class="small muted">尚未簽收</div><div class="big">'+(total-done)+' <small>人</small></div></div></div>';
+  h+='<div class="bar"><i style="width:'+Math.round(done/total*100)+'%"></i></div>';
+  h+='<div class="row"><button id="btn-copy" class="btn sm" data-act="copyUnread">複製未簽收名單（貼到 LINE 提醒）</button><button id="btn-poster" class="btn ghost sm" data-act="poster" data-id="'+a.id+'">生成公告全圖</button>'+(LIVE?'<button id="btn-reload" class="btn quiet sm" data-act="reloadAdmin">重新整理</button>':'<button id="btn-demo" class="btn ghost sm" data-act="demo">填入示範資料</button><button id="btn-reset" class="btn quiet sm" data-act="reset">清除全部簽收紀錄</button>')+'</div>';
+  if(S.copyText!==null) h+='<div><div class="small muted">'+esc(S.copyMsg)+'</div><textarea id="copyout" class="copyout" readonly>'+esc(S.copyText)+'</textarea></div>';
+  h+='</div>';
+  h+='<div class="panel"><div class="scroll"><table><thead><tr><th>姓名</th><th>狀態</th><th>簽收時間</th><th>作答次數</th><th>簽名</th></tr></thead><tbody>';
+  STORES.forEach(function(s){
+    var dn=s.staff.filter(function(nm){ return isDone(a,rec(a.id,pid(s.id,nm))); }).length;
+    h+='<tr class="store"><td colspan="5">'+esc(s.name)+'　'+dn+' / '+s.staff.length+'</td></tr>';
+    s.staff.forEach(function(nm){
+      var r=rec(a.id,pid(s.id,nm)), d=isDone(a,r), old = r&&r.status==="done"&&!d;
+      var pill = d ? '<span class="pill done">已簽收</span>' : old ? '<span class="pill todo">改版後未重簽</span>' : r ? '<span class="pill doing">閱讀中</span>' : '<span class="pill todo">尚未閱讀</span>';
+      var sig = d ? (r.sig ? '<img class="sigimg" alt="'+esc(nm)+' 的簽名" src="'+r.sig+'">' : (LIVE?'':'<span class="small muted">示範資料</span>')) : "";
+      h+='<tr><td>'+esc(nm)+'</td><td>'+pill+'</td><td class="num">'+(d?fmt(r.finishedAt):"—")+'</td><td class="num">'+(r?r.attempts+" 次":"—")+'</td><td>'+sig+'</td></tr>';
+    });
+  });
+  return h+'</tbody></table></div></div>';
+}
+
+function vLog(){
+  var total=totalStaff();
+  var h='<div class="panel"><div class="row"><button id="btn-new" class="btn sm" data-act="newAnn">新增公告</button></div><div class="scroll"><table><thead><tr><th>發布日期</th><th>公告</th><th>狀態</th><th>發布單位</th><th>內容</th><th>簽收進度</th><th></th></tr></thead><tbody>';
+  mem.anns.forEach(function(raw){
+    var a=compile(raw), pub=a.status==="published";
+    h+='<tr><td class="num">'+fmtDate(a.date)+'</td><td><span class="pill tag">'+esc(a.level)+'</span> <span class="small muted">'+esc(a.no||"")+' 號</span><br>'+esc(a.title)+'</td>';
+    h+='<td>'+(pub?'<span class="pill done">已發布</span> <span class="small muted">第 '+a.version+' 版</span>':'<span class="pill draft">草稿</span>')+'</td>';
+    h+='<td>'+esc(a.by)+'</td><td class="num">'+a.clauses.length+' 條／'+a.quiz.length+' 題</td><td class="num">'+(pub?countDone(a)+' / '+total:"—")+'</td>';
+    h+='<td><div class="row" style="flex-wrap:nowrap"><button id="edit-'+a.id+'" class="btn ghost sm" data-act="editAnn" data-id="'+a.id+'">編輯</button>'+(pub?'<button id="see-'+a.id+'" class="btn quiet sm" data-act="seeAnn" data-id="'+a.id+'">看名單</button><button id="pst-'+a.id+'" class="btn quiet sm" data-act="poster" data-id="'+a.id+'">全圖</button>':'')+'</div></td></tr>';
+  });
+  return h+'</tbody></table></div><div class="small muted">每發一則公告，這裡就多一筆。發布日期、版本和每個人的簽收時間都會留存。</div></div>';
+}
+
+function openEditor(id){
+  var r = id ? rawAnn(id) : null;
+  S.ed = r ? {id:r.id, title:r.title, level:r.level, date:r.date, by:r.by, no:r.no||"", src:r.src, qsrc:r.qsrc}
+           : {id:null, title:"", level:"重大公告", date:today(), by:"營運管理部", no:nextNo(), src:"條：標籤｜這一條的標題\n✓ 要做的事，【重點字】用括號框起來\n✕ 不可以做的事\n⚠ 違反的後果\n原文：這一條的公告原文", qsrc:"題：用門市會遇到的情境出題？\n對：正確答案\n錯：錯誤答案\n錯：錯誤答案\n條：1"};
+  S.ed.sig = r&&r.sig ? r.sig : ""; S.ed.sigAt = r&&r.sigAt ? r.sigAt : 0; S.ed.sigNew=false; S.ed.resign=false; S.ed.changeSig=false;
+}
+function vEdit(){
+  if(!S.ed) openEditor(published().length?published()[0].id:(mem.anns[0]&&mem.anns[0].id));
+  var e=S.ed, raw=e.id?rawAnn(e.id):null;
+  var h='<div class="edgrid"><div class="panel">';
+  h+='<div class="row" style="justify-content:space-between;align-items:center"><h2>'+(raw?"編輯公告":"新增公告")+'</h2><button id="btn-new2" class="btn quiet sm" data-act="newAnn">寫一則新的</button></div>';
+  h+='<div class="row"><label class="f wide" for="ed-title">公告標題<input type="text" id="ed-title" data-ed="title" value="'+esc(e.title)+'"></label>';
+  h+='<label class="f" for="ed-level">等級<select id="ed-level" data-ed="level">'+["重大公告","一般公告"].map(function(v){return '<option'+(v===e.level?" selected":"")+'>'+v+'</option>';}).join("")+'</select></label>';
+  h+='<label class="f" for="ed-date">發布日期<input type="date" id="ed-date" data-ed="date" value="'+esc(e.date)+'"></label>';
+  h+='<label class="f" for="ed-by">發布單位<input type="text" id="ed-by" data-ed="by" value="'+esc(e.by)+'"></label><label class="f" for="ed-no">公告編號<input type="text" id="ed-no" data-ed="no" value="'+esc(e.no||"")+'"></label></div>';
+  h+='<b>條文</b><div class="row ins"><button id="ins-ok" data-act="ins" data-s="✓ ">✓ 要做</button><button id="ins-no" data-act="ins" data-s="✕ ">✕ 不可以</button><button id="ins-warn" data-act="ins" data-s="⚠ ">⚠ 後果</button><button id="ins-dot" data-act="ins" data-s="• ">• 說明</button><button id="ins-hl" data-act="ins" data-s="【】">【重點字】</button><button id="ins-c" data-act="insBlock" data-t="src">＋新的一條</button></div>';
+  h+='<textarea id="ed-src" data-ed="src" rows="16" spellcheck="false">'+esc(e.src)+'</textarea>';
+  h+='<div class="howto"><code>條：標籤｜標題</code>　開始新的一條。<br>每行一個重點，行首放符號：<code>✓</code> 要做、<code>✕</code> 不可以、<code>⚠</code> 後果、<code>•</code> 說明。<br><code>【 】</code>框起來的字會變成彩色重點。<br><code>途徑：</code>用 → 隔開每一步，會顯示成一條有編號的路線。<br><code>例：</code>放範例，一行寫一個「例：」，會顯示在一個框裡。<br><code>註：</code>放補充說明，會用小字顯示在重點下面。<br><code>原文：</code>放公告原句，同仁點「看公告原文」才展開。</div>';
+  h+='<b>題目</b><div class="row ins"><button id="ins-q" data-act="insBlock" data-t="qsrc">＋新的一題</button></div>';
+  h+='<textarea id="ed-qsrc" data-ed="qsrc" rows="16" spellcheck="false">'+esc(e.qsrc)+'</textarea>';
+  h+='<div class="howto"><code>題：</code>題目　<code>對：</code>正確答案（1 個）　<code>錯：</code>錯誤答案（至少 2 個）　<code>條：</code>答案在第幾條。<br>出題時題目和選項的順序會自動打亂。</div>';
+  h+='<div id="ed-sign" class="gmsign"></div></div><div id="ed-prev" class="prev"></div></div>';
+  return h;
+}
+function paintPreview(){
+  var box=document.getElementById("ed-prev"); if(!box||!S.ed) return;
+  var e=S.ed, raw=e.id?rawAnn(e.id):null, cl=parseClauses(e.src), qz=parseQuiz(e.qsrc), ck=check(cl,qz), bad=ck.e.length>0, signed=!!(e.sig&&!e.resign);
+  var h='<div class="panel"><h2>檢查</h2><ul class="checks">';
+  ck.e.forEach(function(t){ h+='<li class="e"><span>✕</span><span>'+esc(t)+'</span></li>'; });
+  ck.w.forEach(function(t){ h+='<li class="w"><span>!</span><span>'+esc(t)+'</span></li>'; });
+  if(!ck.e.length&&!ck.w.length) h+='<li class="g"><span>✓</span><span>'+cl.length+' 條、'+qz.length+' 題，格式都正確。</span></li>';
+  else if(!bad) h+='<li class="g"><span>✓</span><span>可以發布。黃色是建議，不擋發布。</span></li>';
+  h+= signed ? '<li class="g"><span>✓</span><span>總經理已核定（'+fmt(e.sigAt)+'）。</span></li>' : '<li class="e"><span>✕</span><span>總經理還沒核定。到編輯區最下面按「確定簽核」後才能發布。</span></li>';
+  h+='</ul><div class="row">';
+  if(raw && raw.status==="published"){
+    h+='<button id="btn-minor" class="btn sm" data-act="edSave" data-mode="minor"'+(bad?" disabled":"")+'>更新（改錯字、標點，不用重簽）</button>';
+    h+='<button id="btn-major" class="btn ghost sm" data-act="edSave" data-mode="major"'+(bad||!signed||!e.sigNew?" disabled":"")+'>改版（規則有變，全員重簽）</button>';
+  } else {
+    h+='<button id="btn-pub" class="btn sm" data-act="edSave" data-mode="publish"'+(bad||!signed?" disabled":"")+'>發布</button>';
+    h+='<button id="btn-draft" class="btn ghost sm" data-act="edSave" data-mode="draft">存成草稿</button>';
+  }
+  h+='</div>'+(raw&&raw.status==="published"?'<div class="small muted">按「改版」前，要請總經理重新簽核。</div>':'')+'</div>';
+  h+='<div class="small muted">同仁會看到的條文（一次只看一條）</div>';
+  cl.forEach(function(c,i){ h+=clauseHtml(c,i,false); });
+  h+='<div class="small muted">同仁會答的題目</div><div class="panel">';
+  qz.forEach(function(q,i){
+    h+='<div class="pq"><b class="q" style="font-size:16px">'+(i+1)+'. '+hl(q.q||"（還沒寫題目）")+'</b>';
+    q.ok.forEach(function(t){ h+='<span class="a">✓ '+esc(t)+'</span>'; });
+    q.wrong.forEach(function(t){ h+='<span class="x">✕ '+esc(t)+'</span>'; });
+    h+='<span class="small muted">答案在'+(q.c===null?"（未填）":"第 "+(q.c+1)+" 條")+'</span></div>';
+  });
+  if(!qz.length) h+='<span class="muted">還沒有題目。</span>';
+  h+='</div>';
+  box.innerHTML=h;
+}
+function pinHash(p){ var x=5381, t="ym:"+p; for(var i=0;i<t.length;i++){ x=((x<<5)+x+t.charCodeAt(i))|0; } return "h"+(x>>>0).toString(36); }
+function paintSign(msg){
+  var box=document.getElementById("ed-sign"); if(!box||!S.ed) return;
+  var e=S.ed, gm=mem.gm||null, h='<b>總經理核定</b>';
+  var approved = e.sig && !e.resign;
+  if(approved && !e.changeSig){
+    h+='<div class="small muted">這則公告已經簽核，簽名會出現在公告全圖的「核定」欄。</div>';
+    h+='<img class="sigimg" alt="總經理簽名" src="'+e.sig+'"><div class="small muted">'+fmt(e.sigAt)+' 核定</div>';
+    h+='<div class="row"><button id="btn-gmre" class="btn quiet sm" data-act="gmResign">重新簽核</button>'+(gm?'<button id="btn-gmchg" class="btn quiet sm" data-act="gmChange">更換留存的簽名</button>':'')+'</div>';
+  } else if(gm && !e.changeSig){
+    h+='<div class="small muted">條文和題目都確定後，輸入核定密碼，按「確定簽核」。留存的簽名會自動放到這則公告的核定欄。</div>';
+    h+='<label class="f" for="gm-pin">核定密碼<input type="password" inputmode="numeric" autocomplete="off" id="gm-pin"></label>';
+    h+='<div class="row"><button id="btn-gmapprove" class="btn grow" data-act="gmApprove">確定簽核</button></div>';
+    h+='<div class="row"><button id="btn-gmchg" class="btn quiet sm" data-act="gmChange">更換留存的簽名</button></div>';
+  } else {
+    h+='<div class="small muted">'+(gm?'請簽下新的簽名，並輸入原本的核定密碼。':'第一次使用，請先留存簽名並設定核定密碼。之後每則公告只要輸入密碼、按「確定簽核」，簽名就會出現。')+'</div>';
+    h+='<div class="signbox"><canvas id="gmsig" tabindex="0" aria-label="總經理簽名區"></canvas><div class="hint" id="gmsig-hint">總經理請在這裡簽名</div></div>';
+    h+='<label class="f" for="gm-pin">'+(gm?'原本的核定密碼':'設定核定密碼（4 到 8 位數字，只有總經理知道）')+'<input type="password" inputmode="numeric" autocomplete="off" id="gm-pin"></label>';
+    h+='<div class="row"><button id="btn-gmclear" class="btn quiet sm" data-act="gmClear">清除</button><button id="btn-gmsave" class="btn sm" data-act="gmSave" disabled>留存簽名</button>'+(gm?'<button id="btn-gmcancel" class="btn quiet sm" data-act="gmCancel">取消</button>':'')+'</div>';
+  }
+  if(msg) h+='<div class="small" id="gm-msg" style="color:var(--seal);font-weight:700">'+esc(msg)+'</div>';
+  box.innerHTML=h; S.gmInk=false;
+  mountSig("gmsig", function(){ S.gmInk=true; var b=document.getElementById("btn-gmsave"); if(b) b.disabled=false; var hn=document.getElementById("gmsig-hint"); if(hn) hn.hidden=true; });
+}
+function edSave(mode){
+  var e=S.ed, raw=e.id?rawAnn(e.id):null;
+  if(!raw){ raw={id:"a"+Date.now(), version:1, status:"draft"}; mem.anns.unshift(raw); e.id=raw.id; }
+  raw.title=e.title.trim()||"未命名公告"; raw.level=e.level; raw.date=e.date||today(); raw.by=e.by.trim()||"營運管理部"; raw.no=(e.no||"").trim()||raw.no||nextNo(); raw.src=e.src; raw.qsrc=e.qsrc; raw.updatedAt=Date.now();
+  if(e.sig&&!e.resign){ raw.sig=e.sig; raw.sigAt=e.sigAt; }
+  if(mode==="publish"){ raw.status="published"; S.msg="已發布「"+raw.title+"」。同仁入口現在看得到這則公告。"; }
+  else if(mode==="major"){ raw.version++; S.msg="已改版為第 "+raw.version+" 版。所有人需要重新閱讀並簽收。"; }
+  else if(mode==="minor"){ S.msg="已更新內容。之前的簽收紀錄維持有效。"; }
+  else { S.msg="已存成草稿。同仁還看不到，發布後才會出現。"; }
+  save(); if(LIVE) syncSave("saveAnn",{ann:JSON.parse(JSON.stringify(raw))});
+  S.adminTab="log"; render();
+}
+
+var WHO={gm:"總經理",hq:"營運管理部",sv:"區督導、門市主管",all:"全體同仁",ai:"AI",boss:"老闆"};
+/* n 步驟、ph 階段、who 負責人、q 要先判斷的問題、yes 往下走的條件、no [條件, 處理, 去向]、s 一句重點、d 怎麼做、to 交接說明 */
+var FLOW=[
+  {n:1,ph:0,who:["gm"],t:"判斷要不要走簽收",q:"這則公告有牽涉獎金、懲處、作業紀律或客戶權益嗎？",yes:"有牽涉：走簽收",no:["沒有牽涉","活動、排班這類一般通知，照舊發 LINE","不走這個流程"]},
+  {n:2,ph:0,who:["gm"],t:"定稿公告原文",s:"原文寫完，用字確認好。",d:"不知道怎麼寫，到「起草公告」複製訪談指令貼給 AI，用語音回答它的問題，它會幫忙寫出原文。後面的條文和題目都以這份原文為準。原文還在改，就先不要往下做。",to:"原文交給營運管理部"},
+  {n:3,ph:1,who:["hq"],t:"拆成一條一條",s:"一條只講一件事，每條最多 4 個重點。",d:"每個重點前面放符號，最重要的幾個字用【】框起來。原句貼在「原文：」。"},
+  {n:4,ph:1,who:["hq"],t:"出 10 題",s:"每條至少 1 題，用門市真的會遇到的情境來問。",d:"每題 1 個正確答案、2 個錯誤答案，並寫明答案在第幾條。"},
+  {n:5,ph:1,who:["hq"],t:"看預覽，用手機走一遍",q:"右邊「檢查」沒有紅字，自己走一遍也讀得順嗎？",d:"存成草稿後，自己從閱讀、問答走到簽名。",yes:"沒問題：送總經理核定",no:["有紅字，或讀起來不順","修改條文或題目","↩ 回到第 3 步"]},
+  {n:6,ph:2,who:["gm"],t:"總經理核定、發布",q:"條文和題目都可以發布了嗎？",d:"公告以營運管理部的名義發布，總經理只做核定。位置在「編輯公告」最下面。",yes:"可以：輸入核定密碼，按「確定簽核」，再按「發布」",no:["還要修改","退回營運管理部","↩ 回到第 3 步"]},
+  {n:7,ph:2,who:["hq"],t:"LINE 發公告全圖、連結和截止日",s:"寫明哪一天前要簽完。",d:"到「簽收狀況」按「生成公告全圖」，把有總經理核定簽名的圖和連結貼到群組。不用再請大家回「已了解」。"},
+  {n:8,ph:3,who:["hq","sv"],t:"截止日追蹤",q:"截止日當天，全員都簽完了嗎？",d:"到「簽收狀況」可以直接複製未簽收名單。",yes:"全員簽完",no:["還有人沒簽","把未簽收名單貼到群組提醒；隔天還沒簽，由門市主管或區督導當面處理","↩ 簽完才能結案"]},
+  {n:9,ph:3,who:["hq"],t:"結案，留存紀錄",s:"紀錄留在後台，之後隨時可以調閱。",d:"之後有人違規，到「簽收狀況」調出他的簽收時間、作答次數和簽名。"}
+];
+var PHASES=["準備原文","做成簽收內容","核定與發布","追蹤到全員簽完"], PHN=["一","二","三","四"];
+var ELBOW='<svg viewBox="0 0 34 40" width="34" height="40" aria-hidden="true"><path d="M6 0V24H20" fill="none" stroke="currentColor" stroke-width="7"/><path d="M19 12L33 24L19 36Z" fill="currentColor"/></svg>';
+function fArrow(who){ return '<span class="fa w-'+who+'" aria-hidden="true"><i></i></span>'; }
+function fNode(s){
+  var h='<div class="fnode w-'+s.who[0]+'"><span class="fnum">'+s.n+'</span><div class="fbody"><div class="fh"><b>'+s.t+'</b>';
+  s.who.forEach(function(w){ h+='<span class="fwho w-'+w+'">'+WHO[w]+'</span>'; });
+  h+='</div>';
+  if(s.s) h+='<p>'+s.s+'</p>';
+  if(s.list){ h+='<ol class="fql">'; s.list.forEach(function(x){ h+='<li><b>'+x[0]+'</b><span>'+x[1]+'</span></li>'; }); h+='</ol>'; }
+  if(s.q) h+='<div class="fq"><span class="fdia" aria-hidden="true"></span><span>'+s.q+'</span></div>';
+  if(s.d) h+='<details class="fd"><summary>怎麼做</summary><p>'+s.d+'</p></details>';
+  return h+'</div></div>';
+}
+function fLink(s, next){
+  var w=next.who[0];
+  if(s.q) return '<div class="fbr w-'+w+'">'+fArrow(w)+'<div class="fbrc"><div class="fno">'+ELBOW+'<div class="fside"><b>'+s.no[0]+'</b><span>'+s.no[1]+'</span><em>'+s.no[2]+'</em></div></div><span class="flab">'+s.yes+'</span></div></div>';
+  return '<div class="fcon w-'+w+'">'+fArrow(w)+(s.to?'<span class="flab">'+s.to+'</span>':'<span></span>')+'</div>';
+}
+function fMini(who,t){ return '<div class="fmini w-'+who+'"><span>'+t+'</span><small>'+WHO[who]+'</small></div>'; }
+function vSop(){
+  var h='<div class="flowwrap">';
+  h+='<div class="fhead"><h2>發一則公告的順序</h2><p class="muted small">從第 1 步照箭頭往下走到第 9 步。每一步的顏色代表由誰做。</p></div><div class="panel flegend"><h2>怎麼看這張圖</h2><ul>'
+    +'<li><span class="fsw w-gm"></span><span>金色：<b>總經理</b>做的事</span></li>'
+    +'<li><span class="fsw w-hq"></span><span>綠色：<b>營運管理部</b>做的事</span></li>'
+    +'<li><span class="fsw w-sv"></span><span>藍色：<b>區督導、門市主管、同仁</b>做的事</span></li>'
+    +'<li>'+fArrow("hq")+'<span>往下的箭頭：做完，換下一步。<b>箭頭的顏色就是下一步由誰做</b></span></li>'
+    +'<li><span class="felb" aria-hidden="true">'+ELBOW+'</span><span>紅色箭頭：<b>還不能往下走</b>，要退回或另外處理</span></li>'
+    +'<li><span class="fdia w-hq" aria-hidden="true"></span><span>虛線框：這一步要<b>先判斷</b>，再決定走哪一邊</span></li>'
+    +'</ul></div>';
+  h+='<div class="flow">';
+  FLOW.forEach(function(s,i){
+    var prev=FLOW[i-1], next=FLOW[i+1];
+    if(!prev || prev.ph!==s.ph) h+='<section class="fphase"><h3><small>階段'+PHN[s.ph]+'</small>'+PHASES[s.ph]+'</h3>';
+    h+=fNode(s);
+    var last=!next || next.ph!==s.ph;
+    if(next && !last) h+=fLink(s,next);
+    if(last) h+='</section>';
+    if(next && last) h+=fLink(s,next);
+  });
+  h+='<div class="fcon w-hq">'+fArrow("hq")+'<span class="fend" style="align-self:end;justify-self:start;margin:0 0 2px">流程結束</span></div>';
+  h+='</div>';
+  h+='<div class="panel ffork"><h2>發布之後，公告要修改</h2><p class="muted small" style="margin:0">先看改的是什麼，再決定走左邊還是右邊。</p><div class="fk">'
+    +'<div class="fkc"><span class="fcond">只改錯字、標點</span>'+fArrow("hq")+fMini("hq","按「更新」")+fArrow("hq")+'<span class="fend">不用重簽</span></div>'
+    +'<div class="fkc"><span class="fcond">規則內容有變</span>'+fArrow("hq")+fMini("hq","按「改版」")+fArrow("gm")+fMini("gm","重新簽核")+fArrow("all")+fMini("all","全員重新簽收")+'</div>'
+    +'</div></div>';
+  return h+'</div>';
+}
+
+/* ---------- 起草公告：一份訪談指令。AI 先確認身分、聽老闆直覺講、給摘要，再問十個細節問題 ---------- */
+var DRAFT_RULES="你是倚盟電訊營運管理部的公告編輯助理。倚盟電訊是台灣大哥大的特約服務中心，在高雄有五家門市。\n\n公司裡發生了一件事，老闆（總經理）想把它訂成全體同仁要「逐條閱讀、答題、簽名」的公告。你的工作是用聊天的方式訪談他，把事情問清楚，再寫成公告。請照下面五段的順序進行，一段做完才做下一段。\n\n【整段對話的規矩】\n- 用繁體中文，口語、簡短、有禮貌。對方是老闆就稱呼「老闆」；不是老闆，照他說的身分稱呼。\n- 一次只問一題，問完就停下來等回答。不可以一次列出好幾題。\n- 一則訊息只能問一件事，只能有一個問號。下面的題目如果一題裡有兩個問句，拆成兩則訊息：先問第一個，他回答之後再問第二個。\n- 對方會用語音輸入，講得亂、順序顛倒都沒關係。你聽不懂，或一句話有兩種意思時，用一句話反問，例如：「您的意思是 A 還是 B？」\n- 每次他回答後，先用一句話說出你聽到的重點，再問下一題。\n- 他前面已經講過的事，不要再問一次，改成確認：「您剛才提到……，我理解成……，對嗎？」\n- 不可以替老闆決定任何規定。他沒講的就問；他說還沒想好，就記下來，最後列在「請總經理確認」。\n- 公司的稱呼請照用：門市（不說分店）、門市主管、區督導、營運管理部、總經理。公告由營運管理部發布，總經理核定。\n- 對方如果上傳錄音檔而你沒辦法聽，直接說明，請他改用鍵盤上的麥克風做語音輸入。\n\n【第一段：開場】\n1. 你的第一則回覆只說這一句：「請問您是哪一位？您是老闆嗎？」\n2. 他回答是老闆，就說：「老闆辛苦了。應該是有事情發生了，接下來我會請您回答幾個問題。先不用管順序：您現在直覺想公告的是什麼？用語音簡單講給我聽就好，前後順序不用在意，我會幫您整理。」\n   他不是老闆（例如營運管理部同仁代為整理），一樣進行，並記住：最後的公告原文要註明「需送總經理確認」。\n3. 他講完後，給一份摘要：用 3 到 5 行條列你聽到的重點（發生了什麼事、他最在意什麼、他希望大家怎麼做），然後問：「我整理的對嗎？有沒有漏掉的？」\n4. 他確認後說：「接下來我需要更明確的細節，讓整份公告有情境、同仁看得懂。一共十個問題，我一題一題問。」然後問第 1 題。\n\n【第二段：十個問題】\n照順序問。句子可以依他前面講過的內容調整，但意思不能變。有選項的題目，把選項列出來，並說也可以用自己的話回答。\n\n第 1 題　發生了什麼事\n「會有這則公告，一定是有事情發生了。可以告訴我發生了什麼事嗎？用您平常講話的方式說就好，我聽不懂會再問您。」\n（開場時他已經講過，就改成確認你的理解，再問還缺的細節。）\n\n第 2 題　情境與頻率\n「這件事是在什麼情況下發生的？它是每天都有、經常發生，還是偶爾一次？」\n\n第 3 題　造成的傷害\n「這件事讓您不開心，是因為它影響了什麼？例如獎金、客人、帳務，或其他狀況。造成的傷害是什麼？講得出金額最好。」\n\n第 4 題　公告裡要不要寫出是誰\n「這件事是哪一家門市發生的？公告裡您希望怎麼寫？\nA. 寫出門市和人員\nB. 只寫門市，不寫是誰\nC. 都不寫，用『公司發現』帶過」\n他選 A 時，提醒一句：「寫出同仁的姓名，容易在同仁之間引起爭議，我會把這一點列在『請總經理確認』。」然後照他的決定做。\n\n第 5 題　正確的做法\n「以後遇到同樣的情況，您希望同仁正確的做法是什麼？」\n\n第 6 題　呈報的流程（這一題拆成幾個小問題，一樣一次只問一個）\n先說：「接下來要把流程定下來。這是以後長期要照著走的，所以我會問得比較細，問完畫成流程圖給您看。」\n6-1「門市同仁要向誰呈報？」\n6-2「用什麼方式呈報？例如 LINE 群組、表單、當面講。要不要留下文字紀錄？」\n6-3「那位主管收到之後要做什麼？他自己就可以決定，還是要再往上呈報？」\n6-4（要往上時才問）「往上是呈報給哪一位主管？他多久之內要回覆？」\n6-5「主管決定之後，要怎麼回覆同仁？多久之內要回覆？」\n6-6「事情做完之後，還需要回報結案嗎？向誰回報？」\n問完後，把流程排成流程圖給他看，每一步寫清楚「誰、做什麼、在哪裡、多久之內」，格式像這樣：\n① 門市同仁｜在 LINE 群組貼申請｜動手之前\n　↓\n② 門市主管｜在群組回覆核准或不核准｜一個工作天內\n　↓\n③ ……\n然後問：「流程是這樣嗎？要改哪一步？」改到他說對為止。\n\n第 7 題　急件\n7-1「如果負責核准的主管沒辦法及時回覆，同仁可以找誰？」\n7-2「同仁對這個規定有疑問時，要問誰？」\n\n第 8 題　沒有照做的處置\n「如果有人沒有照這個程序做，公司會怎麼處理？第一次和再犯，處理方式一樣嗎？」\n\n第 9 題　公告給誰\n「這則公告要給誰看？\nA. 全公司\nB. 門市同仁\nC. 營運管理部\nD. 特別指定的人（請告訴我是誰）\n可以選不只一個。」\n\n第 10 題　從哪一天開始\n「從哪一天開始？\nA. 公告當天\nB. 下個月 1 號\nC. 另外指定日期（請告訴我日期）」\n\n【第三段：整理給他確認】\n十題問完後，給一份「訪談整理」：\n- 十題的答案，每題一到兩行\n- 流程圖（最後確認的版本）\n- 還沒決定的事\n然後問：「這樣對嗎？對的話我就開始寫公告原文。」他說對，才進第四段。\n\n【第四段：寫公告原文，請他確認】\n1. 用完整的句子寫。不用簡稱、不用術語、不用「依規定辦理」這種空話。每一句都要讓第一天上班的新人看得懂要做什麼。\n2. 內部用語第一次出現時，用一句話說明它的意思。\n3. 順序：為什麼訂這個規定（發生了什麼事、造成什麼傷害）→ 適用誰 → 要怎麼做（照流程圖一步一步寫）→ 不可以做什麼 → 急件怎麼辦 → 沒有照做的處置 → 有疑問找誰 → 哪一天開始。\n4. 事發的門市和人員，照第 4 題的決定寫。\n5. 只寫他講過的內容，不可以自己加規定。語氣是說明規定，不是責備。\n6. 原文前面先建議一個公告標題，不用簡稱和術語。\n7. 原文後面另外列「請總經理確認」：\n   - 還沒決定或你覺得不夠清楚的地方\n   - 出現「扣薪、罰款、賠償、追回、分攤」這類字眼的句子。照他的原意寫，並提醒「執行前建議先請勞資顧問或律師看過」\n   - 公告裡寫出同仁姓名的地方\n   沒有就寫「無」。\n8. 最後問：「這份原文可以定稿嗎？要改哪裡？」然後停下來。他說可以定稿，才進第五段。\n\n【第五段：轉成公告簽收系統要用的三段文字】\n\n條文區的寫法：\n- 一條只講一件事。整則公告拆成 4 到 11 條。\n- 每條第一行：條：標籤｜標題\n  標籤 2 到 4 個字，例如 目的、觀念、規範一、規範二、步驟、說明、提醒。標題 14 個字以內。\n- 接著每行寫一個重點。每條 2 到 4 個重點，每個重點 30 個字以內。\n- 每個重點的行首放一個符號，再空一格：\n  ✓ 要做的事\n  ✕ 不可以做的事\n  ⚠ 違反的後果或風險\n  • 背景或說明\n- 每個重點用【】框出最重要的 2 到 10 個字，一行只框一處。字數太緊時把句子寫短，【】不能省。\n- 需要時可以多加這三種行：\n  註：補充說明，系統會用小字顯示\n  例：要同仁照著填的格式或範例，一行寫一個「例：」\n  途徑：第一步 → 第二步 → 第三步（把流程圖排成一條路線，放在最後一條。這一條只要一個 • 重點、一行途徑、一行原文，不用出題）\n- 每條最後一行：原文：把這一條對應的原文句子照抄；對應到好幾句時，照抄最主要的一兩句。\n- 條與條之間空一行。\n\n題目區的寫法：\n- 一共 10 題。每一條至少要有 1 題（只有「途徑：」的那一條除外）。\n- 用門市實際會遇到的情境出題，不要考背誦。\n- 每題五行，每行開頭的字不能改：\n  題：題目\n  對：正確答案\n  錯：錯誤答案\n  錯：錯誤答案\n  條：數字\n  「條：」只寫數字，代表答案在條文區由上往下數的第幾條，不是標籤裡的數字。\n- 每題剛好 1 個「對」、2 個「錯」。\n- 錯誤答案要像同仁真的會有的想法，但依公告內容明確是錯的。不可以有兩個選項都說得通。\n- 三個選項的長度盡量接近，不要讓正確答案總是最長。\n- 題與題之間空一行。\n\n格式範例。條文區的一條長這樣：\n條：規範二｜事先回報\n• 客戶要求取消，或遇到特殊狀況\n✓ 作業前【先通報門市主管】\n✕ 不可以【先做再報】\n原文：遇客戶要求或特殊狀況需要取消，作業前務必先通報門市主管。\n\n題目區的一題長這樣：\n題：客人回到門市，要求取消昨天辦好的申辦。你的第一步是？\n對：先通報門市主管\n錯：先幫客人取消，下班前再跟主管說\n錯：請同事幫忙操作取消\n條：4\n\n訪談紀錄的寫法（給公司存檔，之後查得到當初為什麼訂這條規定）：\n訪談對象：\n想公告的事（一句話）：\n1 發生了什麼事：\n2 情境與頻率：\n3 造成的傷害：\n4 公告裡怎麼寫是誰：\n5 正確的做法：\n6 流程：第一步 → 第二步 → 第三步\n7 急件找誰：\n8 沒有照做的處置：\n9 公告對象：\n10 開始日期：\n請總經理確認的事：\n\n第五段的輸出，依序給三樣東西，不要加其他說明：\n1. 條文區：放在一個程式碼區塊裡\n2. 題目區：放在另一個程式碼區塊裡\n3. 訪談紀錄：放在第三個程式碼區塊裡\n最後加一句：「請把條文區和題目區貼到公告簽收系統的『編輯公告』，訪談紀錄貼到『起草公告』最下面存檔。」\n\n現在請從第一段開始。";
+var TEN=[["發生了什麼事","用平常講話的方式說，AI 聽不懂會反問"],["情境與頻率","什麼情況下發生；每天、經常，還是偶爾"],["造成的傷害","影響了獎金、客人、帳務或其他；講得出金額最好"],["公告裡要不要寫出是誰","寫出門市和人員、只寫門市，或用「公司發現」帶過"],["正確的做法","以後遇到同樣的情況，同仁該怎麼做"],["呈報的流程","向誰呈報、用什麼方式、主管要做什麼、多久回覆"],["急件","核准的主管沒辦法及時回覆時，可以找誰"],["沒有照做的處置","公司會怎麼處理；第一次和再犯是否一樣"],["公告給誰","全公司、門市同仁、營運管理部，或特別指定的人"],["從哪一天開始","公告當天、下個月 1 號，或另外指定日期"]];
+var IPH=["開場","十個細節問題","寫成公告"];
+var IFLOW=[
+  {n:1,ph:0,who:["ai"],t:"確認身分",s:"「請問您是哪一位？您是老闆嗎？」"},
+  {n:2,ph:0,who:["boss"],t:"直覺先講",s:"想公告什麼，用語音講給 AI 聽。前後順序不用在意。"},
+  {n:3,ph:0,who:["ai"],t:"整理成摘要",q:"摘要對嗎？有沒有漏掉的？",yes:"對：開始問細節",no:["不對，或有漏掉","老闆補充，AI 重新整理","↩ 改到對為止"]},
+  {n:4,ph:1,who:["boss"],t:"回答十個問題",s:"AI 一次只問一題。前面講過的，它只會確認，不會再問一次。",list:TEN},
+  {n:5,ph:1,who:["ai"],t:"把第 6 題畫成流程圖",q:"流程是這樣嗎？",yes:"對",no:["要改","告訴 AI 改哪一步","↩ 改到對為止"]},
+  {n:6,ph:2,who:["ai"],t:"寫出公告原文",q:"這份原文可以定稿嗎？",yes:"可以定稿",no:["要修改","告訴 AI 改哪裡","↩ 改到可以定稿"]},
+  {n:7,ph:2,who:["ai"],t:"給三段文字",s:"條文區、題目區、訪談紀錄。每一段都可以整段複製。"},
+  {n:8,ph:2,who:["hq"],t:"貼回這個系統",s:"條文區和題目區貼到「編輯公告」。訪談紀錄貼到這一頁的「起草紀錄」存檔。"}
+];
+function fChart(L, PH){
+  var h='<div class="flow">';
+  L.forEach(function(s,i){
+    var prev=L[i-1], next=L[i+1];
+    if(!prev || prev.ph!==s.ph) h+='<section class="fphase"><h3><small>階段'+PHN[s.ph]+'</small>'+PH[s.ph]+'</h3>';
+    h+=fNode(s);
+    var last=!next || next.ph!==s.ph;
+    if(next && !last) h+=fLink(s,next);
+    if(last) h+='</section>';
+    if(next && last) h+=fLink(s,next);
+  });
+  return h+'</div>';
+}
+function drMigrate(){
+  var K=[["what","發生了什麼事"],["scene","情境"],["impact","影響"],["todo","正確的做法"],["where","在哪裡申請或回報"],["who","由誰核准"],["sla","多久回覆"],["dont","不可以做的事"],["except","例外與緊急"],["penalty","違反的後果"],["more","補充"]];
+  mem.drafts=(mem.drafts||[]).map(function(d){
+    if(typeof d.text==="string") return d;
+    var a=d.a||{}, lines=[]; K.forEach(function(k){ if(a[k[0]]) lines.push(k[1]+"："+a[k[0]]); });
+    return {id:d.id, at:d.upd||d.at||Date.now(), title:String(a.title||a.what||"（舊版問答）").slice(0,30), text:lines.join("\n")};
+  }).filter(function(d){ return d.text; });
+}
+function vDraft(){
+  drMigrate();
+  var L=mem.drafts, R=S.rec||{title:"",text:""};
+  var h='<div class="dwrap"><div class="panel dhero"><h2>老闆用講的，AI 幫忙問、幫忙寫</h2><p style="margin:0">發生了一件事，想訂成公告，但不知道怎麼寫。複製訪談指令貼給 AI，它會先聽您講，再一題一題把細節問清楚，最後寫出公告原文、條文和題目。</p>';
+  h+='<ol class="croute"><li><span>按「複製訪談指令」</span></li><li><span>打開 AI 的 App，開一個新的對話，貼上送出</span></li><li><span>AI 會先問「您是老闆嗎？」，之後用語音回答就可以</span></li></ol>';
+  h+='<div class="row"><button id="dr-copy" class="btn grow" data-act="drCopy">複製訪談指令</button><button id="dr-toedit" class="btn ghost" data-act="drToEdit">到「編輯公告」貼上</button></div>';
+  if(S.copyText!==null) h+='<div><div class="small muted">'+esc(S.copyMsg)+'</div><textarea id="copyout" class="copyout" readonly>'+esc(S.copyText)+'</textarea></div>';
+  h+='</div>';
+  h+='<div class="dchart"><div class="fhead"><h2>AI 會這樣問</h2><p class="muted small">金色是老闆回答，藍色是 AI 做的事，綠色是營運管理部做的事。虛線框是 AI 會停下來請您確認的地方。</p></div>'+fChart(IFLOW,IPH)+'</div>';
+  h+='<div class="panel drec"><h2>起草紀錄</h2><p class="muted small" style="margin:0">把 AI 最後給的「訪談紀錄」貼在這裡存檔。之後可以回來看當初為什麼訂這條規定。</p>';
+  h+='<label class="f wide" for="rec-title">這次訂的是什麼事<input type="text" id="rec-title" data-rec="title" value="'+esc(R.title)+'" placeholder="例如：取消跨月的客戶申辦"></label>';
+  h+='<label class="f wide" for="rec-text">訪談紀錄<textarea id="rec-text" data-rec="text" rows="5" placeholder="把 AI 給的第三段文字整段貼上">'+esc(R.text)+'</textarea></label>';
+  h+='<div class="row"><button id="rec-save" class="btn sm" data-act="recSave">存檔</button></div>';
+  L.forEach(function(d){
+    h+='<div class="drow"><details class="dex"><summary><b>'+esc(d.title)+'</b>　<span class="small muted">'+new Date(d.at).getFullYear()+'/'+fmt(d.at)+'</span></summary><div class="dsa">'+esc(d.text)+'</div></details><button class="btn quiet sm" data-act="drDel" data-id="'+d.id+'">'+(S.drDel===d.id?"確定刪除":"刪除")+'</button></div>';
+  });
+  return h+'</div></div>';
+}
+
+/* ---------- 公告全圖 ---------- */
+var DL=null, posterCanvas=null;
+var PC={paper:"#FFFFFF", ink:"#14251F", muted:"#586962", line:"#D3DCD7", band:"#0E6A5B", bandInk:"#FFFFFF", bandSoft:"#CFE6DF",
+  ok:["#1C7448","#DDF1E5"], no:["#BF3A2B","#F8E3DF"], warn:["#8A5A00","#FAEDCB"], dot:["#1F5FA8","#DEE9F7"]};
+var SERIF='"Noto Serif TC","Songti TC","PMingLiU",serif', SANS='"Noto Sans TC","PingFang TC","Microsoft JhengHei",sans-serif';
+var NOHEAD=/[，。、：；！？）」』】]/;
+function segs(t){
+  var out=[], re=/【(.+?)】/g, last=0, m;
+  while((m=re.exec(t))){ if(m.index>last) out.push({t:t.slice(last,m.index),hl:false}); out.push({t:m[1],hl:true}); last=re.lastIndex; }
+  if(last<t.length) out.push({t:t.slice(last),hl:false});
+  return out;
+}
+/* 逐字換行；parts 是 [{t, font, color, band}]，回傳下一行的 y */
+function flow(ctx, parts, x, y, maxW, size, lh){
+  var cx=x, cy=y; ctx.textBaseline="top"; ctx.textAlign="left";
+  parts.forEach(function(pt){
+    ctx.font=pt.font;
+    (pt.t.match(/[A-Za-z0-9%.]+|[\s\S]/gu)||[]).forEach(function(tok){
+      var w=ctx.measureText(tok).width;
+      if(cx+w>x+maxW && cx>x && !NOHEAD.test(tok)){ cx=x; cy+=lh; if(tok===" ") return; }
+      if(pt.band){ ctx.fillStyle=pt.band; ctx.fillRect(cx, cy+size*0.66, w, size*0.42); }
+      ctx.fillStyle=pt.color; ctx.fillText(tok, cx, cy); cx+=w;
+    });
+  });
+  return cy+lh;
+}
+function rrect(ctx,x,y,w,h,r){ ctx.beginPath(); ctx.moveTo(x+r,y); ctx.arcTo(x+w,y,x+w,y+h,r); ctx.arcTo(x+w,y+h,x,y+h,r); ctx.arcTo(x,y+h,x,y,r); ctx.arcTo(x,y,x+w,y,r); ctx.closePath(); }
+function drawPoster(ctx, a, sigImg, H){
+  var W=1080, M=72, y;
+  ctx.fillStyle=PC.paper; ctx.fillRect(0,0,W,H);
+  ctx.fillStyle=PC.band; ctx.fillRect(0,0,W,176);
+  ctx.textBaseline="top"; ctx.textAlign="left";
+  ctx.fillStyle=PC.bandSoft; ctx.font="500 26px "+SANS; ctx.fillText("倚盟電訊有限公司", M, 38);
+  ctx.fillStyle=PC.bandInk; ctx.font="900 62px "+SERIF; ctx.fillText(a.level, M, 78);
+  ctx.textAlign="right"; ctx.fillStyle=PC.bandSoft; ctx.font="500 26px "+SANS;
+  ctx.fillText("公告 "+(a.no||"")+" 號", W-M, 56); ctx.fillText(fmtDate(a.date)+" 發布", W-M, 92); ctx.fillText("第 "+a.version+" 版", W-M, 128);
+  y=176+52;
+  y=flow(ctx,[{t:a.title, font:"900 52px "+SERIF, color:PC.ink}], M, y, W-2*M, 52, 74);
+  y+=22; ctx.fillStyle=PC.ink; ctx.fillRect(M,y,W-2*M,3); y+=44;
+  a.clauses.forEach(function(c){
+    var tx=M;
+    if(c.tag){
+      ctx.font="700 26px "+SERIF; var tw=ctx.measureText(c.tag).width+32;
+      ctx.fillStyle=PC.band; rrect(ctx,M,y+4,tw,44,6); ctx.fill();
+      ctx.fillStyle=PC.bandInk; ctx.textAlign="left"; ctx.textBaseline="top"; ctx.fillText(c.tag, M+16, y+11);
+      tx=M+tw+18;
+    }
+    var ty=flow(ctx,[{t:c.title, font:"700 36px "+SERIF, color:PC.ink}], tx, y, W-M-tx, 36, 52);
+    y=Math.max(y+52, ty)+14;
+    c.items.forEach(function(it){
+      var col=PC[it.k];
+      ctx.fillStyle=col[1]; ctx.beginPath(); ctx.arc(M+19, y+25, 19, 0, Math.PI*2); ctx.fill();
+      ctx.fillStyle=col[0]; ctx.font="700 22px "+SANS; ctx.textAlign="center"; ctx.textBaseline="middle"; ctx.fillText(ICON[it.k], M+19, y+26);
+      var parts=segs(it.t).map(function(sg){ return sg.hl ? {t:sg.t, font:"700 31px "+SANS, color:col[0], band:col[1]} : {t:sg.t, font:"400 31px "+SANS, color:PC.ink}; });
+      y=flow(ctx, parts, M+56, y+3, W-2*M-56, 31, 50)+8;
+    });
+    if(c.route && c.route.length){
+      c.route.forEach(function(t,i){
+        ctx.fillStyle=PC.band; ctx.beginPath(); ctx.arc(M+75, y+24, 18, 0, Math.PI*2); ctx.fill();
+        ctx.fillStyle=PC.bandInk; ctx.font="700 20px "+SANS; ctx.textAlign="center"; ctx.textBaseline="middle"; ctx.fillText(String(i+1), M+75, y+25);
+        ctx.textAlign="left"; ctx.textBaseline="top"; ctx.fillStyle=PC.ink; ctx.font="400 29px "+SANS; ctx.fillText(t, M+108, y+5);
+        y+=50;
+      });
+      y+=8;
+    }
+    if(c.ex && c.ex.length){
+      var isSep=function(t){ return /^[-－—–┈\s]+$/.test(t); }, bh=60;
+      c.ex.forEach(function(t){ bh+= isSep(t)?26:40; });
+      ctx.fillStyle="#F4F7F5"; rrect(ctx,M+56,y+4,W-2*M-56,bh,10); ctx.fill();
+      ctx.textAlign="left"; ctx.textBaseline="top"; ctx.fillStyle=PC.muted; ctx.font="500 22px "+SANS; ctx.fillText("範例", M+78, y+20);
+      var ey=y+54;
+      c.ex.forEach(function(t){
+        if(isSep(t)){ ctx.save(); ctx.strokeStyle=PC.line; ctx.lineWidth=2; ctx.setLineDash([10,8]); ctx.beginPath(); ctx.moveTo(M+78, ey+10); ctx.lineTo(W-M-22, ey+10); ctx.stroke(); ctx.restore(); ey+=26; return; }
+        var bt=t.replace(/^[^\u4e00-\u9fffA-Za-z0-9【]+/,""), head=bt.charAt(0)==="【";
+        ctx.fillStyle=PC.ink; ctx.font=(head?"700 ":"400 ")+"26px "+SANS; ctx.fillText((head?"":"・")+bt, M+78, ey); ey+=40;
+      });
+      y+=bh+16;
+    }
+    if(c.note){ y=flow(ctx,[{t:"註："+plain(c.note), font:"400 24px "+SANS, color:PC.muted}], M+56, y+2, W-2*M-56, 24, 38)+6; }
+    y+=30;
+  });
+  ctx.fillStyle=PC.line; ctx.fillRect(M,y,W-2*M,2); y+=36;
+  ctx.textAlign="left"; ctx.textBaseline="top";
+  ctx.fillStyle=PC.muted; ctx.font="500 24px "+SANS; ctx.fillText("發布單位", M, y);
+  ctx.fillStyle=PC.ink; ctx.font="700 36px "+SERIF; ctx.fillText(a.by.indexOf("倚盟")>=0 ? a.by : "倚盟電訊　"+a.by, M, y+40);
+  var hasSig=!!(sigImg && sigImg.width), block=hasSig||!!window.__showSignBlock;
+  if(block){
+    var sx=W-M-420;
+    ctx.fillStyle=PC.muted; ctx.font="500 24px "+SANS; ctx.fillText("核定", sx, y);
+    if(hasSig){ var k=Math.min(380/sigImg.width, 130/sigImg.height), sw=sigImg.width*k, sh=sigImg.height*k; ctx.drawImage(sigImg, sx+(420-sw)/2, y+36+(130-sh)/2, sw, sh); }
+    ctx.fillStyle=PC.ink; ctx.fillRect(sx, y+172, 420, 2);
+    var d=a.sigAt?new Date(a.sigAt):null;
+    ctx.fillStyle=PC.muted; ctx.font="400 22px "+SANS; ctx.fillText("總經理"+(d?"　"+d.getFullYear()+"/"+(d.getMonth()+1)+"/"+d.getDate():""), sx, y+184);
+  }
+  y+= block ? 236 : 112;
+  ctx.fillStyle=PC.muted; ctx.font="400 24px "+SANS; ctx.textAlign="left"; ctx.fillText("同仁請到「倚盟公告簽收」逐條閱讀、作答並簽名。", M, y);
+  return y+72;
+}
+function loadFonts(text){
+  if(!document.fonts || !document.fonts.load) return Promise.resolve();
+  var jobs=['900 52px "Noto Serif TC"','700 36px "Noto Serif TC"','400 31px "Noto Sans TC"','500 26px "Noto Sans TC"','700 31px "Noto Sans TC"'].map(function(f){ return document.fonts.load(f, text).catch(function(){}); });
+  return Promise.race([Promise.all(jobs), new Promise(function(res){ setTimeout(res, 5000); })]);
+}
+function loadImg(url){ return new Promise(function(res){ if(!url){ res(null); return; } var im=new Image(); im.onload=function(){ res(im); }; im.onerror=function(){ res(null); }; im.src=url; }); }
+function makePoster(id){
+  var raw=rawAnn(id); if(!raw) return;
+  if(!raw.sig){ S.msg="這則公告還沒有總經理核定。請在下面的編輯區最底下按「確定簽核」，再按「更新」後生成全圖。"; openEditor(id); S.adminTab="edit"; render(); return; }
+  var a=compile(raw); S.poster={id:id, url:null}; S.adminAnn=id; S.adminTab="status"; render();
+  var all="倚盟電訊有限公司發布單位核定總經理公告號第版人簽核同仁請到公告簽收逐條閱讀、作答並簽名。0123456789/"+a.level+a.title+a.by+raw.src;
+  loadFonts(all).then(function(){ return loadImg(raw.sig); }).then(function(img){
+    var cv=document.createElement("canvas"); cv.width=1080; cv.height=300;
+    var h=Math.ceil(drawPoster(cv.getContext("2d"), a, img, 300));
+    cv.height=h; drawPoster(cv.getContext("2d"), a, img, h);
+    posterCanvas=cv; S.poster={id:id, url:cv.toDataURL("image/png"), name:"公告_"+a.date+"_"+a.title+".png"}; render();
+  }).catch(function(){ S.poster=null; S.msg="全圖沒有產生成功，請再按一次。"; render(); });
+}
+function posterHtml(a){
+  if(!S.poster || S.poster.id!==a.id) return "";
+  var h='<div class="panel poster"><div class="row" style="justify-content:space-between;align-items:center"><h2>公告全圖</h2><button id="btn-pclose" class="btn quiet sm" data-act="closePoster">關閉</button></div>';
+  if(S.poster.url){
+    h+='<img alt="'+esc(a.title)+' 公告全圖" src="'+S.poster.url+'">';
+    if(DL||LIVE) h+='<div class="row" style="justify-content:center"><button id="btn-savepng" class="btn sm" data-act="savePoster">儲存圖片</button></div>';
+    h+='<div class="small muted" style="text-align:center">手機長按圖片也可以儲存，再貼到 LINE 群組。</div>';
+  } else h+='<div class="muted">產生中…</div>';
+  return h+'</div>';
+}
+try{
+  if(window.claude && window.claude.use) window.claude.use("downloads").then(function(d){ DL=d||null; if(DL && S.poster && S.view==="admin" && S.adminTab==="status") render(); }, function(){});
+}catch(_e){}
+
+/* ---------- 連線（正式上線才會用到） ---------- */
+var ERR={code:"通行碼不正確，請再輸入一次。", nocode:"系統還沒有設定通行碼，請通知營運管理部。", pw:"後台密碼不正確。", nopw:"試算表的「設定」分頁還沒有填後台密碼。", locked:"密碼錯太多次，請 10 分鐘後再試。",
+  version:"這則公告剛剛改版了，請重新整理頁面再讀一次。", who:"名單裡找不到你的名字，請通知營運管理部。", ann:"這則公告已經不在發布中，請重新整理頁面。", sig:"簽名沒有成功讀取，請清除後重簽。", sigbig:"簽名檔太大，請清除後簽小一點。",
+  pin:"核定密碼不正確。", pinfmt:"核定密碼請輸入 4 到 8 位數字。", nosig:"這則公告還沒有總經理核定，不能發布。", nogm:"還沒有留存總經理簽名。"};
+function errText(e){ var c=e&&e.code; if(c&&ERR[c]) return ERR[c]; if(c==="server") return "系統忙碌中，請再試一次。"+(e.msg?"（"+e.msg+"）":""); return "連不上系統，請檢查網路後再試一次。"; }
+function api(action, data){
+  var d={}, k; for(k in (data||{})) d[k]=data[k];
+  d.action=action; d.code=L.code; if(S.pw) d.pw=S.pw;
+  return fetch(API,{method:"POST", headers:{"Content-Type":"text/plain;charset=utf-8"}, body:JSON.stringify(d)})
+    .then(function(r){ return r.json(); })
+    .then(function(j){ if(!j||!j.ok){ var e=new Error((j&&j.err)||"server"); e.code=(j&&j.err)||"server"; e.msg=j&&j.msg; throw e; } return j; });
+}
+/* 簽名縮小再上傳：試算表一格放不下太大的圖 */
+function shrink(url, w){
+  return new Promise(function(res){
+    if(!url){ res(""); return; }
+    var im=new Image();
+    im.onload=function(){ var k=Math.min(1, w/im.width), cv=document.createElement("canvas"); cv.width=Math.max(1,Math.round(im.width*k)); cv.height=Math.max(1,Math.round(im.height*k)); cv.getContext("2d").drawImage(im,0,0,cv.width,cv.height); var out=url; try{ out=cv.toDataURL("image/png"); }catch(_){ } res(out); };
+    im.onerror=function(){ res(url); }; im.src=url;
+  });
+}
+function setMine(mine){ mem.records={}; if(!mem.me) return; var p=pid(mem.me.store,mem.me.name); Object.keys(mine||{}).forEach(function(id){ mem.records[id]={}; mem.records[id][p]=mine[id]; }); }
+function doBoot(){
+  S.boot="loading"; S.bootErr=""; render();
+  api("boot",{me:mem.me}).then(function(j){
+    STORES=j.stores||[]; mem.anns=j.anns||[];
+    if(mem.me){ var st=storeOf(mem.me.store); if(!st || st.staff.indexOf(mem.me.name)<0) mem.me=null; }
+    setMine(j.mine); S.boot="ok"; save(); flushOutbox(); render();
+  }).catch(function(e){ if(e.code==="code"){ L.code=""; save(); } S.boot="need"; S.bootErr=errText(e); render(); });
+}
+function vGate(){
+  if(S.boot==="loading") return '<div class="narrow"><div class="panel muted">讀取中，請稍候…</div></div>';
+  var h='<div class="narrow"><div><div class="eyebrow">倚盟電訊</div><h1>請輸入通行碼</h1></div><div class="panel">';
+  h+='<label class="f wide" for="gate-code">通行碼（公司提供的數字）<input type="text" inputmode="numeric" autocomplete="off" id="gate-code" maxlength="12"></label>';
+  if(S.bootErr) h+='<div class="small" style="color:var(--seal);font-weight:700">'+esc(S.bootErr)+'</div>';
+  h+='<button id="gate-go" class="btn" data-act="gateGo">進入</button><div class="small muted">這台裝置輸入一次就會記住。</div></div></div>';
+  return h;
+}
+function sendEvent(type){
+  if(!LIVE || !S.A || !mem.me) return;
+  L.outbox.push({type:type, ann:S.A.id, version:S.A.version, store:mem.me.store, name:mem.me.name, startedAt:S.startedAt, attempts:S.attempts, ua:navigator.userAgent});
+  save(); flushOutbox();
+}
+function flushOutbox(){
+  if(S.flushing || !L.outbox.length) return;
+  S.flushing=true;
+  api("event", L.outbox[0]).then(function(){ L.outbox.shift(); save(); S.flushing=false; flushOutbox(); },
+    function(e){ S.flushing=false; if(e.code && e.code!=="server"){ L.outbox.shift(); save(); flushOutbox(); } });
+}
+function applyAdmin(j){ STORES=j.stores||[]; mem.anns=j.anns||[]; mem.records=j.records||{}; mem.gm = j.gm&&j.gm.has ? {sig:j.gm.sig, pin:"server"} : null; mem.drafts=j.drafts||[]; }
+function loadAdmin(){
+  S.adminOk=false; S.adminLoad="loading"; S.adminErr=""; render();
+  api("admin").then(function(j){
+    if(!(j.anns||[]).length && !(j.stores||[]).length && DEFAULT_STORES.length){
+      var seeds=seedAnns().map(function(a){ a.status="draft"; return a; });
+      return api("init",{stores:DEFAULT_STORES, anns:seeds, drafts:[{id:"d-open-1010", at:Date.now(), title:"門市準時開門與全店出勤", text:SEED2_REC}]}).then(function(){
+        S.msg="第一次使用：已經把同仁名單和兩則公告的草稿放進試算表。公告要經總經理簽核、按「發布」之後，同仁才看得到。"; S.adminTab="log"; return api("admin");
+      });
+    }
+    return j;
+  }).then(function(j){ applyAdmin(j); S.adminOk=true; S.adminLoad=""; try{ sessionStorage.setItem("ym-ack-pw", S.pw); }catch(_){ } render(); })
+    .catch(function(e){ S.adminOk=false; S.adminLoad=""; S.adminErr=errText(e); if(e.code==="pw"||e.code==="locked"||e.code==="nopw"){ S.pw=""; try{ sessionStorage.removeItem("ym-ack-pw"); }catch(_){ } } render(); });
+}
+function vAdminGate(){
+  if(S.adminLoad==="loading") return '<div class="narrow"><div class="panel muted">讀取後台資料中，請稍候…</div></div>';
+  var h='<div class="narrow"><div><div class="eyebrow">管理後台</div><h1>請輸入後台密碼</h1></div><div class="panel">';
+  h+='<label class="f wide" for="gate-pw">後台密碼<input type="password" autocomplete="off" id="gate-pw"></label>';
+  if(S.adminErr) h+='<div class="small" style="color:var(--seal);font-weight:700">'+esc(S.adminErr)+'</div>';
+  h+='<button id="gate-pwgo" class="btn" data-act="pwGo">進入後台</button></div></div>';
+  return h;
+}
+function paintSync(state, msg){
+  var el=document.getElementById("syncbar"); if(!el) return;
+  el.hidden=false;
+  if(state==="busy"){ el.className="note syncbar"; el.textContent="儲存中…"; }
+  else if(state==="ok"){ el.className="note syncbar ok"; el.textContent="已存到試算表。"; setTimeout(function(){ if(!S.sync) el.hidden=true; }, 2500); }
+  else { el.className="note syncbar bad"; el.innerHTML='沒有存成功：'+esc(msg)+'　<button class="btn sm" data-act="syncRetry">再試一次</button>'; }
+}
+function syncSave(action, payload){
+  S.sync={action:action, payload:payload}; paintSync("busy");
+  api(action, payload).then(function(){ S.sync=null; paintSync("ok"); }, function(e){ paintSync("err", errText(e)); });
+}
+
+/* ---------- 簽名板 ---------- */
+function mountSig(id, onInk){
+  var cv=document.getElementById(id); if(!cv) return;
+  var dpr=window.devicePixelRatio||1, r=cv.getBoundingClientRect();
+  cv.width=Math.round(r.width*dpr); cv.height=Math.round(r.height*dpr);
+  var ctx=cv.getContext("2d"); ctx.scale(dpr,dpr);
+  ctx.lineWidth=2.6; ctx.lineCap="round"; ctx.lineJoin="round";
+  ctx.strokeStyle=getComputedStyle(document.documentElement).getPropertyValue("--sign-ink").trim()||"#14251F";
+  var down=false, len=0, lx=0, ly=0, fired=false, pid0=null, pen=false;
+  function pos(e){ var b=cv.getBoundingClientRect(); return {x:e.clientX-b.left, y:e.clientY-b.top}; }
+  /* 一次只認一支筆或一根手指；用過觸控筆之後，手掌碰到螢幕不算 */
+  cv.addEventListener("pointerdown",function(e){ e.preventDefault();
+    if(e.pointerType==="pen") pen=true;
+    if(down || (pen && e.pointerType==="touch")) return;
+    down=true; pid0=e.pointerId; var p=pos(e); lx=p.x; ly=p.y; try{cv.setPointerCapture(e.pointerId);}catch(_){ } });
+  cv.addEventListener("pointermove",function(e){
+    if(!down || e.pointerId!==pid0) return; var p=pos(e);
+    ctx.beginPath(); ctx.moveTo(lx,ly); ctx.lineTo(p.x,p.y); ctx.stroke();
+    len+=Math.abs(p.x-lx)+Math.abs(p.y-ly); lx=p.x; ly=p.y;
+    if(len>120 && !fired){ fired=true; onInk(); }
+  });
+  function up(e){ if(e.pointerId===pid0){ down=false; pid0=null; } }
+  cv.addEventListener("pointerup",up); cv.addEventListener("pointercancel",up);
+}
+
+/* ---------- 繪製與事件 ---------- */
+function render(){
+  if(timer){ clearInterval(timer); timer=null; }
+  var v=S.view, html, gated=false;
+  if(LIVE && v==="admin" && !S.adminOk){ html=vAdminGate(); gated=true; }
+  else if(LIVE && v!=="admin" && S.boot!=="ok"){ html=vGate(); gated=true; }
+  else if(v==="home") html=vHome(); else if(v==="read") html=vRead(); else if(v==="quiz") html=vQuiz();
+  else if(v==="fail") html=vFail(); else if(v==="sign") html=vSign(); else if(v==="done") html=vDone(); else html=vAdmin();
+  view.innerHTML=html;
+  document.getElementById("nav-staff").setAttribute("aria-pressed", String(v!=="admin"));
+  document.getElementById("nav-admin").setAttribute("aria-pressed", String(v==="admin"));
+  if(gated){ S.msg=""; return; }
+  if(v==="read") startDwell();
+  if(v==="sign"){ S.hasInk=false; mountSig("sig", function(){ S.hasInk=true; var b=document.getElementById("btn-sign"); if(b) b.disabled=false; var hn=document.getElementById("sig-hint"); if(hn) hn.hidden=true; }); }
+  if(v==="admin" && S.adminTab==="edit"){ paintSign(); paintPreview(); }
+  if(v!=="admin" && !S.noScroll) window.scrollTo(0,0);
+  S.noScroll=false;
+  S.msg="";
+}
+function begin(annId){
+  var a=ann(annId), p=pid(mem.me.store,mem.me.name), r=rec(annId,p), same = r && r.version===a.version && r.status!=="done";
+  S.A=a; S.ci=0; S.seen=-1; S.attempts = same && r.attempts ? r.attempts : 1;
+  S.startedAt = same && r.startedAt ? r.startedAt : Date.now();
+  setRec(annId,p,{status:"reading", version:a.version, startedAt:S.startedAt, attempts:S.attempts});
+  sendEvent("start");
+  S.view="read"; render();
+}
+
+document.addEventListener("input",function(e){
+  var f=e.target.getAttribute && e.target.getAttribute("data-ed");
+  if(f && S.ed){ S.ed[f]=e.target.value; paintPreview(); }
+  var rk=e.target.getAttribute && e.target.getAttribute("data-rec");
+  if(rk){ if(!S.rec) S.rec={title:"",text:""}; S.rec[rk]=e.target.value; }
+});
+document.addEventListener("change",function(e){
+  if(e.target.getAttribute && e.target.getAttribute("data-chg")==="adminAnn"){ S.adminAnn=e.target.value; S.copyText=null; render(); }
+});
+document.addEventListener("click",function(e){
+  var t=e.target.closest("[data-act]"); if(!t) return;
+  var act=t.getAttribute("data-act"), a, ta;
+  if(act==="nav"){
+    S.view=t.getAttribute("data-to"); S.copyText=null;
+    if(LIVE){ if(S.view==="admin"){ if(S.pw){ loadAdmin(); return; } } else if(L.code){ doBoot(); return; } }
+    render();
+  }
+  else if(act==="gateGo"){ L.code=String((document.getElementById("gate-code")||{}).value||"").trim(); if(!L.code){ S.bootErr="請輸入通行碼。"; render(); return; } save(); doBoot(); }
+  else if(act==="pwGo"){ S.pw=String((document.getElementById("gate-pw")||{}).value||""); if(!S.pw){ S.adminErr="請輸入後台密碼。"; render(); return; } loadAdmin(); }
+  else if(act==="reloadAdmin"){ loadAdmin(); }
+  else if(act==="syncRetry"){ if(S.sync) syncSave(S.sync.action, S.sync.payload); }
+  else if(act==="pickStore"){ S.pickStore=t.getAttribute("data-id"); S.pickName=null; S.noScroll=true; render(); }
+  else if(act==="pickName"){ S.pickName=t.getAttribute("data-name"); S.noScroll=true; render(); }
+  else if(act==="confirmMe"){ if(S.pickStore&&S.pickName){ mem.me={store:S.pickStore, name:S.pickName}; save(); if(LIVE){ doBoot(); return; } render(); } }
+  else if(act==="switchUser"){ mem.me=null; S.pickStore=null; S.pickName=null; save(); render(); }
+  else if(act==="start"){ begin(t.getAttribute("data-id")); }
+  else if(act==="receipt"){ S.A=ann(t.getAttribute("data-id")); S.view="done"; render(); }
+  else if(act==="prev"){ if(S.ci>0){ S.ci--; render(); } }
+  else if(act==="next"){
+    if(t.disabled) return; a=S.A;
+    if(S.ci<a.clauses.length-1){ S.ci++; render(); }
+    else { S.order=buildQuiz(a); S.qi=0; S.pick=null; S.locked=false; S.view="quiz"; render(); }
+  }
+  else if(act==="opt"){ if(S.locked) return; S.pick=Number(t.getAttribute("data-k")); render(); }
+  else if(act==="answer"){
+    if(S.pick===null||S.locked) return;
+    var item=S.order[S.qi];
+    if(item.opts[S.pick].ok){
+      S.locked=true; render();
+      setTimeout(function(){
+        S.locked=false; S.pick=null;
+        if(S.qi<S.order.length-1){ S.qi++; S.view="quiz"; } else { S.view="sign"; }
+        render();
+      },650);
+    } else {
+      S.failQ=item.i; S.attempts++;
+      setRec(S.A.id,pid(mem.me.store,mem.me.name),{status:"reading", version:S.A.version, startedAt:S.startedAt, attempts:S.attempts});
+      sendEvent("fail");
+      S.pick=null; S.view="fail"; render();
+    }
+  }
+  else if(act==="retry"){ S.ci=0; S.seen=-1; S.view="read"; render(); }
+  else if(act==="clearSig"){ render(); }
+  else if(act==="sign"){
+    if(!S.hasInk) return;
+    var cv=document.getElementById("sig"), url=""; try{ url=cv.toDataURL("image/png"); }catch(_){ }
+    if(LIVE){
+      t.disabled=true; t.textContent="送出中…";
+      var sm=document.getElementById("sign-msg"); if(sm) sm.hidden=true;
+      var A0=S.A, me0=mem.me, small0="";
+      shrink(url,420).then(function(small){ small0=small; return api("event",{type:"done", ann:A0.id, version:A0.version, store:me0.store, name:me0.name, startedAt:S.startedAt, attempts:S.attempts, sig:small, ua:navigator.userAgent}); })
+        .then(function(j){ setRec(A0.id,pid(me0.store,me0.name),{status:"done", version:A0.version, startedAt:S.startedAt, finishedAt:j.at||Date.now(), attempts:S.attempts, sig:small0}); S.view="done"; render(); })
+        .catch(function(e){ t.disabled=false; t.textContent="再送一次"; if(sm){ sm.hidden=false; sm.textContent=errText(e)+" 簽名還在，按「再送一次」就可以。"; } });
+      return;
+    }
+    setRec(S.A.id,pid(mem.me.store,mem.me.name),{status:"done", version:S.A.version, startedAt:S.startedAt, finishedAt:Date.now(), attempts:S.attempts, sig:url});
+    S.view="done"; render();
+  }
+  else if(act==="tab"){ S.adminTab=t.getAttribute("data-tab"); S.copyText=null; render(); }
+  else if(act==="seeAnn"){ S.adminAnn=t.getAttribute("data-id"); S.adminTab="status"; render(); }
+  else if(act==="newAnn"){ openEditor(null); S.adminTab="edit"; render(); }
+  else if(act==="editAnn"){ openEditor(t.getAttribute("data-id")); S.adminTab="edit"; render(); }
+  else if(act==="ins"){
+    ta=document.getElementById("ed-src"); if(!ta) return;
+    var s=t.getAttribute("data-s"), a0=ta.selectionStart, b0=ta.selectionEnd, v=ta.value;
+    if(s==="【】"){ ta.value=v.slice(0,a0)+"【"+v.slice(a0,b0)+"】"+v.slice(b0); ta.selectionStart=a0+1; ta.selectionEnd=b0+1; }
+    else { ta.value=v.slice(0,a0)+s+v.slice(a0); ta.selectionStart=ta.selectionEnd=a0+s.length; }
+    S.ed.src=ta.value; ta.focus(); paintPreview();
+  }
+  else if(act==="insBlock"){
+    var which=t.getAttribute("data-t"); ta=document.getElementById("ed-"+which); if(!ta) return;
+    var n = which==="src" ? parseClauses(S.ed.src).length : 0;
+    ta.value = ta.value.replace(/\s+$/,"") + (which==="src" ? "\n\n條：標籤｜標題\n• \n原文：" : "\n\n題：\n對：\n錯：\n錯：\n條：");
+    S.ed[which]=ta.value; ta.focus(); ta.selectionStart=ta.selectionEnd=ta.value.length; ta.scrollTop=ta.scrollHeight; paintPreview();
+  }
+  else if(act==="gmClear"){ paintSign(); }
+  else if(act==="gmResign"){ S.ed.resign=true; paintSign(); paintPreview(); }
+  else if(act==="gmChange"){ S.ed.changeSig=true; paintSign(); }
+  else if(act==="gmCancel"){ S.ed.changeSig=false; paintSign(); }
+  else if(act==="gmSave"){
+    var pin0=(document.getElementById("gm-pin")||{}).value||"";
+    if(!S.gmInk) return;
+    if(mem.gm && !LIVE){ if(pinHash(pin0)!==mem.gm.pin){ paintSign("核定密碼不正確，簽名沒有更換。"); return; } }
+    else if(!/^\d{4,8}$/.test(pin0)){ var m0=document.getElementById("gm-msg"); if(!m0){ m0=document.createElement("div"); m0.id="gm-msg"; m0.className="small"; m0.style.cssText="color:var(--seal);font-weight:700"; document.getElementById("ed-sign").appendChild(m0); } m0.textContent="核定密碼請輸入 4 到 8 位數字。"; return; }
+    var gc=document.getElementById("gmsig"), gu=""; try{ gu=gc.toDataURL("image/png"); }catch(_){ }
+    if(gu && LIVE){
+      t.disabled=true; t.textContent="儲存中…";
+      shrink(gu,420).then(function(small){ return api("gmSave",{sig:small, pin:pin0}).then(function(){ mem.gm={sig:small, pin:"server"}; S.ed.changeSig=false; paintSign(); paintPreview(); }); })
+        .catch(function(e){ paintSign(errText(e)+(e.code==="pin"?"簽名沒有更換。":"")); });
+      return;
+    }
+    if(gu){ mem.gm={sig:gu, pin: mem.gm?mem.gm.pin:pinHash(pin0)}; save(); S.ed.changeSig=false; paintSign(); paintPreview(); }
+  }
+  else if(act==="gmApprove"){
+    var pin1=(document.getElementById("gm-pin")||{}).value||"";
+    if(!mem.gm) return;
+    if(LIVE){
+      t.disabled=true; t.textContent="核對中…";
+      api("gmApprove",{pin:pin1}).then(function(j){ S.ed.sig=j.sig; S.ed.sigAt=j.at||Date.now(); S.ed.sigNew=true; S.ed.resign=false; paintSign(); paintPreview(); }, function(e){ paintSign(errText(e)); });
+      return;
+    }
+    if(pinHash(pin1)!==mem.gm.pin){ paintSign("核定密碼不正確。"); return; }
+    S.ed.sig=mem.gm.sig; S.ed.sigAt=Date.now(); S.ed.sigNew=true; S.ed.resign=false; paintSign(); paintPreview();
+  }
+  else if(act==="poster"){ makePoster(t.getAttribute("data-id")); }
+  else if(act==="closePoster"){ S.poster=null; render(); }
+  else if(act==="savePoster"){
+    if(!posterCanvas || !S.poster) return;
+    if(!DL){ var al=document.createElement("a"); al.href=S.poster.url; al.download=S.poster.name; document.body.appendChild(al); al.click(); al.remove(); return; }
+    var nm=S.poster.name;
+    posterCanvas.toBlob(function(blob){
+      if(!blob) return;
+      DL.save({filename:nm, data:blob}).then(function(){ S.msg="圖片已儲存。"; render(); }, function(err){
+        if(err && err.code==="declined") return;
+        S.msg="這個畫面不能直接儲存，請長按圖片儲存。"; render();
+      });
+    }, "image/png");
+  }
+  else if(act==="copyEx"){
+    var bx=t.closest(".cex"); if(!bx) return;
+    var tx=Array.prototype.map.call(bx.querySelectorAll(".cex-l"), function(el){
+      var L=el.textContent, c0=L.charAt(0), k=L.indexOf("：");
+      return (c0==="【"||c0==="⚠"||c0==="➡"||k<0) ? L : L.slice(0,k+1);
+    }).join("\n");
+    var pr; try{ pr=navigator.clipboard.writeText(tx); }catch(_){ pr=null; }
+    var done=function(ok){ t.textContent= ok ? "已複製，到 LINE 貼上" : "無法自動複製，請長按文字"; setTimeout(function(){ t.textContent="複製空白格式"; },2600); };
+    if(pr && pr.then) pr.then(function(){ done(true); }, function(){ done(false); }); else done(false);
+  }
+  else if(act==="edSave"){ if(!t.disabled) edSave(t.getAttribute("data-mode")); }
+  else if(act==="drCopy"){
+    S.copyText=DRAFT_RULES; S.copyMsg="已複製。打開 AI 的 App，開一個新的對話，貼上送出。";
+    var p3; try{ p3=navigator.clipboard.writeText(DRAFT_RULES); }catch(_){ p3=Promise.reject(); }
+    p3.then(function(){ render(); }, function(){ S.copyMsg="這個畫面不能自動複製，請長按下面的文字全選後複製。"; render(); var o=document.getElementById("copyout"); if(o){ o.focus(); o.select(); } });
+  }
+  else if(act==="drToEdit"){
+    openEditor(null); S.ed.src=""; S.ed.qsrc=""; S.copyText=null; S.adminTab="edit";
+    S.msg="把 AI 給的「條文區」貼到條文，「題目區」貼到題目。"; render(); window.scrollTo(0,0);
+  }
+  else if(act==="recSave"){
+    var rr=S.rec||{title:"",text:""}, rt=String(rr.text||"").trim();
+    if(!rt){ S.msg="請先把 AI 給的訪談紀錄貼到框裡，再按存檔。"; render(); return; }
+    if(!mem.drafts) mem.drafts=[];
+    mem.drafts.unshift({id:"d"+Date.now().toString(36), at:Date.now(), title:String(rr.title||"").trim()||rt.split("\n")[0].slice(0,30), text:rt});
+    save(); if(LIVE) syncSave("saveDraft",{d:mem.drafts[0]});
+    S.rec=null; S.msg="已存檔。"; render();
+  }
+  else if(act==="drDel"){
+    var di=t.getAttribute("data-id");
+    if(S.drDel===di){ mem.drafts=(mem.drafts||[]).filter(function(x){ return x.id!==di; }); save(); if(LIVE) syncSave("delDraft",{id:di}); S.drDel=null; } else S.drDel=di;
+    render();
+  }
+  else if(act==="copyUnread"){
+    var txt=unreadText(ann(S.adminAnn)); S.copyText=txt; S.copyMsg="已複製，可以直接貼到 LINE。";
+    var p2; try{ p2=navigator.clipboard.writeText(txt); }catch(_){ p2=Promise.reject(); }
+    p2.then(function(){ render(); }, function(){ S.copyMsg="這個畫面不能自動複製，請長按下面的文字全選後複製。"; render(); var o=document.getElementById("copyout"); if(o){ o.focus(); o.select(); } });
+  }
+  else if(act==="demo"){
+    a=ann(S.adminAnn); var base=Date.now();
+    STORES.forEach(function(s,si){ s.staff.forEach(function(nm,i){
+      if(i<2 && !rec(a.id,pid(s.id,nm))) setRec(a.id,pid(s.id,nm),{status:"done", version:a.version, demo:true, startedAt:base-(si*37+i*11+20)*60000, finishedAt:base-(si*37+i*11+12)*60000, attempts:1+((si+i)%3), sig:""});
+    }); });
+    render();
+  }
+  else if(act==="reset"){ mem.records={}; save(); S.copyText=null; render(); }
+});
+
+document.addEventListener("keydown",function(e){
+  if(e.key!=="Enter" || !e.target) return;
+  var b = e.target.id==="gate-code" ? "gate-go" : e.target.id==="gate-pw" ? "gate-pwgo" : "";
+  if(b){ e.preventDefault(); var el=document.getElementById(b); if(el) el.click(); }
+});
+if(LIVE){
+  var dn=document.getElementById("demo-note"); if(dn) dn.hidden=true;
+  try{ S.pw=sessionStorage.getItem("ym-ack-pw")||""; }catch(_){ }
+  if(L.code) doBoot(); else { S.boot="need"; render(); }
+} else render();
+})();
+</script>
+</body>
+</html>
