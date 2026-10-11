@@ -309,6 +309,15 @@ label.f.wide{flex-basis:100%}
 .ask .panel{max-width:460px;width:100%}
 .ask p{margin:0}
 .bak{border-color:var(--warn);background:var(--warn-soft)}
+/* 輸入通行碼、後台密碼的畫面：欄位不要拉成一長條 */
+.narrow.gate{max-width:440px}
+.gate .panel{padding:24px}
+.pwrow{display:flex;gap:8px;align-items:stretch}
+.pwrow input{flex:1 1 auto}
+.pwrow .btn{flex:none;white-space:nowrap}
+.gate #gate-code{text-align:center;letter-spacing:.3em;font-size:26px;font-weight:700}
+table .btn.sm{white-space:nowrap}
+td.nw{white-space:nowrap}
 
 /* 平板（簽名用的主要裝置）：同仁閱讀、答題、簽名的字和按鈕放大，欄位加寬 */
 @media (min-width:700px){
@@ -798,7 +807,7 @@ function vLog(){
     var a=compile(raw), pub=a.status==="published";
     h+='<tr><td class="num">'+fmtDate(a.date)+'</td><td><span class="pill tag">'+esc(a.level)+'</span> <span class="small muted">'+esc(a.no||"")+' 號・'+MODE_NAME[modeOf(raw)]+'</span><br>'+esc(a.title)+'</td>';
     h+='<td>'+(pub?'<span class="pill done">已發布</span> <span class="small muted">第 '+a.version+' 版</span>':'<span class="pill draft">草稿</span>')+(raw.updatedAt?'<br><span class="small muted">最後儲存 '+fmt(raw.updatedAt)+'</span>':'')+'</td>';
-    h+='<td>'+esc(a.by)+'</td><td class="num">'+a.clauses.length+' 條／'+a.quiz.length+' 題</td><td class="num">'+(pub?countDone(a)+' / '+total:"—")+'</td>';
+    h+='<td class="nw">'+esc(a.by)+'</td><td class="num">'+a.clauses.length+' 條／'+a.quiz.length+' 題</td><td class="num">'+(pub?countDone(a)+' / '+total:"—")+'</td>';
     h+='<td><div class="row" style="flex-wrap:nowrap"><button id="edit-'+a.id+'" class="btn ghost sm" data-act="editAnn" data-id="'+a.id+'">編輯</button>'+(pub?'<button id="see-'+a.id+'" class="btn quiet sm" data-act="seeAnn" data-id="'+a.id+'">看名單</button><button id="pst-'+a.id+'" class="btn quiet sm" data-act="poster" data-id="'+a.id+'">全圖</button>':'')+'</div></td></tr>';
   });
   return h+'</tbody></table></div><div class="small muted">每發一則公告，這裡就多一筆。發布日期、版本和每個人的簽收時間都會留存。</div></div>';
@@ -1211,7 +1220,7 @@ function doBoot(){
 }
 function vGate(){
   if(S.boot==="loading") return '<div class="narrow"><div class="panel muted">讀取中，請稍候…</div></div>';
-  var h='<div class="narrow"><div><div class="eyebrow">倚盟電訊</div><h1>請輸入通行碼</h1></div><div class="panel">';
+  var h='<div class="narrow gate"><div><div class="eyebrow">倚盟電訊</div><h1>請輸入通行碼</h1></div><div class="panel">';
   h+='<label class="f wide" for="gate-code">通行碼（公司提供的數字）<input type="text" inputmode="numeric" autocomplete="off" id="gate-code" maxlength="12"></label>';
   if(S.bootErr) h+='<div class="small" style="color:var(--seal);font-weight:700">'+esc(S.bootErr)+'</div>';
   h+='<button id="gate-go" class="btn" data-act="gateGo">進入</button><div class="small muted">這台裝置輸入一次就會記住。</div></div></div>';
@@ -1244,8 +1253,9 @@ function loadAdmin(){
 }
 function vAdminGate(){
   if(S.adminLoad==="loading") return '<div class="narrow"><div class="panel muted">讀取後台資料中，請稍候…</div></div>';
-  var h='<div class="narrow"><div><div class="eyebrow">管理後台</div><h1>請輸入後台密碼</h1></div><div class="panel">';
-  h+='<label class="f wide" for="gate-pw">後台密碼<input type="password" autocomplete="off" id="gate-pw"></label>';
+  var h='<div class="narrow gate"><div><div class="eyebrow">管理後台</div><h1>請輸入後台密碼</h1></div><div class="panel">';
+  h+='<label class="f wide" for="gate-pw">後台密碼<span class="pwrow"><input type="password" autocomplete="off" id="gate-pw"><button type="button" id="gate-pwshow" class="btn quiet sm" data-act="pwShow">顯示</button></span></label>';
+  h+='<div class="small muted">營運管理部專用。這不是同仁的通行碼，也不是總經理的核定密碼。</div>';
   if(S.adminErr) h+='<div class="small" style="color:var(--seal);font-weight:700">'+esc(S.adminErr)+'</div>';
   h+='<button id="gate-pwgo" class="btn" data-act="pwGo">進入後台</button></div></div>';
   return h;
@@ -1355,6 +1365,7 @@ document.addEventListener("click",function(e){
   else if(act==="gateGo"){ L.code=String((document.getElementById("gate-code")||{}).value||"").trim(); if(!L.code){ S.bootErr="請輸入通行碼。"; render(); return; } save(); doBoot(); }
   else if(act==="pwGo"){ S.pw=String((document.getElementById("gate-pw")||{}).value||""); if(!S.pw){ S.adminErr="請輸入後台密碼。"; render(); return; } loadAdmin(); }
   else if(act==="reloadAdmin"){ loadAdmin(); }
+  else if(act==="pwShow"){ var pi=document.getElementById("gate-pw"); if(pi){ var sh1=pi.type==="password"; pi.type=sh1?"text":"password"; t.textContent=sh1?"隱藏":"顯示"; pi.focus(); } }
   else if(act==="refreshHome"){ if(LIVE) doBoot(); else render(); }
   else if(act==="syncRetry"){ if(S.sync) syncSave(S.sync.action, S.sync.payload, S.sync.onOk, S.sync.okMsg); }
   else if(act==="pickStore"){ S.pickStore=t.getAttribute("data-id"); S.pickName=null; S.noScroll=true; render(); }
