@@ -601,8 +601,10 @@ function vHome(){
   var me=mem.me, st=storeOf(me.store);
   h='<div class="narrow"><div class="panel who"><div><div class="small muted">簽收人</div><b>'+esc(me.name)+'</b>　<span class="muted">'+esc(st.name)+'</span></div><button id="btn-switch" class="btn quiet sm" data-act="switchUser">重新選擇</button></div>';
   h+='<h2>你的公告</h2>';
-  var list=published().slice().sort(function(x,y){ return String(y.date).localeCompare(String(x.date)); });
+  var isMine=function(raw){ var a0=compile(raw); return isDone(a0, rec(a0.id,pid(me.store,me.name))); };
+  var list=published().slice().sort(function(x,y){ var dx=isMine(x)?1:0, dy=isMine(y)?1:0; return dx-dy || String(y.date).localeCompare(String(x.date)); });
   if(!list.length) h+='<div class="panel muted">目前沒有需要簽收的公告。</div>';
+  else h+='<div class="small muted">還沒簽的排在前面。簽過的公告都留在這裡，隨時可以回來重看內容。</div>';
   list.forEach(function(raw){
     var a=compile(raw), r=rec(a.id,pid(me.store,me.name)), done=isDone(a,r);
     var redo = r && r.status==="done" && !done;
@@ -614,7 +616,7 @@ function vHome(){
     h+='<div class="small muted">共 '+a.clauses.length+' 條，讀完回答 '+a.quiz.length+' 題，全對後簽名。大約 5 分鐘。</div>';
     var g=gateFor(a,me);
     if(g) h+=chainLines(g);
-    if(done) h+='<button id="open-'+a.id+'" class="btn ghost" data-act="receipt" data-id="'+a.id+'">查看簽收單</button>';
+    if(done) h+='<div class="row"><button id="review-'+a.id+'" class="btn grow" data-act="review" data-id="'+a.id+'">重看公告內容</button><button id="open-'+a.id+'" class="btn ghost" data-act="receipt" data-id="'+a.id+'">查看簽收單</button></div>';
     else if(g && g.blocked) h+='<button id="open-'+a.id+'" class="btn" disabled>'+GATE_TEXT[g.blocked]+'</button><button id="refresh-'+a.id+'" class="btn quiet sm" data-act="refreshHome" style="align-self:flex-start">重新整理</button>';
     else h+='<button id="open-'+a.id+'" class="btn" data-act="start" data-id="'+a.id+'">'+(r&&!redo?"繼續閱讀":"開始閱讀")+'</button>';
     h+='</div>';
@@ -678,6 +680,17 @@ function vSign(){
   h+='<p class="declare">本人 <b>'+esc(me.name)+'</b>（'+esc(st.name)+'）已逐條閱讀「'+esc(a.title)+'」共 '+a.clauses.length+' 條，並通過 '+a.quiz.length+' 題問答，了解內容'+(boss?'，並<b>承諾帶領同仁確實執行</b>。':'並願意遵守。')+'</p>';
   h+='<div class="signbox"><canvas id="sig" aria-label="簽名區"></canvas><div class="hint" id="sig-hint">請用觸控筆或手指在這裡簽名</div></div>';
   h+='<div class="row"><button id="btn-clear" class="btn quiet" data-act="clearSig">清除重簽</button><button id="btn-sign" class="btn grow" data-act="sign" disabled>確認簽收</button></div><div id="sign-msg" class="small" style="color:var(--seal);font-weight:700" hidden></div></div></div>';
+  return h;
+}
+/* 簽過的公告：全部條文一次列出來，給同仁之後查 */
+function vReview(){
+  var a=S.A, me=mem.me, r=rec(a.id,pid(me.store,me.name));
+  var back='<button class="btn ghost" data-act="nav" data-to="home">回到公告列表</button>';
+  var h='<div class="narrow"><div><div class="eyebrow">重看公告內容</div><h1>'+esc(a.title)+'</h1></div>';
+  h+='<div class="meta"><span class="pill tag">'+esc(a.level)+'</span><span>'+fmtDate(a.date)+' 發布</span>'+(a.no?'<span>公告 '+esc(a.no)+' 號</span>':'')+'<span>第 '+a.version+' 版</span>'+(r&&r.finishedAt?'<span class="pill done">你已於 '+fmt(r.finishedAt)+' 簽收</span>':'')+'</div>';
+  h+=back.replace('<button','<button id="btn-back-top"')+LEGEND;
+  a.clauses.forEach(function(c,i){ h+=clauseHtml(c,i,true); });
+  h+=back.replace('<button','<button id="btn-back-bottom"')+'</div>';
   return h;
 }
 function vDone(){
@@ -1276,7 +1289,7 @@ function render(){
   if(LIVE && v==="admin" && !S.adminOk){ html=vAdminGate(); gated=true; }
   else if(LIVE && v!=="admin" && S.boot!=="ok"){ html=vGate(); gated=true; }
   else if(v==="home") html=vHome(); else if(v==="read") html=vRead(); else if(v==="quiz") html=vQuiz();
-  else if(v==="fail") html=vFail(); else if(v==="sign") html=vSign(); else if(v==="done") html=vDone(); else html=vAdmin();
+  else if(v==="fail") html=vFail(); else if(v==="sign") html=vSign(); else if(v==="done") html=vDone(); else if(v==="review") html=vReview(); else html=vAdmin();
   view.innerHTML=html;
   document.getElementById("nav-staff").setAttribute("aria-pressed", String(v!=="admin"));
   document.getElementById("nav-admin").setAttribute("aria-pressed", String(v==="admin"));
@@ -1339,6 +1352,7 @@ document.addEventListener("click",function(e){
   else if(act==="switchUser"){ mem.me=null; S.pickStore=null; S.pickName=null; save(); render(); }
   else if(act==="start"){ begin(t.getAttribute("data-id")); }
   else if(act==="receipt"){ S.A=ann(t.getAttribute("data-id")); S.view="done"; render(); }
+  else if(act==="review"){ S.A=ann(t.getAttribute("data-id")); S.view="review"; render(); }
   else if(act==="prev"){ if(S.ci>0){ S.ci--; render(); } }
   else if(act==="next"){
     if(t.disabled) return; a=S.A;
