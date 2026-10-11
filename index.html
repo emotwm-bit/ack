@@ -317,7 +317,45 @@ label.f.wide{flex-basis:100%}
 .pwrow .btn{flex:none;white-space:nowrap}
 .gate #gate-code{text-align:center;letter-spacing:.3em;font-size:26px;font-weight:700}
 table .btn.sm{white-space:nowrap}
-td.nw{white-space:nowrap}
+/* 後台：分段標題、預覽框、未簽名單、人員名單 */
+.tabs .tabgap{margin-left:auto}
+.sech{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.secn{flex:none;width:30px;height:30px;border-radius:50%;background:var(--accent);color:var(--accent-ink);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:16px}
+.edsub{font-weight:700;font-size:16px;border-top:1px solid var(--line);padding-top:12px}
+.sech+.edsub{border-top:0;padding-top:0}
+.edcol{display:flex;flex-direction:column;gap:10px;min-width:0}
+.pvbox{max-height:600px;overflow:auto;border:1px solid var(--line);border-radius:var(--r);padding:12px;background:var(--bg)}
+.edgrid .gmsign{border-top:0;padding-top:0}
+details.fold>summary{cursor:pointer;font-weight:700;padding:6px 0}
+.due{font-family:var(--display);font-weight:900;font-size:28px;line-height:1.45;font-variant-numeric:tabular-nums}
+.due small{font-family:var(--body);font-size:15px;font-weight:700;color:var(--muted)}
+.due.late,.due.late small{color:var(--seal)}
+.dueline{font-size:15px;font-weight:700;color:var(--warn)}
+.dueline.late{color:var(--seal)}
+.ugroup{display:flex;flex-direction:column;gap:8px;border-top:1px solid var(--line);padding-top:12px}
+h2+.ugroup{border-top:0;padding-top:0}
+.uhead{display:flex;gap:10px;align-items:baseline}
+.uchips{display:flex;flex-wrap:wrap;gap:8px}
+.uchip{display:inline-flex;align-items:center;gap:8px;border:1px solid var(--line);border-radius:999px;padding:5px 6px 5px 14px;background:var(--surface-2);font-size:16px}
+.nx{font-weight:700}
+.nx.e{color:var(--seal)}
+.nx.w{color:var(--warn)}
+.nx.g{color:var(--ok)}
+.dcol{display:flex;flex-direction:column;gap:16px;max-width:860px}
+.step{display:grid;grid-template-columns:30px minmax(0,1fr);gap:12px;align-items:start;border-top:1px solid var(--line);padding-top:14px}
+.stepb{display:flex;flex-direction:column;gap:10px;min-width:0}
+.stepb p{margin:0}
+.pgroup{border-top:1px solid var(--line);padding-top:14px;display:flex;flex-direction:column;gap:4px}
+.phead{display:flex;gap:8px 16px;align-items:center;flex-wrap:wrap;justify-content:space-between}
+.plead{display:flex;gap:8px;align-items:center;font-size:13px;color:var(--muted)}
+.plead select{width:auto;min-width:150px}
+.prow{display:flex;gap:8px;align-items:center;flex-wrap:wrap;padding:6px 0;border-top:1px dashed var(--line)}
+.prow .pn{flex:1 1 140px;font-size:17px}
+.prow input[type=text],.prow select{width:auto;max-width:220px}
+.padd{display:flex;gap:10px;flex-wrap:wrap;align-items:flex-end;background:var(--surface-2);border-radius:var(--r);padding:12px}
+.padd label.f{flex:1 1 160px}
+td.nw,span.nw{white-space:nowrap}
+#ed-check .checks{margin-top:8px}
 
 /* 平板（簽名用的主要裝置）：同仁閱讀、答題、簽名的字和按鈕放大，欄位加寬 */
 @media (min-width:700px){
@@ -368,19 +406,18 @@ td.nw{white-space:nowrap}
   .rtab td,.ltab td,.ctab td{border:0;padding:0}
   .rtab tr.store{padding:0;border:0}
   .rtab tr.store td{flex:1 1 100%;padding:8px 10px;border-radius:6px}
-  .rtab td:nth-child(1){flex:1 1 auto;font-weight:700;font-size:16px}
-  .rtab td:nth-child(3){flex:1 1 100%;color:var(--muted);font-size:14px}
-  .rtab td:nth-child(3)::before{content:"簽收時間　"}
-  .rtab td:nth-child(4){color:var(--muted);font-size:14px}
-  .rtab td:nth-child(4)::before{content:"作答　"}
-  .rtab td:nth-child(5){margin-left:auto}
-  .rtab td.nil,.rtab td:nth-child(5):empty{display:none}
-  .ltab td:nth-child(1){color:var(--muted);font-size:14px}
-  .ltab td:nth-child(2){flex:1 1 100%;order:-1;font-weight:700;font-size:16px}
-  .ltab td:nth-child(4),.ltab td:nth-child(5){color:var(--muted);font-size:14px}
-  .ltab td:nth-child(6)::before{content:"已簽收　";color:var(--muted);font-size:14px}
-  .ltab td:nth-child(7){flex:1 1 100%}
-  .ltab td:nth-child(7) .row{flex-wrap:wrap!important}
+  .rtab td:nth-child(1){flex:1 1 100%;font-weight:700;font-size:16px}
+  .rtab td:nth-child(2),.rtab td:nth-child(3){color:var(--muted);font-size:14px}
+  .rtab td:nth-child(2)::before{content:"簽收時間　"}
+  .rtab td:nth-child(3)::before{content:"作答　"}
+  .rtab td:nth-child(4){margin-left:auto}
+  .ltab td:nth-child(1){flex:1 1 100%}
+  .ltab td:nth-child(3){flex:1 1 100%}
+  .ltab td:nth-child(3)::before{content:"下一步　";color:var(--muted);font-size:14px}
+  .ltab td:nth-child(4)::before{content:"截止日　";color:var(--muted);font-size:14px}
+  .ltab td:nth-child(5){flex:1 1 100%}
+  .ltab td:nth-child(5) .row{flex-wrap:wrap!important;justify-content:flex-start!important}
+  .tabs .tabgap{margin-left:0}
   .ctab td:nth-child(2){font-weight:700}
   .ctab td:nth-child(3){flex:1 1 100%}
   .ctab select{max-width:none}
@@ -436,7 +473,7 @@ function load(){
 function save(){ try{ if(LIVE){ L.me=mem.me; localStorage.setItem(LKEY, JSON.stringify(L)); } else localStorage.setItem(KEY, JSON.stringify(mem)); }catch(e){} }
 load();
 if(LIVE){ STORES=[]; mem={records:{}, me:L.me, anns:[], drafts:[], gm:null, seedRev:999, rec2:1}; }
-else if(mem.leadMap){ STORES.forEach(function(x){ x.lead=mem.leadMap[x.id]||""; }); }
+else { if(mem.stores && mem.stores.length) STORES=mem.stores; if(mem.leadMap) STORES.forEach(function(x){ x.lead=mem.leadMap[x.id]||""; }); }
 var SEED_REV=20;
 (function(){ if((mem.seedRev||1)<SEED_REV){ mem.anns.forEach(function(a){ if(a.id==="2026-10-09-cancel"){ a.src=SEED_SRC; a.qsrc=SEED_QSRC; a.title=SEED_TITLE; } }); if(!mem.anns.some(function(a){ return a.id==="2026-10-10-open"; })) mem.anns.push(seed2()); mem.seedRev=SEED_REV; save(); } })();
 (function(){ if(!mem.drafts) mem.drafts=[]; if(!mem.rec2){ mem.drafts.unshift({id:"d-open-1010", at:Date.now(), title:"門市準時開門與全店出勤", text:SEED2_REC}); mem.rec2=1; save(); } })();
@@ -513,7 +550,7 @@ function ann(id){ var r=rawAnn(id)||mem.anns[0]; return compile(r); }
 function published(){ return mem.anns.filter(function(a){return a.status==="published";}); }
 
 var S = {view:"home", pickStore:null, pickName:null, noScroll:false, A:null, ci:0, seen:-1, order:[], qi:0, pick:null, locked:false,
-         attempts:1, startedAt:null, failQ:null, adminTab:"status", adminAnn:null, copyText:null, copyMsg:"", hasInk:false, ed:null, msg:""};
+         attempts:1, startedAt:null, failQ:null, adminTab:"log", adminAnn:null, copyText:null, copyMsg:"", hasInk:false, ed:null, msg:""};
 var timer = null;
 var view = document.getElementById("view");
 
@@ -630,6 +667,8 @@ function vHome(){
     h+='<div class="panel ann"><div class="meta"><span class="pill tag">'+esc(a.level)+'</span><span>'+fmtDate(a.date)+' 發布</span>'+pill+'</div>';
     h+='<h2>'+esc(a.title)+'</h2>';
     h+='<div class="small muted">共 '+a.clauses.length+' 條，讀完回答 '+a.quiz.length+' 題，全對後簽名。大約 5 分鐘。</div>';
+    var di=dueInfo(raw);
+    if(di && !done) h+='<div class="'+(di.late?'dueline late':'dueline')+'">請在 '+di.md+'前簽完（'+di.text+'）</div>';
     var g=gateFor(a,me);
     if(g) h+=chainLines(g);
     if(done) h+='<div class="row"><button id="review-'+a.id+'" class="btn grow" data-act="review" data-id="'+a.id+'">重看公告內容</button><button id="open-'+a.id+'" class="btn ghost" data-act="receipt" data-id="'+a.id+'">查看簽收單</button></div>';
@@ -720,58 +759,150 @@ function vDone(){
 
 /* ---------- 管理後台 ---------- */
 function countDone(a){ var n=0; STORES.forEach(function(s){ s.staff.forEach(function(nm){ if(isDone(a,rec(a.id,pid(s.id,nm)))) n++; }); }); return n; }
-function unreadText(a){
-  var lines=["【尚未簽收】"+a.title+"（"+fmtDate(a.date)+" 發布）"];
-  STORES.forEach(function(s){
-    var names=s.staff.filter(function(nm){ return !isDone(a,rec(a.id,pid(s.id,nm))); });
-    if(names.length) lines.push(s.name+"："+names.join("、"));
-  });
-  lines.push("請今天內完成閱讀與簽收。");
-  return lines.join("\n");
+/* 截止日：還剩幾天 */
+function dueInfo(raw){
+  var p=String((raw&&raw.due)||"").split("-"); if(p.length!==3) return null;
+  var d=new Date(Number(p[0]),Number(p[1])-1,Number(p[2])), n=new Date(), t=new Date(n.getFullYear(),n.getMonth(),n.getDate());
+  if(isNaN(d.getTime())) return null;
+  var k=Math.round((d.getTime()-t.getTime())/86400000);
+  return {n:k, md:Number(p[1])+"/"+Number(p[2])+"（"+"日一二三四五六".charAt(d.getDay())+"）", text:k>0?"還剩 "+k+" 天":k===0?"今天截止":"已逾期 "+(-k)+" 天", late:k<0};
 }
-var TABS=[["status","簽收狀況"],["log","公告紀錄"],["draft","起草公告"],["edit","編輯公告"],["leads","主管設定"],["sop","發布流程"]];
+var TABS=[["log","公告總覽"],["draft","① 起草公告"],["edit","② 編輯公告"],["status","③ 簽收狀況"],["leads","人員名單"],["sop","流程說明"]];
 function FREE_NOTE(){ var f=STORES.filter(function(s){ return isFree(s.id); }); return f.length ? '<div class="small muted">'+esc(f.map(function(s){ return s.name; }).join("、"))+'不受順序限制，公告一發布就可以簽。</div>' : ''; }
+
+/* ---------- 人員名單：新增、離職、改名、調單位、誰是率先簽收人 ---------- */
 function vLeads(){
-  var h='<div class="panel" style="max-width:720px"><h2>各門市的率先簽收人</h2><div class="small muted">簽署方式選「主管優先」的公告，區督導先簽，各門市的率先簽收人再簽，同仁最後。這裡設定的是預設名單，之後新發布的公告都照這份名單。已經發布的公告要改，請到「簽收狀況」的「簽收順序」。</div><div class="scroll"><table class="ctab"><thead><tr><th>順序</th><th>單位</th><th>率先簽收人</th></tr></thead><tbody>';
-  var row=function(layer, s){
-    var opts='<option value="">不指定</option>'; s.staff.forEach(function(nm){ opts+='<option'+(nm===(s.lead||"")?" selected":"")+'>'+esc(nm)+'</option>'; });
-    return '<tr><td class="small muted">'+layer+'</td><td>'+esc(s.name)+'</td><td><select id="lead-'+s.id+'" data-chg="lead" data-sid="'+s.id+'" aria-label="'+esc(s.name)+'的率先簽收人">'+opts+'</select></td></tr>';
-  };
-  STORES.forEach(function(s){ if(s.id===TOP_STORE) h+=row("第一層", s); });
-  STORES.forEach(function(s){ if(s.id!==TOP_STORE && !isFree(s.id)) h+=row("第二層", s); });
-  h+='</tbody></table></div><div class="small muted">選好就會自動儲存。門市沒有指定人時，那一家店的同仁在區督導簽完後就可以開始。</div>'+FREE_NOTE()+'</div>';
+  var pp=S.pp||{};
+  var h='<div class="panel" style="max-width:860px"><h2>人員名單</h2><div class="small muted">誰要簽收、誰是率先簽收人，都在這裡改，改完馬上生效。離職的人不會被刪掉，之前的簽收紀錄都還在。</div>';
+  if(S.ppErr) h+='<div class="small" id="pp-err" style="color:var(--seal);font-weight:700">'+esc(S.ppErr)+'</div>';
+  h+='<div class="padd"><label class="f" for="pp-unit">單位<select id="pp-unit">'+STORES.map(function(s){ return '<option value="'+esc(s.id)+'">'+esc(s.name)+'</option>'; }).join("")+'</select></label><label class="f" for="pp-name">姓名（跟身分證上的字一樣）<input type="text" id="pp-name" maxlength="20" autocomplete="off"></label><button id="pp-add" class="btn sm" data-act="ppAdd">新增人員</button></div>';
+  var order=STORES.filter(function(s){ return s.id===TOP_STORE; }).concat(STORES.filter(function(s){ return s.id!==TOP_STORE; }));
+  order.forEach(function(s){
+    var free=isFree(s.id), top=s.id===TOP_STORE;
+    h+='<div class="pgroup"><div class="phead"><div><b style="font-size:17px">'+esc(s.name)+'</b>　<span class="small muted">'+s.staff.length+' 人</span></div>';
+    if(free) h+='<span class="small muted">不受順序限制，公告一發布就可以簽</span>';
+    else {
+      var opts='<option value="">不指定</option>'; s.staff.forEach(function(nm){ opts+='<option'+(nm===(s.lead||"")?" selected":"")+'>'+esc(nm)+'</option>'; });
+      h+='<label class="plead" for="lead-'+s.id+'">'+(top?"主管優先時，第一個簽的人":"率先簽收人")+'<select id="lead-'+s.id+'" data-chg="lead" data-sid="'+s.id+'">'+opts+'</select></label>';
+    }
+    h+='</div>';
+    s.staff.forEach(function(nm,i){
+      var on=pp.store===s.id && pp.name===nm, key=' data-sid="'+esc(s.id)+'" data-name="'+esc(nm)+'"', cancel='<button class="btn quiet sm" data-act="ppCancel">取消</button>';
+      h+='<div class="prow"><span class="pn">'+esc(nm)+(nm===(s.lead||"")&&!free?' <span class="pill tag">率先簽收</span>':'')+'</span>';
+      if(on && pp.op==="rename") h+='<input type="text" id="pp-val" maxlength="20" value="'+esc(nm)+'" aria-label="新的姓名"><button id="pp-ok" class="btn sm" data-act="ppOk">確定改名</button>'+cancel;
+      else if(on && pp.op==="move") h+='<select id="pp-val" aria-label="調到哪個單位">'+STORES.filter(function(x){ return x.id!==s.id; }).map(function(x){ return '<option value="'+esc(x.id)+'">'+esc(x.name)+'</option>'; }).join("")+'</select><button id="pp-ok" class="btn sm" data-act="ppOk">確定調過去</button>'+cancel;
+      else if(on && pp.op==="off") h+='<span class="small" style="color:var(--seal);font-weight:700">確定 '+esc(nm)+' 離職？</span><button id="pp-ok" class="btn sm" data-act="ppOk">確定</button>'+cancel;
+      else h+='<button id="pp-rename-'+s.id+'-'+i+'" class="btn quiet sm" data-act="pp" data-op="rename"'+key+'>改名</button><button id="pp-move-'+s.id+'-'+i+'" class="btn quiet sm" data-act="pp" data-op="move"'+key+'>調單位</button><button id="pp-off-'+s.id+'-'+i+'" class="btn quiet sm" data-act="pp" data-op="off"'+key+'>離職</button>';
+      h+='</div>';
+    });
+    h+='</div>';
+  });
+  var fm=(LIVE?S.former:mem.former)||[];
+  if(fm.length){
+    h+='<details class="fold pgroup" id="former"><summary>已離職（'+fm.length+' 人）</summary>';
+    fm.forEach(function(f,i){ h+='<div class="prow"><span class="pn">'+esc(f.name)+'　<span class="small muted">'+esc(f.storeName)+'</span></span><button id="pp-on-'+i+'" class="btn quiet sm" data-act="ppOn" data-sid="'+esc(f.store)+'" data-name="'+esc(f.name)+'">復職</button></div>'; });
+    h+='</details>';
+  }
+  h+='<div class="small muted">改名只能用在還沒簽過任何公告的人；已經簽過的人，紀錄是用原本的名字記的。調單位之後，之前簽過的公告不用重簽。要新增一家門市，請通知負責系統的人。</div></div>';
   return h;
+}
+function rosterLocal(op, sid, nm, to){   /* 樣板模式：直接改這台裝置上的名單 */
+  var s=storeOf(sid), bad=function(x){ return !x || x.length>20 || /[:|,]/.test(x); };
+  if(!s || bad(nm)) return "name";
+  if(!mem.former) mem.former=[];
+  var fi=-1; mem.former.forEach(function(f,i){ if(f.store===sid && f.name===nm) fi=i; });
+  if(op==="add"){ if(s.staff.indexOf(nm)>=0) return "dup"; if(fi>=0) mem.former.splice(fi,1); s.staff.push(nm); return ""; }
+  if(op==="on"){ if(fi<0) return "who"; mem.former.splice(fi,1); if(s.staff.indexOf(nm)<0) s.staff.push(nm); return ""; }
+  var i=s.staff.indexOf(nm); if(i<0) return "who";
+  if(op==="off"){ s.staff.splice(i,1); if(s.lead===nm) s.lead=""; mem.former.push({store:sid, storeName:s.name, name:nm}); return ""; }
+  if(op==="rename"){
+    if(bad(to)) return "name"; if(s.staff.indexOf(to)>=0) return "dup";
+    var used=false; Object.keys(mem.records||{}).forEach(function(k){ if(mem.records[k][pid(sid,nm)]) used=true; }); if(used) return "haslog";
+    s.staff[i]=to; if(s.lead===nm) s.lead=to; return "";
+  }
+  if(op==="move"){
+    var d=storeOf(to); if(!d) return "unit"; if(d.staff.indexOf(nm)>=0) return "dup";
+    s.staff.splice(i,1); if(s.lead===nm) s.lead=""; d.staff.push(nm);
+    Object.keys(mem.records||{}).forEach(function(k){ var r=mem.records[k], o=r[pid(sid,nm)]; if(o){ r[pid(to,nm)]=o; delete r[pid(sid,nm)]; } });
+    return "";
+  }
+  return "op";
+}
+function rosterDo(op, sid, nm, to){
+  if(!nm){ S.ppErr="請先輸入姓名。"; render(); return; }
+  var s0=storeOf(sid), wasLead=!!(s0 && s0.lead===nm), warn="";
+  if(op==="off"||op==="move"){
+    var hit=[]; published().forEach(function(r){ if(!hasOrder(r)) return; var c=r.chain; if(((sid===(c.topStore||TOP_STORE) && c.top===nm) || (c.leads||{})[sid]===nm) && !doneAt(compile(r),sid,nm)) hit.push(r.no||r.title); });
+    if(wasLead) warn+=nm+" 原本是率先簽收人，請在這一頁重新指定。";
+    if(hit.length) warn+="他也是公告 "+hit.join("、")+" 指定的率先簽收人，請到「③ 簽收狀況」的「簽收順序」改指定別人。";
+  }
+  var okMsg=({add:"已新增 "+nm+"。", off:nm+" 已設成離職。", on:nm+" 已復職。", rename:"已改名為 "+to+"。", move:"已把 "+nm+" 調過去。"})[op]+warn;
+  var fin=function(){ S.pp=null; S.ppErr=""; S.msg=okMsg; render(); };
+  if(!LIVE){ var e=rosterLocal(op,sid,nm,to); if(e){ S.ppErr=ERR[e]||"沒有成功，請再試一次。"; render(); return; } mem.stores=STORES; save(); fin(); return; }
+  var bar=function(on){ var el=document.getElementById("syncbar"); if(!el) return; if(on){ el.hidden=false; el.className="note syncbar"; el.textContent="儲存中…"; } else el.hidden=true; };
+  bar(true);
+  api("rosterOp",{op:op, store:sid, name:nm, to:to}).then(function(){ return api("admin"); }).then(function(j){ applyAdmin(j); bar(false); fin(); },
+    function(e2){ bar(false); S.ppErr=errText(e2); render(); });
 }
 
 function vAdmin(){
   var h='<div><h1 style="margin-bottom:12px">管理後台</h1><div class="tabs" role="tablist">';
-  TABS.forEach(function(t){ h+='<button id="tab-'+t[0]+'" role="tab" data-act="tab" data-tab="'+t[0]+'" aria-selected="'+(S.adminTab===t[0])+'"'+(t[0]==="edit"&&S.ed&&S.ed.dirty?' class="dirty"':'')+'>'+t[1]+'</button>'; });
+  TABS.forEach(function(t){ h+='<button id="tab-'+t[0]+'" role="tab" data-act="tab" data-tab="'+t[0]+'" aria-selected="'+(S.adminTab===t[0])+'" class="'+(t[0]==="edit"&&S.ed&&S.ed.dirty?'dirty':'')+(t[0]==="leads"?' tabgap':'')+'">'+t[1]+'</button>'; });
   h+='</div></div>';
   if(S.ask) h+='<div class="ask" role="dialog" aria-modal="true" aria-labelledby="ask-h"><div class="panel"><h2 id="ask-h">有修改還沒儲存</h2><p>「'+esc((S.ed&&S.ed.title)||"未命名公告")+'」改過的內容還沒儲存。換到別則公告，這些修改就不見了。</p><div class="row"><button id="btn-askback" class="btn grow" data-act="askBack">回去儲存</button><button id="btn-askgo" class="btn quiet" data-act="askGo">不要這些修改</button></div></div></div>';
   if(S.msg){ h+='<div class="note" style="color:var(--ok);background:var(--ok-soft)">'+esc(S.msg)+'</div>'; }
-  if(S.adminTab==="log") return h+vLog();
+  if(S.adminTab==="status") return h+vStatus();
   if(S.adminTab==="edit") return h+vEdit();
   if(S.adminTab==="sop") return h+vSop();
   if(S.adminTab==="draft") return h+vDraft();
   if(S.adminTab==="leads") return h+vLeads();
-  return h+vStatus();
+  return h+vLog();
 }
 
+/* ---------- ③ 簽收狀況：先看誰還沒簽 ---------- */
+function personState(a, cst, s, nm){
+  var r=rec(a.id,pid(s.id,nm)), d=isDone(a,r), g=cst?gateFor(a,{store:s.id,name:nm}):null;
+  var isL=!!cst && ((s.id===cst.topStore && nm===cst.top.name) || ((cst.leads[s.id]||{}).name===nm));
+  return {r:r, done:d, old:!!(r&&r.status==="done"&&!d), lead:isL, blocked:g?g.blocked:0};
+}
+function unreadText(a){
+  var raw=rawAnn(a.id), di=dueInfo(raw), lines=["【尚未簽收】"+a.title+"（"+fmtDate(a.date)+" 發布）"];
+  STORES.forEach(function(s){
+    var names=s.staff.filter(function(nm){ return !isDone(a,rec(a.id,pid(s.id,nm))); });
+    if(names.length) lines.push(s.name+"："+names.join("、"));
+  });
+  lines.push(!di ? "請今天內完成閱讀與簽收。" : di.late ? "已經超過截止日 "+di.md+"，請今天內完成。" : di.n===0 ? "今天 "+di.md+"截止，請今天內完成閱讀與簽收。" : "請在 "+di.md+"前完成閱讀與簽收。");
+  return lines.join("\n");
+}
 function vStatus(){
   var list=published(), total=totalStaff(), h="";
-  if(!list.length) return '<div class="panel muted">還沒有已發布的公告。到「編輯公告」寫一則並發布。</div>';
+  if(!list.length) return '<div class="panel muted">還沒有已發布的公告。到「② 編輯公告」寫好，請總經理簽核後按「發布」，這裡才會有名單。</div>';
   if(!S.adminAnn || !list.some(function(a){return a.id===S.adminAnn;})) S.adminAnn=list[0].id;
-  var a=ann(S.adminAnn), done=countDone(a);
+  var a=ann(S.adminAnn), raw=rawAnn(a.id), done=countDone(a), cst=chainState(a), di=dueInfo(raw);
   h+=posterHtml(a);
   h+='<div class="panel">';
   if(list.length>1){ h+='<label class="f wide">選擇公告<select id="sel-ann" data-chg="adminAnn">'; list.forEach(function(x){ h+='<option value="'+x.id+'"'+(x.id===a.id?" selected":"")+'>'+fmtDate(x.date)+'　'+esc(x.title)+'</option>'; }); h+='</select></label>'; }
-  h+='<div class="ann"><div class="meta"><span class="pill tag">'+esc(a.level)+'</span><span>'+fmtDate(a.date)+' 發布</span><span>公告 '+esc(a.no||"")+' 號</span><span>發布單位：'+esc(a.by)+'</span><span>簽署方式：'+MODE_NAME[modeOf(rawAnn(a.id))]+'</span><span>總經理核定</span><span>第 '+a.version+' 版</span></div><h2>'+esc(a.title)+'</h2></div>';
-  h+='<div class="sum"><div><div class="small muted">已簽收</div><div class="big">'+done+' <small>/ '+total+' 人</small></div></div><div><div class="small muted">尚未簽收</div><div class="big">'+(total-done)+' <small>人</small></div></div></div>';
-  h+='<div class="bar"><i style="width:'+Math.round(done/total*100)+'%"></i></div>';
+  h+='<div class="ann"><div class="meta"><span class="pill tag">'+esc(a.level)+'</span><span>'+fmtDate(a.date)+' 發布</span><span>公告 '+esc(a.no||"")+' 號</span><span>簽署方式：'+MODE_NAME[modeOf(raw)]+'</span><span>第 '+a.version+' 版</span></div><h2>'+esc(a.title)+'</h2></div>';
+  h+='<div class="sum"><div><div class="small muted">已簽收</div><div class="big">'+done+' <small>/ '+total+' 人</small></div></div><div><div class="small muted">尚未簽收</div><div class="big">'+(total-done)+' <small>人</small></div></div>';
+  h+='<div><div class="small muted">截止日</div><div id="due-box" class="due'+(di&&di.late&&done<total?" late":"")+'">'+(di ? di.md+' <small>'+(done>=total?"全員簽完":di.text)+'</small>' : '<small>沒有設定（到「② 編輯公告」填）</small>')+'</div></div></div>';
+  h+='<div class="bar"><i style="width:'+Math.round(done/Math.max(1,total)*100)+'%"></i></div>';
   h+='<div class="row"><button id="btn-copy" class="btn sm" data-act="copyUnread">複製未簽收名單（貼到 LINE 提醒）</button><button id="btn-poster" class="btn ghost sm" data-act="poster" data-id="'+a.id+'">生成公告全圖</button>'+(LIVE?'<button id="btn-reload" class="btn quiet sm" data-act="reloadAdmin">重新整理</button>':'<button id="btn-demo" class="btn ghost sm" data-act="demo">填入示範資料</button><button id="btn-reset" class="btn quiet sm" data-act="reset">清除全部簽收紀錄</button>')+'</div>';
   if(S.copyText!==null) h+='<div><div class="small muted">'+esc(S.copyMsg)+'</div><textarea id="copyout" class="copyout" readonly>'+esc(S.copyText)+'</textarea></div>';
   h+='</div>';
-  var cst=chainState(a);
+  /* 還沒簽的人排最上面 */
+  var un=0, uh="";
+  STORES.forEach(function(s){
+    var rows=[]; s.staff.forEach(function(nm){ var st=personState(a,cst,s,nm); if(!st.done) rows.push([nm,st]); });
+    if(!rows.length) return; un+=rows.length;
+    uh+='<div class="ugroup"><div class="uhead"><b>'+esc(s.name)+'</b><span class="small muted">'+rows.length+' 人還沒簽</span></div><div class="uchips">';
+    rows.forEach(function(x){
+      var st=x[1], pill = st.blocked===1 ? '<span class="pill draft">等區督導先簽</span>' : st.blocked===2 ? '<span class="pill draft">等門市主管先簽</span>' : st.old ? '<span class="pill todo">改版後未重簽</span>' : st.r ? '<span class="pill doing">閱讀中</span>' : '<span class="pill todo">尚未閱讀</span>';
+      uh+='<span class="uchip"><b>'+esc(x[0])+'</b>'+(st.lead?'<span class="pill tag">率先簽收</span>':'')+pill+'</span>';
+    });
+    uh+='</div></div>';
+  });
+  h+='<div class="panel" id="p-unsigned"><h2>還沒簽的人（'+un+'）</h2>'+(un ? uh : '<div class="muted">全員都簽完了。</div>')+'</div>';
+  /* 簽收順序：很少改，收起來 */
   if(cst){
     var crow=function(layer, label, sid, cur){
       var st1=storeOf(sid), opts='<option value="">不指定（直接開放）</option>';
@@ -779,38 +910,59 @@ function vStatus(){
       var stt = !cur.name ? '<span class="small muted">不指定，直接開放</span>' : cur.at ? '<span class="pill done">已簽收 '+fmt(cur.at)+'</span>' : '<span class="pill todo">尚未簽收</span>';
       return '<tr><td class="small muted">'+layer+'</td><td>'+esc(label)+'</td><td><select id="chain-'+sid+'" data-chg="chain" data-sid="'+sid+'" aria-label="'+esc(label)+'的率先簽收人">'+opts+'</select></td><td>'+stt+'</td></tr>';
     };
-    h+='<div class="panel"><h2>簽收順序</h2><div class="small muted">區督導先簽，各門市的率先簽收人再簽，同仁最後。主管休假時，在這裡把這一則公告改指定別人，或選「不指定」直接開放。</div><div class="scroll"><table class="ctab"><thead><tr><th>順序</th><th>單位</th><th>率先簽收人</th><th>狀態</th></tr></thead><tbody>';
+    var ln=0, ld=0; STORES.forEach(function(s){ var l=cst.leads[s.id]; if(s.id!==cst.topStore && !isFree(s.id) && l && l.name){ ln++; if(l.at) ld++; } });
+    var sumTxt=(!cst.top.name ? "區督導不指定" : cst.top.at ? "區督導已簽" : "區督導還沒簽")+"；門市主管 "+ld+"／"+ln+" 位已簽";
+    h+='<div class="panel"><details class="fold" id="chainbox"'+(S.chainOpen?" open":"")+'><summary>簽收順序　<span class="small muted" style="font-weight:400">'+sumTxt+'。主管休假要改指定別人，點這裡打開。</span></summary>';
+    h+='<div class="small muted" style="margin:8px 0">區督導先簽，各門市的率先簽收人再簽，同仁最後。在這裡改，只影響這一則公告；選「不指定」就直接開放。</div><div class="scroll"><table class="ctab"><thead><tr><th>順序</th><th>單位</th><th>率先簽收人</th><th>狀態</th></tr></thead><tbody>';
     var tsS=storeOf(cst.topStore);
     h+=crow("第一層", tsS?tsS.name:"區督導", cst.topStore, cst.top);
     STORES.forEach(function(s){ if(s.id!==cst.topStore && !isFree(s.id)) h+=crow("第二層", s.name, s.id, cst.leads[s.id]||{name:"",at:0}); });
-    h+='</tbody></table></div>'+FREE_NOTE()+'</div>';
+    h+='</tbody></table></div>'+FREE_NOTE()+'</details></div>';
   }
-  h+='<div class="panel"><div class="scroll"><table class="rtab"><thead><tr><th>姓名</th><th>狀態</th><th>簽收時間</th><th>作答次數</th><th>簽名</th></tr></thead><tbody>';
+  h+='<div class="panel"><h2>已經簽的人（'+done+'）</h2>';
+  if(!done) return h+'<div class="muted">還沒有人簽收。</div></div>';
+  h+='<div class="scroll"><table class="rtab"><thead><tr><th>姓名</th><th>簽收時間</th><th>作答次數</th><th>簽名</th></tr></thead><tbody>';
   STORES.forEach(function(s){
-    var dn=s.staff.filter(function(nm){ return isDone(a,rec(a.id,pid(s.id,nm))); }).length;
-    h+='<tr class="store"><td colspan="5">'+esc(s.name)+'　'+dn+' / '+s.staff.length+'</td></tr>';
-    s.staff.forEach(function(nm){
-      var r=rec(a.id,pid(s.id,nm)), d=isDone(a,r), old = r&&r.status==="done"&&!d;
-      var pill = d ? '<span class="pill done">已簽收</span>' : old ? '<span class="pill todo">改版後未重簽</span>' : r ? '<span class="pill doing">閱讀中</span>' : '<span class="pill todo">尚未閱讀</span>';
-      var sig = d ? (r.sig ? '<img class="sigimg" alt="'+esc(nm)+' 的簽名" src="'+r.sig+'">' : (LIVE?'':'<span class="small muted">示範資料</span>')) : "";
-      var isL = cst && ((s.id===cst.topStore && nm===cst.top.name) || ((cst.leads[s.id]||{}).name===nm));
-      h+='<tr><td>'+esc(nm)+(isL?' <span class="pill tag">率先簽收</span>':'')+'</td><td>'+pill+'</td><td class="num'+(d?"":" nil")+'">'+(d?fmt(r.finishedAt):"—")+'</td><td class="num'+(r?"":" nil")+'">'+(r?r.attempts+" 次":"—")+'</td><td>'+sig+'</td></tr>';
+    var ok=s.staff.filter(function(nm){ return isDone(a,rec(a.id,pid(s.id,nm))); });
+    if(!ok.length) return;
+    h+='<tr class="store"><td colspan="4">'+esc(s.name)+'　'+ok.length+' / '+s.staff.length+'</td></tr>';
+    ok.forEach(function(nm){
+      var r=rec(a.id,pid(s.id,nm)), isL = cst && ((s.id===cst.topStore && nm===cst.top.name) || ((cst.leads[s.id]||{}).name===nm));
+      var sig = r.sig ? '<img class="sigimg" alt="'+esc(nm)+' 的簽名" src="'+r.sig+'">' : (LIVE?'':'<span class="small muted">示範資料</span>');
+      h+='<tr><td>'+esc(nm)+(isL?' <span class="pill tag">率先簽收</span>':'')+'</td><td class="num">'+fmt(r.finishedAt)+'</td><td class="num">'+r.attempts+' 次</td><td>'+sig+'</td></tr>';
     });
   });
   return h+'</tbody></table></div></div>';
 }
 
+/* ---------- 公告總覽：每一則做到哪裡、下一步是什麼 ---------- */
+function nextStep(raw, a, total){
+  if(raw.status==="published"){
+    var dn=countDone(a), di=dueInfo(raw);
+    if(dn>=total) return {t:"全員簽完", cls:"g"};
+    return {t:"還有 "+(total-dn)+" 人沒簽"+(di?"（"+di.text+"）":""), cls:di&&di.late?"e":"w"};
+  }
+  var ck=check(a.clauses,a.quiz);
+  if(ck.e.length) return {t:"有 "+ck.e.length+" 個紅字要修正", cls:"e", btn:"去修正"};
+  if(!raw.sig) return {t:"等總經理簽核", cls:"w", btn:"去簽核"};
+  return {t:"已簽核，還沒按發布", cls:"w", btn:"去發布"};
+}
 function vLog(){
   var total=totalStaff();
-  var h='<div class="panel"><div class="row"><button id="btn-new" class="btn sm" data-act="newAnn">新增公告</button></div><div class="scroll"><table class="ltab"><thead><tr><th>發布日期</th><th>公告</th><th>狀態</th><th>發布單位</th><th>內容</th><th>簽收進度</th><th></th></tr></thead><tbody>';
-  mem.anns.forEach(function(raw){
-    var a=compile(raw), pub=a.status==="published";
-    h+='<tr><td class="num">'+fmtDate(a.date)+'</td><td><span class="pill tag">'+esc(a.level)+'</span> <span class="small muted">'+esc(a.no||"")+' 號・'+MODE_NAME[modeOf(raw)]+'</span><br>'+esc(a.title)+'</td>';
-    h+='<td>'+(pub?'<span class="pill done">已發布</span> <span class="small muted">第 '+a.version+' 版</span>':'<span class="pill draft">草稿</span>')+(raw.updatedAt?'<br><span class="small muted">最後儲存 '+fmt(raw.updatedAt)+'</span>':'')+'</td>';
-    h+='<td class="nw">'+esc(a.by)+'</td><td class="num">'+a.clauses.length+' 條／'+a.quiz.length+' 題</td><td class="num">'+(pub?countDone(a)+' / '+total:"—")+'</td>';
-    h+='<td><div class="row" style="flex-wrap:nowrap"><button id="edit-'+a.id+'" class="btn ghost sm" data-act="editAnn" data-id="'+a.id+'">編輯</button>'+(pub?'<button id="see-'+a.id+'" class="btn quiet sm" data-act="seeAnn" data-id="'+a.id+'">看名單</button><button id="pst-'+a.id+'" class="btn quiet sm" data-act="poster" data-id="'+a.id+'">全圖</button>':'')+'</div></td></tr>';
+  var list=mem.anns.slice().sort(function(x,y){ var px=x.status==="published"?1:0, py=y.status==="published"?1:0; return px-py || String(y.date).localeCompare(String(x.date)); });
+  var h='<div class="panel"><div class="row" style="justify-content:space-between;align-items:center"><h2>公告總覽</h2><div class="row"><button id="btn-todraft" class="btn ghost sm" data-act="tab" data-tab="draft">用 AI 起草一則</button><button id="btn-new" class="btn sm" data-act="newAnn">直接新增公告</button></div></div>';
+  h+='<div class="small muted">每一則公告做到哪裡、下一步是什麼，都在這裡。還沒發布的排在前面。</div>';
+  if(!list.length) return h+'<div class="muted">還沒有公告。按右上角開始第一則。</div></div>';
+  h+='<div class="scroll"><table class="ltab"><thead><tr><th>公告</th><th>狀態</th><th>下一步</th><th>截止日</th><th></th></tr></thead><tbody>';
+  list.forEach(function(raw){
+    var a=compile(raw), pub=a.status==="published", nx=nextStep(raw,a,total), di=dueInfo(raw);
+    h+='<tr><td><span class="pill tag">'+esc(a.level)+'</span> <span class="small muted">'+esc(a.no||"")+' 號・'+MODE_NAME[modeOf(raw)]+'</span><br><b>'+esc(a.title)+'</b><br><span class="small muted">'+fmtDate(a.date)+(pub?" 發布":" 預定發布")+'・'+a.clauses.length+' 條／'+a.quiz.length+' 題</span></td>';
+    h+='<td>'+(pub?'<span class="pill done">已發布</span><br><span class="small muted nw">第 '+a.version+' 版</span>':'<span class="pill draft">草稿</span>')+(raw.updatedAt?'<br><span class="small muted nw">最後儲存 '+fmt(raw.updatedAt)+'</span>':'')+'</td>';
+    h+='<td class="nw"><span class="nx '+nx.cls+'">'+esc(nx.t)+'</span>'+(pub?'<br><span class="small muted">已簽 '+countDone(a)+' / '+total+'</span>':'')+'</td>';
+    h+='<td class="num">'+(di?di.md:"—")+'</td>';
+    h+='<td><div class="row" style="flex-wrap:nowrap;justify-content:flex-end">'+(pub?'<button id="see-'+a.id+'" class="btn sm" data-act="seeAnn" data-id="'+a.id+'">看誰還沒簽</button>':'')+'<button id="edit-'+a.id+'" class="btn '+(pub?'quiet':'')+' sm" data-act="editAnn" data-id="'+a.id+'">'+(nx.btn||"編輯")+'</button>'+(pub?'<button id="pst-'+a.id+'" class="btn quiet sm" data-act="poster" data-id="'+a.id+'">全圖</button>':'')+'</div></td></tr>';
   });
-  return h+'</tbody></table></div><div class="small muted">每發一則公告，這裡就多一筆。發布日期、版本和每個人的簽收時間都會留存。</div></div>';
+  return h+'</tbody></table></div></div>';
 }
 
 function openEditor(id){
@@ -818,10 +970,10 @@ function openEditor(id){
   S.ed = r ? {id:r.id, title:r.title, level:r.level, date:r.date, by:r.by, no:r.no||"", src:r.src, qsrc:r.qsrc}
            : {id:null, title:"", level:"重大公告", date:today(), by:"營運管理部", no:nextNo(), src:"條：標籤｜這一條的標題\n✓ 要做的事，【重點字】用括號框起來\n✕ 不可以做的事\n⚠ 違反的後果\n原文：這一條的公告原文", qsrc:"題：用門市會遇到的情境出題？\n對：正確答案\n錯：錯誤答案\n錯：錯誤答案\n條：1"};
   S.ed.sig = r&&r.sig ? r.sig : ""; S.ed.sigAt = r&&r.sigAt ? r.sigAt : 0; S.ed.sigNew=false; S.ed.resign=false; S.ed.changeSig=false; S.ed.dirty=false;
-  S.ed.mode = modeOf(r);
+  S.ed.mode = modeOf(r); S.ed.due = r&&r.due ? r.due : "";
 }
 /* 還沒按儲存的修改，先在這台裝置留一份，重新整理或不小心關掉都拿得回來 */
-var EBK="ym-ack-edbak", EDF=["title","level","date","by","no","src","qsrc"];
+var EBK="ym-ack-edbak", EDF=["title","level","date","by","no","src","qsrc","due"];
 function bakGet(){ try{ return JSON.parse(localStorage.getItem(EBK)||"null"); }catch(_){ return null; } }
 function bakClear(){ try{ localStorage.removeItem(EBK); }catch(_){ } }
 function bakSave(){ var e=S.ed, o={id:e.id||null, at:Date.now()}; EDF.forEach(function(k){ o[k]=e[k]; }); o.mode=e.mode; try{ localStorage.setItem(EBK, JSON.stringify(o)); }catch(_){ } }
@@ -833,42 +985,53 @@ function bakLive(){
 }
 function touch(){ if(!S.ed) return; S.ed.dirty=true; bakSave(); }
 function guard(fn){ if(S.ed && S.ed.dirty){ S.ask=fn; render(); } else fn(); }
+function secHead(n, title, who, note){ return '<div class="sech"><span class="secn">'+n+'</span><h2>'+title+'</h2><span class="fwho w-'+who+'">'+WHO[who]+'</span>'+(note?'<span class="small muted">'+note+'</span>':'')+'</div>'; }
 function vEdit(){
   if(!S.ed) openEditor(published().length?published()[0].id:(mem.anns[0]&&mem.anns[0].id));
   var e=S.ed, raw=e.id?rawAnn(e.id):null;
   var h="", bk=e.dirty?null:bakLive();
   if(bk) h+='<div class="panel bak"><b>這台裝置留著一份還沒儲存的修改</b><div>「'+esc(bk.title||"未命名公告")+'」，'+fmt(bk.at)+' 改的，當時沒有按儲存。</div><div class="row"><button id="btn-bakuse" class="btn sm" data-act="bakUse">拿回來接著改</button><button id="btn-bakdrop" class="btn quiet sm" data-act="bakDrop">不要了</button></div></div>';
-  h+='<div class="edgrid"><div class="panel">';
-  h+='<div class="row" style="justify-content:space-between;align-items:center"><h2>'+(raw?"編輯公告":"新增公告")+'</h2><button id="btn-new2" class="btn quiet sm" data-act="newAnn">寫一則新的</button></div>';
-  h+='<div class="row"><label class="f wide" for="ed-title">公告標題<input type="text" id="ed-title" data-ed="title" value="'+esc(e.title)+'"></label>';
-  h+='<label class="f" for="ed-level">等級<select id="ed-level" data-ed="level">'+["重大公告","一般公告"].map(function(v){return '<option'+(v===e.level?" selected":"")+'>'+v+'</option>';}).join("")+'</select></label>';
+  h+='<div class="row" style="justify-content:space-between;align-items:center"><div><div class="small muted">'+(raw?(raw.status==="published"?"正在編輯已發布的公告":"正在編輯草稿"):"新增公告")+'</div><h2>'+esc(e.title||"（還沒有標題）")+'</h2></div><button id="btn-new2" class="btn quiet sm" data-act="newAnn">寫一則新的</button></div>';
+  /* ① 基本資料 */
+  h+='<div class="panel">'+secHead(1,"基本資料","hq");
+  h+='<div class="row"><label class="f wide" for="ed-title">公告標題<input type="text" id="ed-title" data-ed="title" value="'+esc(e.title)+'"></label></div>';
+  h+='<div class="row"><label class="f" for="ed-level">等級（嚴重度）<select id="ed-level" data-ed="level">'+["重大公告","一般公告"].map(function(v){return '<option'+(v===e.level?" selected":"")+'>'+v+'</option>';}).join("")+'</select></label>';
   h+='<label class="f" for="ed-mode">簽署方式<select id="ed-mode" data-ed="mode"><option value="lead"'+(e.mode==="lead"?" selected":"")+'>主管優先</option><option value="all"'+(e.mode==="all"?" selected":"")+'>全體皆可</option></select></label>';
   h+='<label class="f" for="ed-date">發布日期<input type="date" id="ed-date" data-ed="date" value="'+esc(e.date)+'"></label>';
-  h+='<label class="f" for="ed-by">發布單位<input type="text" id="ed-by" data-ed="by" value="'+esc(e.by)+'"></label><label class="f" for="ed-no">公告編號<input type="text" id="ed-no" data-ed="no" value="'+esc(e.no||"")+'"></label></div>';
-  h+='<div class="howto"><code>主管優先</code>　區督導先簽 → 各門市的率先簽收人 → 同仁。營運管理部不用等，發布後就可以簽。<br><code>全體皆可</code>　發布後大家同時可以簽，沒有先後。</div>';
-  h+='<b>條文</b><div class="row ins"><button id="ins-ok" data-act="ins" data-s="✓ ">✓ 要做</button><button id="ins-no" data-act="ins" data-s="✕ ">✕ 不可以</button><button id="ins-warn" data-act="ins" data-s="⚠ ">⚠ 後果</button><button id="ins-dot" data-act="ins" data-s="• ">• 說明</button><button id="ins-hl" data-act="ins" data-s="【】">【重點字】</button><button id="ins-c" data-act="insBlock" data-t="src">＋新的一條</button></div>';
-  h+='<textarea id="ed-src" data-ed="src" rows="16" spellcheck="false">'+esc(e.src)+'</textarea>';
-  h+='<div class="howto"><code>條：標籤｜標題</code>　開始新的一條。<br>每行一個重點，行首放符號：<code>✓</code> 要做、<code>✕</code> 不可以、<code>⚠</code> 後果、<code>•</code> 說明。<br><code>【 】</code>框起來的字會變成彩色重點。<br><code>途徑：</code>用 → 隔開每一步，會顯示成一條有編號的路線。<br><code>例：</code>放範例，一行寫一個「例：」，會顯示在一個框裡。<br><code>註：</code>放補充說明，會用小字顯示在重點下面。<br><code>原文：</code>放公告原句，同仁點「看公告原文」才展開。</div>';
-  h+='<b>題目</b><div class="row ins"><button id="ins-q" data-act="insBlock" data-t="qsrc">＋新的一題</button></div>';
-  h+='<textarea id="ed-qsrc" data-ed="qsrc" rows="16" spellcheck="false">'+esc(e.qsrc)+'</textarea>';
-  h+='<div class="howto"><code>題：</code>題目　<code>對：</code>正確答案（1 個）　<code>錯：</code>錯誤答案（至少 2 個）　<code>條：</code>答案在第幾條。<br>出題時題目和選項的順序會自動打亂。</div>';
-  h+='<div id="ed-sign" class="gmsign"></div></div><div id="ed-prev" class="prev"></div></div>';
+  h+='<label class="f" for="ed-due">截止日（哪一天前要簽完）<input type="date" id="ed-due" data-ed="due" value="'+esc(e.due||"")+'"></label></div>';
+  h+='<div class="row"><label class="f" for="ed-no">公告編號<input type="text" id="ed-no" data-ed="no" value="'+esc(e.no||"")+'"></label><label class="f" for="ed-by">發布單位<input type="text" id="ed-by" data-ed="by" value="'+esc(e.by)+'"></label></div>';
+  h+='<div class="howto"><code>主管優先</code>　區督導先簽 → 各門市的率先簽收人 → 同仁。營運管理部不用等，發布後就可以簽。<br><code>全體皆可</code>　發布後大家同時可以簽，沒有先後。</div></div>';
+  /* ② 條文和題目 */
+  h+='<div class="panel">'+secHead(2,"條文和題目","hq","左邊打字，右邊是同仁會看到的樣子");
+  h+='<div class="edsub">條文</div><div class="edgrid"><div class="edcol"><div class="row ins"><button id="ins-ok" data-act="ins" data-s="✓ ">✓ 要做</button><button id="ins-no" data-act="ins" data-s="✕ ">✕ 不可以</button><button id="ins-warn" data-act="ins" data-s="⚠ ">⚠ 後果</button><button id="ins-dot" data-act="ins" data-s="• ">• 說明</button><button id="ins-hl" data-act="ins" data-s="【】">【重點字】</button><button id="ins-c" data-act="insBlock" data-t="src">＋新的一條</button></div>';
+  h+='<textarea id="ed-src" data-ed="src" rows="20" spellcheck="false">'+esc(e.src)+'</textarea>';
+  h+='<details class="fold"><summary>條文怎麼寫（格式說明）</summary><div class="howto"><code>條：標籤｜標題</code>　開始新的一條。<br>每行一個重點，行首放符號：<code>✓</code> 要做、<code>✕</code> 不可以、<code>⚠</code> 後果、<code>•</code> 說明。<br><code>【 】</code>框起來的字會變成彩色重點。<br><code>途徑：</code>用 → 隔開每一步，會顯示成一條有編號的路線。<br><code>例：</code>放範例，一行寫一個「例：」，會顯示在一個框裡。<br><code>註：</code>放補充說明，會用小字顯示在重點下面。<br><code>原文：</code>放公告原句，同仁點「看公告原文」才展開。</div></details></div>';
+  h+='<div><div class="small muted" style="margin-bottom:6px">同仁會看到的條文（一次只看一條）</div><div id="ed-prev-c" class="prev pvbox"></div></div></div>';
+  h+='<div class="edsub">題目</div><div class="edgrid"><div class="edcol"><div class="row ins"><button id="ins-q" data-act="insBlock" data-t="qsrc">＋新的一題</button></div>';
+  h+='<textarea id="ed-qsrc" data-ed="qsrc" rows="20" spellcheck="false">'+esc(e.qsrc)+'</textarea>';
+  h+='<details class="fold"><summary>題目怎麼寫（格式說明）</summary><div class="howto"><code>題：</code>題目　<code>對：</code>正確答案（1 個）　<code>錯：</code>錯誤答案（至少 2 個）　<code>條：</code>答案在第幾條。<br>出題時題目和選項的順序會自動打亂。</div></details></div>';
+  h+='<div><div class="small muted" style="margin-bottom:6px">同仁會答的題目</div><div id="ed-prev-q" class="prev pvbox"></div></div></div></div>';
+  /* ③ 檢查、核定、發布 */
+  h+='<div class="panel" id="ed-step3">'+secHead(3,"檢查、核定、發布","gm","左邊沒有紅字，總經理再簽核");
+  h+='<div class="edgrid"><div id="ed-check"></div><div id="ed-sign" class="gmsign"></div></div>';
+  h+='<div class="small muted">儲存和發布的按鈕固定在畫面最下面。</div></div>';
   h+='<div class="sb-space"></div><div id="savebar" class="savebar" role="region" aria-label="儲存"></div>';
   return h;
 }
 function paintPreview(){
-  var box=document.getElementById("ed-prev"); if(!box||!S.ed) return;
-  var e=S.ed, raw=e.id?rawAnn(e.id):null, cl=parseClauses(e.src), qz=parseQuiz(e.qsrc), ck=check(cl,qz), bad=ck.e.length>0, signed=!!(e.sig&&!e.resign);
-  var h='<div class="panel"><h2>檢查</h2><ul class="checks">';
+  var bk=document.getElementById("ed-check"), bc=document.getElementById("ed-prev-c"), bq=document.getElementById("ed-prev-q"); if(!bk||!S.ed) return;
+  var e=S.ed, cl=parseClauses(e.src), qz=parseQuiz(e.qsrc), ck=check(cl,qz), bad=ck.e.length>0, signed=!!(e.sig&&!e.resign);
+  var h='<b>檢查</b><ul class="checks">';
   ck.e.forEach(function(t){ h+='<li class="e"><span>✕</span><span>'+esc(t)+'</span></li>'; });
   ck.w.forEach(function(t){ h+='<li class="w"><span>!</span><span>'+esc(t)+'</span></li>'; });
+  if(!e.due) h+='<li class="w"><span>!</span><span>還沒填截止日。提醒同仁時會沒有日期。</span></li>';
   if(!ck.e.length&&!ck.w.length) h+='<li class="g"><span>✓</span><span>'+cl.length+' 條、'+qz.length+' 題，格式都正確。</span></li>';
   else if(!bad) h+='<li class="g"><span>✓</span><span>可以發布。黃色是建議，不擋發布。</span></li>';
-  h+= signed ? '<li class="g"><span>✓</span><span>總經理已核定（'+fmt(e.sigAt)+'）。</span></li>' : '<li class="e"><span>✕</span><span>總經理還沒核定。到編輯區最下面按「確定簽核」後才能發布。</span></li>';
-  h+='</ul><div class="small muted">儲存和發布的按鈕固定在畫面最下面。</div></div>';
-  h+='<div class="small muted">同仁會看到的條文（一次只看一條）</div>';
-  cl.forEach(function(c,i){ h+=clauseHtml(c,i,false); });
-  h+='<div class="small muted">同仁會答的題目</div><div class="panel">';
+  h+= signed ? '<li class="g"><span>✓</span><span>總經理已核定（'+fmt(e.sigAt)+'）。</span></li>' : '<li class="e"><span>✕</span><span>總經理還沒核定。在右邊按「確定簽核」後才能發布。</span></li>';
+  bk.innerHTML=h+'</ul>';
+  h=""; cl.forEach(function(c,i){ h+=clauseHtml(c,i,false); });
+  if(bc) bc.innerHTML=h||'<span class="muted">還沒有條文。</span>';
+  h='<div class="panel">';
   qz.forEach(function(q,i){
     h+='<div class="pq"><b class="q" style="font-size:16px">'+(i+1)+'. '+hl(q.q||"（還沒寫題目）")+'</b>';
     q.ok.forEach(function(t){ h+='<span class="a">✓ '+esc(t)+'</span>'; });
@@ -876,8 +1039,7 @@ function paintPreview(){
     h+='<span class="small muted">答案在'+(q.c===null?"（未填）":"第 "+(q.c+1)+" 條")+'</span></div>';
   });
   if(!qz.length) h+='<span class="muted">還沒有題目。</span>';
-  h+='</div>';
-  box.innerHTML=h;
+  if(bq) bq.innerHTML=h+'</div>';
   paintBar(ck, signed);
 }
 function paintBar(ck, signed){
@@ -886,7 +1048,7 @@ function paintBar(ck, signed){
   var st = e.dirty ? '<b class="dirty">● 有修改，還沒儲存</b>' : raw ? '<b class="clean">✓ 內容和已儲存的一樣</b>'+(raw.updatedAt?'<span class="why">上次儲存：'+fmt(raw.updatedAt)+'</span>':'') : '<b class="dirty">● 新公告，還沒儲存</b>';
   var why="";
   if(bad) why='有 '+ck.e.length+' 個紅字要先修正，才能'+(pub?"更新":"發布")+'。<button id="btn-seecheck" data-act="seeCheck">看檢查結果</button>';
-  else if(!pub && !signed) why='要發布，先請總經理簽核（在編輯區最下面）。<button id="btn-seesign" data-act="seeSign">去簽核</button>';
+  else if(!pub && !signed) why='要發布，先請總經理簽核（第 ③ 段）。<button id="btn-seesign" data-act="seeSign">去簽核</button>';
   else if(!pub) why= e.dirty ? '總經理已簽核。按「發布」同仁才看得到。' : '按「發布」同仁才看得到。';
   else if(e.dirty) why='改錯字按「更新」；規則有變按「改版」（要請總經理重新簽核）。';
   var h='<div class="sb-in"><div class="sb-st">'+st+(why?'<span class="why">'+why+'</span>':'')+'</div><div class="row">';
@@ -927,7 +1089,7 @@ function paintSign(msg){
 function edSave(mode){
   var e=S.ed, raw=e.id?rawAnn(e.id):null;
   if(!raw){ raw={id:"a"+Date.now(), version:1, status:"draft"}; mem.anns.unshift(raw); e.id=raw.id; }
-  raw.title=e.title.trim()||"未命名公告"; raw.level=e.level; raw.date=e.date||today(); raw.by=e.by.trim()||"營運管理部"; raw.no=(e.no||"").trim()||raw.no||nextNo(); raw.src=e.src; raw.qsrc=e.qsrc; raw.updatedAt=Date.now();
+  raw.title=e.title.trim()||"未命名公告"; raw.level=e.level; raw.date=e.date||today(); raw.by=e.by.trim()||"營運管理部"; raw.no=(e.no||"").trim()||raw.no||nextNo(); raw.src=e.src; raw.qsrc=e.qsrc; raw.due=e.due||""; raw.updatedAt=Date.now();
   if(e.sig&&!e.resign){ raw.sig=e.sig; raw.sigAt=e.sigAt; }
   if(e.mode==="all") raw.chain={mode:"all"};
   else if(mode==="publish" || mode==="draft" || !hasOrder(raw)) raw.chain=defaultChain();   /* 已發布、原本就是主管優先的，保留那一則指定過的人 */
@@ -951,7 +1113,7 @@ var FLOW=[
   {n:5,ph:1,who:["hq"],t:"看預覽，用手機走一遍",q:"「檢查」沒有紅字，自己走一遍也讀得順嗎？",d:"按畫面最下面的「存成草稿」。存好後，自己從閱讀、問答走到簽名。",yes:"沒問題：送總經理核定",no:["有紅字，或讀起來不順","修改條文或題目","↩ 回到第 3 步"]},
   {n:6,ph:2,who:["gm"],t:"總經理核定、發布",q:"條文和題目都可以發布了嗎？",d:"公告以營運管理部的名義發布，總經理只做核定。位置在「編輯公告」最下面。",yes:"可以：輸入核定密碼，按「確定簽核」，再按畫面最下面的「發布」",no:["還要修改","退回營運管理部","↩ 回到第 3 步"]},
   {n:7,ph:2,who:["hq"],t:"LINE 發公告全圖、連結和截止日",s:"寫明哪一天前要簽完。",d:"到「簽收狀況」按「生成公告全圖」，把有總經理核定簽名的圖和連結貼到群組。不用再請大家回「已了解」。"},
-  {n:8,ph:3,who:["sv"],t:"主管依序率先簽收",s:"簽署方式選「主管優先」才有這一步。區督導先簽，各門市的率先簽收人再簽，同仁最後。",d:"誰是率先簽收人，在「主管設定」點選。這一則公告遇到主管休假，到「簽收狀況」的「簽收順序」改指定別人。"},
+  {n:8,ph:3,who:["sv"],t:"主管依序率先簽收",s:"簽署方式選「主管優先」才有這一步。區督導先簽，各門市的率先簽收人再簽，同仁最後。",d:"誰是率先簽收人，在「人員名單」點選。這一則公告遇到主管休假，到「簽收狀況」的「簽收順序」改指定別人。"},
   {n:9,ph:3,who:["hq","sv"],t:"截止日追蹤",q:"截止日當天，全員都簽完了嗎？",d:"到「簽收狀況」可以直接複製未簽收名單。",yes:"全員簽完",no:["還有人沒簽","把未簽收名單貼到群組提醒；隔天還沒簽，由門市主管或區督導當面處理","↩ 簽完才能結案"]},
   {n:10,ph:3,who:["hq"],t:"結案，留存紀錄",s:"紀錄留在後台，之後隨時可以調閱。",d:"之後有人違規，到「簽收狀況」調出他的簽收時間、作答次數和簽名。"}
 ];
@@ -1041,16 +1203,16 @@ function drMigrate(){
 function vDraft(){
   drMigrate();
   var L=mem.drafts, R=S.rec||{title:"",text:""};
-  var h='<div class="dwrap"><div class="panel dhero"><h2>老闆用講的，AI 幫忙問、幫忙寫</h2><p style="margin:0">發生了一件事，想訂成公告，但不知道怎麼寫。複製訪談指令貼給 AI，它會先聽您講，再一題一題把細節問清楚，最後寫出公告原文、條文和題目。</p>';
-  h+='<ol class="croute"><li><span>按「複製訪談指令」</span></li><li><span>打開 AI 的 App，開一個新的對話，貼上送出</span></li><li><span>AI 會先問「您是老闆嗎？」，之後用語音回答就可以</span></li></ol>';
-  h+='<div class="row"><button id="dr-copy" class="btn grow" data-act="drCopy">複製訪談指令</button><button id="dr-toedit" class="btn ghost" data-act="drToEdit">到「編輯公告」貼上</button></div>';
-  if(S.copyText!==null) h+='<div><div class="small muted">'+esc(S.copyMsg)+'</div><textarea id="copyout" class="copyout" readonly>'+esc(S.copyText)+'</textarea></div>';
+  var step=function(n, body){ return '<div class="step"><span class="secn">'+n+'</span><div class="stepb">'+body+'</div></div>'; };
+  var h='<div class="dcol"><div class="panel"><h2>老闆用講的，AI 幫忙問、幫忙寫</h2><p style="margin:0">發生了一件事，想訂成公告，但不知道怎麼寫。照下面四步做，AI 會先聽您講，再一題一題把細節問清楚，最後寫出公告原文、條文和題目。</p>';
+  h+=step(1,'<b>複製訪談指令</b><div class="row"><button id="dr-copy" class="btn" data-act="drCopy">複製訪談指令</button></div>'+(S.copyText!==null?'<div><div class="small muted">'+esc(S.copyMsg)+'</div><textarea id="copyout" class="copyout" readonly>'+esc(S.copyText)+'</textarea></div>':''));
+  h+=step(2,'<b>貼給 AI，用語音回答</b><p>打開 AI 的 App，開一個新的對話，貼上送出。AI 會先問「您是老闆嗎？」，之後用語音回答就可以，前後順序不用在意。</p>');
+  h+=step(3,'<b>把條文和題目貼到「② 編輯公告」</b><p>AI 最後會給三段文字：條文區、題目區、訪談紀錄。前兩段貼到編輯公告。</p><div class="row"><button id="dr-toedit" class="btn ghost" data-act="drToEdit">到「② 編輯公告」貼上</button></div>');
+  h+=step(4,'<b>把訪談紀錄存在這裡</b><p class="small muted">之後可以回來看當初為什麼訂這條規定。</p><label class="f wide" for="rec-title">這次訂的是什麼事<input type="text" id="rec-title" data-rec="title" value="'+esc(R.title)+'" placeholder="例如：取消跨月的客戶申辦"></label><label class="f wide" for="rec-text">訪談紀錄<textarea id="rec-text" data-rec="text" rows="5" placeholder="把 AI 給的第三段文字整段貼上">'+esc(R.text)+'</textarea></label><div class="row"><button id="rec-save" class="btn sm" data-act="recSave">存檔</button></div>');
   h+='</div>';
-  h+='<div class="dchart"><div class="fhead"><h2>AI 會這樣問</h2><p class="muted small">金色是老闆回答，藍色是 AI 做的事，綠色是營運管理部做的事。虛線框是 AI 會停下來請您確認的地方。</p></div>'+fChart(IFLOW,IPH)+'</div>';
-  h+='<div class="panel drec"><h2>起草紀錄</h2><p class="muted small" style="margin:0">把 AI 最後給的「訪談紀錄」貼在這裡存檔。之後可以回來看當初為什麼訂這條規定。</p>';
-  h+='<label class="f wide" for="rec-title">這次訂的是什麼事<input type="text" id="rec-title" data-rec="title" value="'+esc(R.title)+'" placeholder="例如：取消跨月的客戶申辦"></label>';
-  h+='<label class="f wide" for="rec-text">訪談紀錄<textarea id="rec-text" data-rec="text" rows="5" placeholder="把 AI 給的第三段文字整段貼上">'+esc(R.text)+'</textarea></label>';
-  h+='<div class="row"><button id="rec-save" class="btn sm" data-act="recSave">存檔</button></div>';
+  h+='<div class="panel"><details class="fold" id="dr-flow"><summary>想知道 AI 會問什麼？打開看流程圖</summary><div class="dchart" style="margin-top:12px"><p class="muted small" style="margin:0">金色是老闆回答，藍色是 AI 做的事，綠色是營運管理部做的事。虛線框是 AI 會停下來請您確認的地方。</p>'+fChart(IFLOW,IPH)+'</div></details></div>';
+  h+='<div class="panel"><h2>起草紀錄（'+L.length+'）</h2>';
+  if(!L.length) h+='<div class="muted">還沒有存過訪談紀錄。</div>';
   L.forEach(function(d){
     h+='<div class="drow"><details class="dex"><summary><b>'+esc(d.title)+'</b>　<span class="small muted">'+new Date(d.at).getFullYear()+'/'+fmt(d.at)+'</span></summary><div class="dsa">'+esc(d.text)+'</div></details><button class="btn quiet sm" data-act="drDel" data-id="'+d.id+'">'+(S.drDel===d.id?"確定刪除":"刪除")+'</button></div>';
   });
@@ -1152,7 +1314,7 @@ function drawPoster(ctx, a, sigImg, H){
     ctx.fillStyle=PC.muted; ctx.font="400 22px "+SANS; ctx.fillText("總經理"+(d?"　"+d.getFullYear()+"/"+(d.getMonth()+1)+"/"+d.getDate():""), sx, y+184);
   }
   y+= block ? 236 : 112;
-  ctx.fillStyle=PC.muted; ctx.font="400 24px "+SANS; ctx.textAlign="left"; ctx.fillText("同仁請到「倚盟公告簽收」逐條閱讀、作答並簽名。", M, y);
+  ctx.fillStyle=PC.muted; ctx.font="400 24px "+SANS; ctx.textAlign="left"; var dP=dueInfo(a); ctx.fillText("同仁請到「倚盟公告簽收」逐條閱讀、作答並簽名。"+(dP?"請在 "+dP.md+"前完成。":""), M, y);
   return y+72;
 }
 function loadFonts(text){
@@ -1165,7 +1327,7 @@ function makePoster(id){
   var raw=rawAnn(id); if(!raw) return;
   if(!raw.sig){ S.msg="這則公告還沒有總經理核定。請在下面的編輯區最底下按「確定簽核」，再按畫面最下面的「更新」，就可以生成全圖。"; openEditor(id); S.adminTab="edit"; render(); return; }
   var a=compile(raw); S.poster={id:id, url:null}; S.adminAnn=id; S.adminTab="status"; render();
-  var all="倚盟電訊有限公司發布單位核定總經理公告號第版人簽核同仁請到公告簽收逐條閱讀、作答並簽名。0123456789/"+a.level+a.title+a.by+raw.src;
+  var all="倚盟電訊有限公司發布單位核定總經理公告號第版人簽核同仁請到公告簽收逐條閱讀、作答並簽名。請在前完成（）日一二三四五六0123456789/"+a.level+a.title+a.by+raw.src;
   loadFonts(all).then(function(){ return loadImg(raw.sig); }).then(function(img){
     var cv=document.createElement("canvas"); cv.width=1080; cv.height=300;
     var h=Math.ceil(drawPoster(cv.getContext("2d"), a, img, 300));
@@ -1191,6 +1353,7 @@ try{
 var ERR={code:"通行碼不正確，請再輸入一次。", nocode:"系統還沒有設定通行碼，請通知營運管理部。", pw:"後台密碼不正確。", nopw:"試算表的「設定」分頁還沒有填後台密碼。", locked:"密碼錯太多次，請 10 分鐘後再試。",
   version:"這則公告剛剛改版了，請重新整理頁面再讀一次。", who:"名單裡找不到你的名字，請通知營運管理部。", ann:"這則公告已經不在發布中，請重新整理頁面。", sig:"簽名沒有成功讀取，請清除後重簽。", sigbig:"簽名檔太大，請清除後簽小一點。",
   gate1:"要等區督導簽收之後才能開始，請回到首頁按「重新整理」。", gate2:"要等本門市主管簽收之後才能開始，請回到首頁按「重新整理」。",
+  dup:"這個單位已經有同名的人。", haslog:"這個人已經簽過公告，紀錄是用原本的名字記的，不能直接改名。", unit:"找不到這個單位。", name:"姓名不能空白，也不能有冒號、逗號這類符號。", op:"這個動作系統不認得，請重新整理頁面再試。",
   pin:"核定密碼不正確。", pinfmt:"核定密碼請輸入 4 到 8 位數字。", nosig:"這則公告還沒有總經理核定，不能發布。", nogm:"還沒有留存總經理簽名。"};
 function errText(e){ var c=e&&e.code; if(c&&ERR[c]) return ERR[c]; if(c==="server") return "系統忙碌中，請再試一次。"+(e.msg?"（"+e.msg+"）":""); return "連不上系統，請檢查網路後再試一次。"; }
 function api(action, data){
@@ -1237,7 +1400,7 @@ function flushOutbox(){
   api("event", L.outbox[0]).then(function(){ L.outbox.shift(); save(); S.flushing=false; flushOutbox(); },
     function(e){ S.flushing=false; if(e.code && e.code!=="server"){ L.outbox.shift(); save(); flushOutbox(); } });
 }
-function applyAdmin(j){ STORES=j.stores||[]; mem.anns=j.anns||[]; mem.records=j.records||{}; mem.gm = j.gm&&j.gm.has ? {sig:j.gm.sig, pin:"server"} : null; mem.drafts=j.drafts||[]; }
+function applyAdmin(j){ STORES=j.stores||[]; mem.anns=j.anns||[]; mem.records=j.records||{}; mem.gm = j.gm&&j.gm.has ? {sig:j.gm.sig, pin:"server"} : null; mem.drafts=j.drafts||[]; S.former=j.former||[]; }
 function loadAdmin(){
   S.adminOk=false; S.adminLoad="loading"; S.adminErr=""; render();
   api("admin").then(function(j){
@@ -1332,6 +1495,7 @@ function begin(annId){
   S.view="read"; render();
 }
 
+document.addEventListener("toggle",function(e){ if(e.target && e.target.id==="chainbox") S.chainOpen=e.target.open; }, true);
 window.addEventListener("beforeunload",function(e){ if((S.ed && S.ed.dirty) || S.sync){ e.preventDefault(); e.returnValue=""; } });
 document.addEventListener("input",function(e){
   var f=e.target.getAttribute && e.target.getAttribute("data-ed");
@@ -1351,7 +1515,7 @@ document.addEventListener("change",function(e){
     var ra=rawAnn(S.adminAnn); if(!ra || !ra.chain) return;
     var csid=e.target.getAttribute("data-sid"), c2=JSON.parse(JSON.stringify(ra.chain)); if(!c2.leads) c2.leads={};
     if(csid===(c2.topStore||TOP_STORE)) c2.top=e.target.value; else c2.leads[csid]=e.target.value;
-    ra.chain=c2; save(); if(LIVE) syncSave("setChain",{id:ra.id, chain:c2}); render();
+    ra.chain=c2; S.chainOpen=true; save(); if(LIVE) syncSave("setChain",{id:ra.id, chain:c2}); render();
   }
 });
 document.addEventListener("click",function(e){
@@ -1424,6 +1588,11 @@ document.addEventListener("click",function(e){
     if(S.ed && S.ed.dirty && S.ed.id===eid){ S.adminTab="edit"; render(); }
     else guard(function(){ openEditor(eid); S.adminTab="edit"; render(); });
   }
+  else if(act==="pp"){ S.pp={op:t.getAttribute("data-op"), store:t.getAttribute("data-sid"), name:t.getAttribute("data-name")}; S.ppErr=""; render(); var pv=document.getElementById("pp-val"); if(pv && pv.focus) pv.focus(); }
+  else if(act==="ppCancel"){ S.pp=null; S.ppErr=""; render(); }
+  else if(act==="ppOk"){ var q=S.pp; if(!q) return; var pv2=document.getElementById("pp-val"); rosterDo(q.op, q.store, q.name, pv2?String(pv2.value||"").trim():""); }
+  else if(act==="ppAdd"){ rosterDo("add", String((document.getElementById("pp-unit")||{}).value||""), String((document.getElementById("pp-name")||{}).value||"").trim(), ""); }
+  else if(act==="ppOn"){ rosterDo("on", t.getAttribute("data-sid"), t.getAttribute("data-name"), ""); }
   else if(act==="askBack"){ S.ask=null; S.adminTab="edit"; render(); }
   else if(act==="askGo"){ var af=S.ask; S.ask=null; if(S.ed) S.ed.dirty=false; bakClear(); if(af) af(); }
   else if(act==="bakUse"){
@@ -1431,7 +1600,7 @@ document.addEventListener("click",function(e){
     openEditor(bk.id && rawAnn(bk.id) ? bk.id : null); EDF.forEach(function(k){ S.ed[k]=bk[k]==null?"":bk[k]; }); if(bk.mode) S.ed.mode=bk.mode; S.ed.dirty=true; render();
   }
   else if(act==="bakDrop"){ bakClear(); render(); }
-  else if(act==="seeCheck"){ var sc=document.getElementById("ed-prev"); if(sc) sc.scrollIntoView({behavior:"smooth", block:"start"}); }
+  else if(act==="seeCheck"){ var sc=document.getElementById("ed-step3"); if(sc) sc.scrollIntoView({behavior:"smooth", block:"start"}); }
   else if(act==="seeSign"){ var sg=document.getElementById("ed-sign"); if(sg) sg.scrollIntoView({behavior:"smooth", block:"center"}); }
   else if(act==="ins"){
     ta=document.getElementById("ed-src"); if(!ta) return;
