@@ -44,7 +44,7 @@ body{background:var(--bg);color:var(--ink);font-family:var(--body);font-size:16p
 .brand b{font-family:var(--display);font-weight:900;font-size:20px;letter-spacing:.04em}
 .brand span{color:var(--muted);font-size:13px}
 .switch{display:flex;border:1px solid var(--line);border-radius:999px;padding:3px;background:var(--surface)}
-.switch button{border:0;background:transparent;color:var(--muted);font:inherit;font-size:14px;padding:6px 14px;border-radius:999px;cursor:pointer}
+.switch button{border:0;background:transparent;color:var(--muted);font:inherit;font-size:15px;padding:9px 16px;border-radius:999px;cursor:pointer}
 .switch button[aria-pressed="true"]{background:var(--accent);color:var(--accent-ink);font-weight:700}
 .note{font-size:13px;color:var(--warn);background:var(--warn-soft);border-radius:var(--r);padding:8px 12px}
 button:focus-visible,select:focus-visible,canvas:focus-visible,input:focus-visible,textarea:focus-visible,summary:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
@@ -61,7 +61,7 @@ h2{font-family:var(--display);font-weight:700;font-size:19px;margin:0;text-wrap:
 .btn.ghost{background:transparent;color:var(--accent)}
 .btn.quiet{background:transparent;color:var(--muted);border-color:var(--line);font-weight:500}
 .btn:disabled{background:var(--surface-2);border-color:var(--line);color:var(--muted);cursor:not-allowed}
-.btn.sm{min-height:0;padding:7px 12px;font-size:14px}
+.btn.sm{min-height:42px;padding:8px 14px;font-size:15px}
 .row{display:flex;gap:10px;flex-wrap:wrap}
 .row .grow{flex:1 1 160px}
 
@@ -104,13 +104,13 @@ mark{background:none;font-weight:700;padding:0 1px}
 .k-warn mark{color:var(--warn);background:linear-gradient(transparent 64%,var(--warn-soft) 0)}
 .k-dot mark,.q mark{color:var(--info);background:linear-gradient(transparent 64%,var(--info-soft) 0)}
 details.law{border-top:1px solid var(--line);padding-top:10px;font-size:14px;color:var(--muted)}
-details.law summary{cursor:pointer}
+details.law summary{cursor:pointer;padding:8px 0;font-size:15px}
 details.law p{margin:8px 0 0}
 .cex{background:var(--surface-2);border-radius:var(--r);padding:12px 14px;font-size:15px;line-height:1.9;overflow-wrap:anywhere}
 .cex-sep{font-size:0;line-height:0;border-top:2px dashed var(--line);margin:10px 0}
 .cex-t{font-weight:700;font-size:1.05em;margin-bottom:2px}
 .cex-top{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:4px}
-.cex-copy{font:inherit;font-size:13px;font-weight:700;border:1px solid var(--accent);background:transparent;color:var(--accent);border-radius:999px;padding:2px 12px;cursor:pointer;white-space:nowrap}
+.cex-copy{font:inherit;font-size:14px;font-weight:700;border:1px solid var(--accent);background:transparent;color:var(--accent);border-radius:999px;padding:7px 14px;cursor:pointer;white-space:nowrap}
 ol.croute{list-style:none;margin:0;padding:0;counter-reset:r;display:flex;flex-direction:column}
 ol.croute li{counter-increment:r;display:grid;grid-template-columns:32px minmax(0,1fr);gap:12px;align-items:start;padding:7px 0;font-size:18px;line-height:1.6;position:relative}
 ol.croute li::before{content:counter(r);width:32px;height:32px;border-radius:50%;background:var(--accent);color:var(--accent-ink);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:15px;position:relative;z-index:1}
@@ -154,7 +154,8 @@ ol.croute li span{padding-top:2px}
 
 /* 後台 */
 .tabs{display:flex;gap:20px;border-bottom:1px solid var(--line);overflow-x:auto}
-.tabs button{font:inherit;font-size:16px;background:none;border:0;border-bottom:3px solid transparent;color:var(--muted);padding:8px 2px;cursor:pointer;white-space:nowrap}
+.tabs button{font:inherit;font-size:16px;background:none;border:0;border-bottom:3px solid transparent;color:var(--muted);padding:10px 2px;cursor:pointer;white-space:nowrap}
+.tabs button.dirty::after{content:"未儲存";margin-left:6px;font-size:12px;font-weight:700;color:var(--seal);background:var(--seal-soft);border-radius:999px;padding:1px 8px}
 .tabs button[aria-selected="true"]{color:var(--ink);font-weight:700;border-bottom-color:var(--accent)}
 .sum{display:flex;gap:24px;flex-wrap:wrap;align-items:flex-end}
 .sum .big{font-family:var(--display);font-weight:900;font-size:40px;line-height:1;font-variant-numeric:tabular-nums}
@@ -169,16 +170,16 @@ td.num{font-variant-numeric:tabular-nums;white-space:nowrap}
 tr.store td{background:var(--surface-2);font-weight:700;font-size:14px}
 td .sigimg{height:34px;width:auto;display:block}
 .copyout{width:100%;min-height:120px}
-input[type=text],input[type=date],select,textarea{font:inherit;font-size:16px;color:var(--ink);background:var(--surface-2);border:1px solid var(--line);border-radius:8px;padding:9px 11px;width:100%;min-width:0}
+input[type=text],input[type=password],input[type=date],select,textarea{font:inherit;font-size:16px;color:var(--ink);background:var(--surface-2);border:1px solid var(--line);border-radius:8px;padding:9px 11px;width:100%;min-width:0}
 textarea{line-height:1.75;resize:vertical}
 label.f{display:flex;flex-direction:column;gap:4px;font-size:13px;color:var(--muted);flex:1 1 130px;min-width:0}
 label.f.wide{flex-basis:100%}
 
-/* 編輯公告：左邊打字、右邊預覽 */
+/* 編輯公告：左邊打字、右邊預覽；平板直放和手機改成上下排 */
 .edgrid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:16px;align-items:start}
-@media (max-width:820px){.edgrid{grid-template-columns:minmax(0,1fr)}}
+@media (max-width:900px){.edgrid{grid-template-columns:minmax(0,1fr)}}
 .ins{gap:6px}
-.ins button{font:inherit;font-size:14px;border:1px solid var(--line);background:var(--surface);color:var(--ink);border-radius:999px;padding:4px 12px;cursor:pointer}
+.ins button{font:inherit;font-size:15px;border:1px solid var(--line);background:var(--surface);color:var(--ink);border-radius:999px;padding:8px 14px;cursor:pointer}
 .prev{display:flex;flex-direction:column;gap:12px;min-width:0}
 .prev .clause{padding:16px}
 .prev .clause h1{font-size:20px}
@@ -213,7 +214,7 @@ label.f.wide{flex-basis:100%}
 .fql b{font-size:15px}
 .fql span{grid-column:2;color:var(--muted)}
 .dex{font-size:14px}
-.dex summary{cursor:pointer}
+.dex summary{cursor:pointer;padding:6px 0}
 .dex summary b{color:var(--accent)}
 .dsa{white-space:pre-wrap;font-size:14px;margin:8px 0 0;background:var(--surface-2);border-radius:8px;padding:10px 12px}
 .drow{display:flex;justify-content:space-between;gap:10px;align-items:flex-start;border-top:1px solid var(--line);padding-top:12px}
@@ -240,18 +241,18 @@ label.f.wide{flex-basis:100%}
 .felb{justify-self:center;color:var(--seal);display:flex}
 .fphase{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:14px;display:flex;flex-direction:column}
 .fphase>h3{font-family:var(--display);font-weight:700;font-size:17px;margin:0 0 10px;display:flex;gap:10px;align-items:baseline;flex-wrap:wrap}
-.fphase>h3 small{font-family:var(--body);font-weight:700;font-size:12px;letter-spacing:.1em;color:var(--muted)}
+.fphase>h3 small{font-family:var(--body);font-weight:700;font-size:13px;letter-spacing:.1em;color:var(--muted)}
 .fnode{display:grid;grid-template-columns:32px minmax(0,1fr);gap:12px;padding:12px;border-radius:var(--r);background:var(--cs);border-left:6px solid var(--c)}
 .fnum{width:32px;height:32px;border-radius:50%;background:var(--c);color:var(--surface);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:16px}
 .fh{display:flex;gap:8px;align-items:center;flex-wrap:wrap;min-height:32px}
 .fh b{font-size:17px;line-height:1.4}
-.fwho{font-size:12px;font-weight:700;border-radius:999px;padding:1px 9px;background:var(--surface);color:var(--c);border:1px solid var(--c);white-space:nowrap}
+.fwho{font-size:13px;font-weight:700;border-radius:999px;padding:1px 9px;background:var(--surface);color:var(--c);border:1px solid var(--c);white-space:nowrap}
 .fbody{min-width:0}
 .fbody p{margin:4px 0 0;font-size:15px}
 .fq{display:flex;gap:8px;align-items:flex-start;margin-top:8px;padding:8px 10px;background:var(--surface);border:2px dashed var(--c);border-radius:8px;font-weight:700;font-size:15px;line-height:1.6}
 .fdia{flex:none;width:12px;height:12px;background:var(--c);transform:rotate(45deg);margin:6px 3px 0}
 .fd{margin-top:6px;font-size:14px}
-.fd summary{cursor:pointer;color:var(--c);font-weight:700;width:fit-content}
+.fd summary{cursor:pointer;color:var(--c);font-weight:700;width:fit-content;padding:6px 0}
 .fd p{font-size:14px}
 .fcon,.fbr{display:grid;grid-template-columns:32px minmax(0,1fr);gap:12px;padding-left:18px;align-items:stretch}
 .flow>.fcon,.flow>.fbr{padding-left:33px;padding-right:15px}
@@ -272,7 +273,7 @@ label.f.wide{flex-basis:100%}
 .fkc .fa{align-self:center;min-height:40px}
 .fcond{align-self:center;text-align:center;font-size:14px;font-weight:700;border:2px dashed var(--muted);border-radius:8px;padding:6px 10px}
 .fmini{border-left:6px solid var(--c);background:var(--cs);border-radius:8px;padding:8px 10px;font-weight:700;font-size:15px;line-height:1.5;display:flex;flex-direction:column;gap:2px}
-.fmini small{font-weight:700;font-size:12px;color:var(--c)}
+.fmini small{font-weight:700;font-size:13px;color:var(--c)}
 .fkc .fend{align-self:center;margin:0}
 .chain{display:flex;flex-direction:column;gap:6px;font-size:15px;border-top:1px solid var(--line);padding-top:10px}
 .chain div{display:grid;grid-template-columns:24px minmax(0,1fr);gap:8px;align-items:start}
@@ -291,6 +292,90 @@ label.f.wide{flex-basis:100%}
 .gmsign label.f{flex:none}
 .gmsign input{max-width:260px}
 .poster img{display:block;width:100%;max-width:520px;height:auto;border:1px solid var(--line);border-radius:6px;margin:0 auto}
+/* 儲存列：編輯公告時固定在畫面最下面 */
+.savebar{position:fixed;left:0;right:0;bottom:0;z-index:20;background:var(--surface);border-top:2px solid var(--accent);box-shadow:0 -6px 18px rgba(0,0,0,.12);padding:10px 16px calc(10px + env(safe-area-inset-bottom,0px))}
+.sb-in{max-width:1048px;margin:0 auto;display:flex;gap:10px 16px;align-items:center;justify-content:space-between;flex-wrap:wrap}
+.sb-st{display:flex;flex-direction:column;gap:2px;min-width:0;flex:1 1 240px;font-size:14px;line-height:1.5}
+.sb-st b{font-size:16px}
+.sb-st b.dirty{color:var(--seal)}
+.sb-st b.clean{color:var(--ok)}
+.sb-st .why{color:var(--muted)}
+.sb-st .why button{font:inherit;font-weight:700;color:var(--accent);background:none;border:0;padding:4px 2px;text-decoration:underline;cursor:pointer}
+.savebar .row{flex-wrap:nowrap}
+.savebar .btn{min-height:48px;padding:10px 18px;font-size:16px;white-space:nowrap}
+.sb-space{height:110px}
+@media (max-width:560px){.savebar .row{flex:1 1 100%}.savebar .btn{flex:1 1 0;padding:10px 8px;font-size:15px}.sb-space{height:170px}}
+.ask{position:fixed;inset:0;z-index:30;background:rgba(10,20,16,.55);display:flex;align-items:center;justify-content:center;padding:16px}
+.ask .panel{max-width:460px;width:100%}
+.ask p{margin:0}
+.bak{border-color:var(--warn);background:var(--warn-soft)}
+
+/* 平板（簽名用的主要裝置）：同仁閱讀、答題、簽名的字和按鈕放大，欄位加寬 */
+@media (min-width:700px){
+  .narrow{max-width:700px}
+  .narrow h1{font-size:30px}
+  .narrow h2{font-size:21px}
+  .narrow .small,.narrow .stepline,.narrow .meta,.narrow .legend{font-size:15px}
+  .narrow .pill{font-size:14px}
+  .narrow .btn{font-size:18px;min-height:58px}
+  .narrow .btn.sm{font-size:16px;min-height:46px}
+  .narrow .pick{grid-template-columns:repeat(auto-fill,minmax(150px,1fr))}
+  .narrow .pick button{font-size:20px;padding:18px 8px}
+  .narrow .clause{padding:28px 28px;gap:20px}
+  .narrow .clause .tag{font-size:17px}
+  .narrow .items{gap:18px}
+  .narrow .items .it{font-size:22px;gap:14px}
+  .narrow .items .it .ic{width:30px;height:30px;font-size:17px;margin-top:4px}
+  .narrow ol.croute li{font-size:20px}
+  .narrow .cex{font-size:17px;padding:16px 18px}
+  .narrow .cnote{font-size:16px}
+  .narrow details.law,.narrow details.law summary{font-size:16px}
+  .narrow .legend .ic{width:22px;height:22px;font-size:13px}
+  .narrow .q{font-size:23px}
+  .narrow .opts{gap:12px}
+  .narrow .opts button{font-size:20px;padding:16px 18px;gap:14px}
+  .narrow .opts .ab{width:34px;height:34px;font-size:17px}
+  .narrow .declare{font-size:20px}
+  .narrow .signbox canvas{height:280px}
+  .narrow .signbox .hint{font-size:18px}
+  .narrow .chain{font-size:17px}
+  .narrow .receipt dt{font-size:16px}
+  .narrow .receipt dd{font-size:18px}
+  .narrow input[type=text],.narrow input[type=password]{font-size:20px;padding:12px 14px}
+}
+/* 平板直放：後台表格的格子收窄一點，不用左右滑 */
+@media (max-width:900px){th,td{padding:10px 8px}}
+/* 手機：分頁改成兩排按鈕，表格改成一人一格往下排，不用左右滑 */
+@media (max-width:640px){
+  .tabs{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;border-bottom:0;overflow:visible}
+  .tabs button{border:1px solid var(--line);border-radius:8px;background:var(--surface);padding:10px 2px;font-size:15px}
+  .tabs button[aria-selected="true"]{border-color:var(--accent);background:var(--accent-soft);color:var(--accent)}
+  .tabs button.dirty::after{content:"●";background:none;padding:0;margin-left:3px}
+  .panel{padding:16px}
+  table.rtab,table.ltab,table.ctab{min-width:0;display:block}
+  .rtab thead,.ltab thead,.ctab thead{display:none}
+  .rtab tbody,.ltab tbody,.ctab tbody{display:block}
+  .rtab tr,.ltab tr,.ctab tr{display:flex;flex-wrap:wrap;align-items:center;gap:4px 12px;padding:12px 2px;border-bottom:1px solid var(--line)}
+  .rtab td,.ltab td,.ctab td{border:0;padding:0}
+  .rtab tr.store{padding:0;border:0}
+  .rtab tr.store td{flex:1 1 100%;padding:8px 10px;border-radius:6px}
+  .rtab td:nth-child(1){flex:1 1 auto;font-weight:700;font-size:16px}
+  .rtab td:nth-child(3){flex:1 1 100%;color:var(--muted);font-size:14px}
+  .rtab td:nth-child(3)::before{content:"簽收時間　"}
+  .rtab td:nth-child(4){color:var(--muted);font-size:14px}
+  .rtab td:nth-child(4)::before{content:"作答　"}
+  .rtab td:nth-child(5){margin-left:auto}
+  .rtab td.nil,.rtab td:nth-child(5):empty{display:none}
+  .ltab td:nth-child(1){color:var(--muted);font-size:14px}
+  .ltab td:nth-child(2){flex:1 1 100%;order:-1;font-weight:700;font-size:16px}
+  .ltab td:nth-child(4),.ltab td:nth-child(5){color:var(--muted);font-size:14px}
+  .ltab td:nth-child(6)::before{content:"已簽收　";color:var(--muted);font-size:14px}
+  .ltab td:nth-child(7){flex:1 1 100%}
+  .ltab td:nth-child(7) .row{flex-wrap:wrap!important}
+  .ctab td:nth-child(2){font-weight:700}
+  .ctab td:nth-child(3){flex:1 1 100%}
+  .ctab select{max-width:none}
+}
 </style>
 </head>
 <body>
@@ -460,12 +545,12 @@ function gateFor(a, me){
   return {st:st, role:isTop?"top":isLead?"lead":"staff", lead:l, blocked:blocked};
 }
 function chainLines(g){
-  var st=g.st, h='<div class="chain">';
+  var st=g.st, h="";
   if(g.role==="top") h+='<div class="me"><span class="ic">★</span><span>你是這則公告的<b>率先簽收人</b>。你簽完，各門市才能開始。</span></div>';
   else if(st.top.name) h+='<div class="'+(st.top.at?"ok":"wait")+'"><span class="ic">'+(st.top.at?"✓":"…")+'</span><span>區督導 <b>'+esc(st.top.name)+'</b>　'+(st.top.at?'已於 '+fmt(st.top.at)+' 率先簽收':'尚未簽收')+'</span></div>';
   if(g.role==="lead") h+='<div class="me"><span class="ic">★</span><span>你是本門市的<b>率先簽收人</b>。你簽完，本門市同仁才能開始。</span></div>';
   else if(g.role==="staff" && g.lead.name) h+='<div class="'+(g.lead.at?"ok":"wait")+'"><span class="ic">'+(g.lead.at?"✓":"…")+'</span><span>本門市主管 <b>'+esc(g.lead.name)+'</b>　'+(g.lead.at?'已於 '+fmt(g.lead.at)+' 簽收':'尚未簽收')+'</span></div>';
-  return h+'</div>';
+  return h ? '<div class="chain">'+h+'</div>' : "";
 }
 var GATE_TEXT=["","等區督導簽收後才能開始","等本門市主管簽收後才能開始"];
 
@@ -630,8 +715,9 @@ function vLeads(){
 
 function vAdmin(){
   var h='<div><h1 style="margin-bottom:12px">管理後台</h1><div class="tabs" role="tablist">';
-  TABS.forEach(function(t){ h+='<button id="tab-'+t[0]+'" role="tab" data-act="tab" data-tab="'+t[0]+'" aria-selected="'+(S.adminTab===t[0])+'">'+t[1]+'</button>'; });
+  TABS.forEach(function(t){ h+='<button id="tab-'+t[0]+'" role="tab" data-act="tab" data-tab="'+t[0]+'" aria-selected="'+(S.adminTab===t[0])+'"'+(t[0]==="edit"&&S.ed&&S.ed.dirty?' class="dirty"':'')+'>'+t[1]+'</button>'; });
   h+='</div></div>';
+  if(S.ask) h+='<div class="ask" role="dialog" aria-modal="true" aria-labelledby="ask-h"><div class="panel"><h2 id="ask-h">有修改還沒儲存</h2><p>「'+esc((S.ed&&S.ed.title)||"未命名公告")+'」改過的內容還沒儲存。換到別則公告，這些修改就不見了。</p><div class="row"><button id="btn-askback" class="btn grow" data-act="askBack">回去儲存</button><button id="btn-askgo" class="btn quiet" data-act="askGo">不要這些修改</button></div></div></div>';
   if(S.msg){ h+='<div class="note" style="color:var(--ok);background:var(--ok-soft)">'+esc(S.msg)+'</div>'; }
   if(S.adminTab==="log") return h+vLog();
   if(S.adminTab==="edit") return h+vEdit();
@@ -669,7 +755,7 @@ function vStatus(){
     STORES.forEach(function(s){ if(s.id!==cst.topStore) h+=crow("第二層", s.name, s.id, cst.leads[s.id]||{name:"",at:0}); });
     h+='</tbody></table></div></div>';
   }
-  h+='<div class="panel"><div class="scroll"><table><thead><tr><th>姓名</th><th>狀態</th><th>簽收時間</th><th>作答次數</th><th>簽名</th></tr></thead><tbody>';
+  h+='<div class="panel"><div class="scroll"><table class="rtab"><thead><tr><th>姓名</th><th>狀態</th><th>簽收時間</th><th>作答次數</th><th>簽名</th></tr></thead><tbody>';
   STORES.forEach(function(s){
     var dn=s.staff.filter(function(nm){ return isDone(a,rec(a.id,pid(s.id,nm))); }).length;
     h+='<tr class="store"><td colspan="5">'+esc(s.name)+'　'+dn+' / '+s.staff.length+'</td></tr>';
@@ -678,7 +764,7 @@ function vStatus(){
       var pill = d ? '<span class="pill done">已簽收</span>' : old ? '<span class="pill todo">改版後未重簽</span>' : r ? '<span class="pill doing">閱讀中</span>' : '<span class="pill todo">尚未閱讀</span>';
       var sig = d ? (r.sig ? '<img class="sigimg" alt="'+esc(nm)+' 的簽名" src="'+r.sig+'">' : (LIVE?'':'<span class="small muted">示範資料</span>')) : "";
       var isL = cst && ((s.id===cst.topStore && nm===cst.top.name) || ((cst.leads[s.id]||{}).name===nm));
-      h+='<tr><td>'+esc(nm)+(isL?' <span class="pill tag">率先簽收</span>':'')+'</td><td>'+pill+'</td><td class="num">'+(d?fmt(r.finishedAt):"—")+'</td><td class="num">'+(r?r.attempts+" 次":"—")+'</td><td>'+sig+'</td></tr>';
+      h+='<tr><td>'+esc(nm)+(isL?' <span class="pill tag">率先簽收</span>':'')+'</td><td>'+pill+'</td><td class="num'+(d?"":" nil")+'">'+(d?fmt(r.finishedAt):"—")+'</td><td class="num'+(r?"":" nil")+'">'+(r?r.attempts+" 次":"—")+'</td><td>'+sig+'</td></tr>';
     });
   });
   return h+'</tbody></table></div></div>';
@@ -686,11 +772,11 @@ function vStatus(){
 
 function vLog(){
   var total=totalStaff();
-  var h='<div class="panel"><div class="row"><button id="btn-new" class="btn sm" data-act="newAnn">新增公告</button></div><div class="scroll"><table><thead><tr><th>發布日期</th><th>公告</th><th>狀態</th><th>發布單位</th><th>內容</th><th>簽收進度</th><th></th></tr></thead><tbody>';
+  var h='<div class="panel"><div class="row"><button id="btn-new" class="btn sm" data-act="newAnn">新增公告</button></div><div class="scroll"><table class="ltab"><thead><tr><th>發布日期</th><th>公告</th><th>狀態</th><th>發布單位</th><th>內容</th><th>簽收進度</th><th></th></tr></thead><tbody>';
   mem.anns.forEach(function(raw){
     var a=compile(raw), pub=a.status==="published";
     h+='<tr><td class="num">'+fmtDate(a.date)+'</td><td><span class="pill tag">'+esc(a.level)+'</span> <span class="small muted">'+esc(a.no||"")+' 號</span><br>'+esc(a.title)+'</td>';
-    h+='<td>'+(pub?'<span class="pill done">已發布</span> <span class="small muted">第 '+a.version+' 版</span>':'<span class="pill draft">草稿</span>')+'</td>';
+    h+='<td>'+(pub?'<span class="pill done">已發布</span> <span class="small muted">第 '+a.version+' 版</span>':'<span class="pill draft">草稿</span>')+(raw.updatedAt?'<br><span class="small muted">最後儲存 '+fmt(raw.updatedAt)+'</span>':'')+'</td>';
     h+='<td>'+esc(a.by)+'</td><td class="num">'+a.clauses.length+' 條／'+a.quiz.length+' 題</td><td class="num">'+(pub?countDone(a)+' / '+total:"—")+'</td>';
     h+='<td><div class="row" style="flex-wrap:nowrap"><button id="edit-'+a.id+'" class="btn ghost sm" data-act="editAnn" data-id="'+a.id+'">編輯</button>'+(pub?'<button id="see-'+a.id+'" class="btn quiet sm" data-act="seeAnn" data-id="'+a.id+'">看名單</button><button id="pst-'+a.id+'" class="btn quiet sm" data-act="poster" data-id="'+a.id+'">全圖</button>':'')+'</div></td></tr>';
   });
@@ -701,12 +787,27 @@ function openEditor(id){
   var r = id ? rawAnn(id) : null;
   S.ed = r ? {id:r.id, title:r.title, level:r.level, date:r.date, by:r.by, no:r.no||"", src:r.src, qsrc:r.qsrc}
            : {id:null, title:"", level:"重大公告", date:today(), by:"營運管理部", no:nextNo(), src:"條：標籤｜這一條的標題\n✓ 要做的事，【重點字】用括號框起來\n✕ 不可以做的事\n⚠ 違反的後果\n原文：這一條的公告原文", qsrc:"題：用門市會遇到的情境出題？\n對：正確答案\n錯：錯誤答案\n錯：錯誤答案\n條：1"};
-  S.ed.sig = r&&r.sig ? r.sig : ""; S.ed.sigAt = r&&r.sigAt ? r.sigAt : 0; S.ed.sigNew=false; S.ed.resign=false; S.ed.changeSig=false;
+  S.ed.sig = r&&r.sig ? r.sig : ""; S.ed.sigAt = r&&r.sigAt ? r.sigAt : 0; S.ed.sigNew=false; S.ed.resign=false; S.ed.changeSig=false; S.ed.dirty=false;
 }
+/* 還沒按儲存的修改，先在這台裝置留一份，重新整理或不小心關掉都拿得回來 */
+var EBK="ym-ack-edbak", EDF=["title","level","date","by","no","src","qsrc"];
+function bakGet(){ try{ return JSON.parse(localStorage.getItem(EBK)||"null"); }catch(_){ return null; } }
+function bakClear(){ try{ localStorage.removeItem(EBK); }catch(_){ } }
+function bakSave(){ var e=S.ed, o={id:e.id||null, at:Date.now()}; EDF.forEach(function(k){ o[k]=e[k]; }); try{ localStorage.setItem(EBK, JSON.stringify(o)); }catch(_){ } }
+function bakLive(){
+  var bk=bakGet(); if(!bk || typeof bk.src!=="string") return null;
+  var r=bk.id?rawAnn(bk.id):null;
+  if(r && EDF.every(function(k){ return String(r[k]||"")===String(bk[k]||""); })){ bakClear(); return null; }
+  return bk;
+}
+function touch(){ if(!S.ed) return; S.ed.dirty=true; bakSave(); }
+function guard(fn){ if(S.ed && S.ed.dirty){ S.ask=fn; render(); } else fn(); }
 function vEdit(){
   if(!S.ed) openEditor(published().length?published()[0].id:(mem.anns[0]&&mem.anns[0].id));
   var e=S.ed, raw=e.id?rawAnn(e.id):null;
-  var h='<div class="edgrid"><div class="panel">';
+  var h="", bk=e.dirty?null:bakLive();
+  if(bk) h+='<div class="panel bak"><b>這台裝置留著一份還沒儲存的修改</b><div>「'+esc(bk.title||"未命名公告")+'」，'+fmt(bk.at)+' 改的，當時沒有按儲存。</div><div class="row"><button id="btn-bakuse" class="btn sm" data-act="bakUse">拿回來接著改</button><button id="btn-bakdrop" class="btn quiet sm" data-act="bakDrop">不要了</button></div></div>';
+  h+='<div class="edgrid"><div class="panel">';
   h+='<div class="row" style="justify-content:space-between;align-items:center"><h2>'+(raw?"編輯公告":"新增公告")+'</h2><button id="btn-new2" class="btn quiet sm" data-act="newAnn">寫一則新的</button></div>';
   h+='<div class="row"><label class="f wide" for="ed-title">公告標題<input type="text" id="ed-title" data-ed="title" value="'+esc(e.title)+'"></label>';
   h+='<label class="f" for="ed-level">等級<select id="ed-level" data-ed="level">'+["重大公告","一般公告"].map(function(v){return '<option'+(v===e.level?" selected":"")+'>'+v+'</option>';}).join("")+'</select></label>';
@@ -719,6 +820,7 @@ function vEdit(){
   h+='<textarea id="ed-qsrc" data-ed="qsrc" rows="16" spellcheck="false">'+esc(e.qsrc)+'</textarea>';
   h+='<div class="howto"><code>題：</code>題目　<code>對：</code>正確答案（1 個）　<code>錯：</code>錯誤答案（至少 2 個）　<code>條：</code>答案在第幾條。<br>出題時題目和選項的順序會自動打亂。</div>';
   h+='<div id="ed-sign" class="gmsign"></div></div><div id="ed-prev" class="prev"></div></div>';
+  h+='<div class="sb-space"></div><div id="savebar" class="savebar" role="region" aria-label="儲存"></div>';
   return h;
 }
 function paintPreview(){
@@ -730,15 +832,7 @@ function paintPreview(){
   if(!ck.e.length&&!ck.w.length) h+='<li class="g"><span>✓</span><span>'+cl.length+' 條、'+qz.length+' 題，格式都正確。</span></li>';
   else if(!bad) h+='<li class="g"><span>✓</span><span>可以發布。黃色是建議，不擋發布。</span></li>';
   h+= signed ? '<li class="g"><span>✓</span><span>總經理已核定（'+fmt(e.sigAt)+'）。</span></li>' : '<li class="e"><span>✕</span><span>總經理還沒核定。到編輯區最下面按「確定簽核」後才能發布。</span></li>';
-  h+='</ul><div class="row">';
-  if(raw && raw.status==="published"){
-    h+='<button id="btn-minor" class="btn sm" data-act="edSave" data-mode="minor"'+(bad?" disabled":"")+'>更新（改錯字、標點，不用重簽）</button>';
-    h+='<button id="btn-major" class="btn ghost sm" data-act="edSave" data-mode="major"'+(bad||!signed||!e.sigNew?" disabled":"")+'>改版（規則有變，全員重簽）</button>';
-  } else {
-    h+='<button id="btn-pub" class="btn sm" data-act="edSave" data-mode="publish"'+(bad||!signed?" disabled":"")+'>發布</button>';
-    h+='<button id="btn-draft" class="btn ghost sm" data-act="edSave" data-mode="draft">存成草稿</button>';
-  }
-  h+='</div>'+(raw&&raw.status==="published"?'<div class="small muted">按「改版」前，要請總經理重新簽核。</div>':'')+'</div>';
+  h+='</ul><div class="small muted">儲存和發布的按鈕固定在畫面最下面。</div></div>';
   h+='<div class="small muted">同仁會看到的條文（一次只看一條）</div>';
   cl.forEach(function(c,i){ h+=clauseHtml(c,i,false); });
   h+='<div class="small muted">同仁會答的題目</div><div class="panel">';
@@ -751,6 +845,27 @@ function paintPreview(){
   if(!qz.length) h+='<span class="muted">還沒有題目。</span>';
   h+='</div>';
   box.innerHTML=h;
+  paintBar(ck, signed);
+}
+function paintBar(ck, signed){
+  var bar=document.getElementById("savebar"); if(!bar||!S.ed) return;
+  var e=S.ed, raw=e.id?rawAnn(e.id):null, pub=!!(raw && raw.status==="published"), bad=ck.e.length>0;
+  var st = e.dirty ? '<b class="dirty">● 有修改，還沒儲存</b>' : raw ? '<b class="clean">✓ 內容和已儲存的一樣</b>'+(raw.updatedAt?'<span class="why">上次儲存：'+fmt(raw.updatedAt)+'</span>':'') : '<b class="dirty">● 新公告，還沒儲存</b>';
+  var why="";
+  if(bad) why='有 '+ck.e.length+' 個紅字要先修正，才能'+(pub?"更新":"發布")+'。<button id="btn-seecheck" data-act="seeCheck">看檢查結果</button>';
+  else if(!pub && !signed) why='要發布，先請總經理簽核（在編輯區最下面）。<button id="btn-seesign" data-act="seeSign">去簽核</button>';
+  else if(!pub) why= e.dirty ? '總經理已簽核。按「發布」同仁才看得到。' : '按「發布」同仁才看得到。';
+  else if(e.dirty) why='改錯字按「更新」；規則有變按「改版」（要請總經理重新簽核）。';
+  var h='<div class="sb-in"><div class="sb-st">'+st+(why?'<span class="why">'+why+'</span>':'')+'</div><div class="row">';
+  if(pub){
+    h+='<button id="btn-major" class="btn ghost" data-act="edSave" data-mode="major"'+(bad||!signed||!e.sigNew?" disabled":"")+'>改版（全員重簽）</button>';
+    h+='<button id="btn-minor" class="btn" data-act="edSave" data-mode="minor"'+(bad?" disabled":"")+'>更新（不用重簽）</button>';
+  } else {
+    h+='<button id="btn-draft" class="btn ghost" data-act="edSave" data-mode="draft">存成草稿</button>';
+    h+='<button id="btn-pub" class="btn" data-act="edSave" data-mode="publish"'+(bad||!signed?" disabled":"")+'>發布</button>';
+  }
+  bar.innerHTML=h+'</div></div>';
+  var tb=document.getElementById("tab-edit"); if(tb) tb.classList.toggle("dirty", !!e.dirty);
 }
 function pinHash(p){ var x=5381, t="ym:"+p; for(var i=0;i<t.length;i++){ x=((x<<5)+x+t.charCodeAt(i))|0; } return "h"+(x>>>0).toString(36); }
 function paintSign(msg){
@@ -787,7 +902,9 @@ function edSave(mode){
   else if(mode==="major"){ raw.version++; S.msg="已改版為第 "+raw.version+" 版。所有人需要重新閱讀並簽收。"; }
   else if(mode==="minor"){ S.msg="已更新內容。之前的簽收紀錄維持有效。"; }
   else { S.msg="已存成草稿。同仁還看不到，發布後才會出現。"; }
-  save(); if(LIVE) syncSave("saveAnn",{ann:JSON.parse(JSON.stringify(raw))});
+  e.dirty=false;
+  save();
+  if(LIVE){ var okm="✓ "+S.msg+"（已存到試算表）"; S.msg=""; syncSave("saveAnn",{ann:JSON.parse(JSON.stringify(raw))}, bakClear, okm); } else bakClear();
   S.adminTab="log"; render();
 }
 
@@ -798,8 +915,8 @@ var FLOW=[
   {n:2,ph:0,who:["gm"],t:"定稿公告原文",s:"原文寫完，用字確認好。",d:"不知道怎麼寫，到「起草公告」複製訪談指令貼給 AI，用語音回答它的問題，它會幫忙寫出原文。後面的條文和題目都以這份原文為準。原文還在改，就先不要往下做。",to:"原文交給營運管理部"},
   {n:3,ph:1,who:["hq"],t:"拆成一條一條",s:"一條只講一件事，每條最多 4 個重點。",d:"每個重點前面放符號，最重要的幾個字用【】框起來。原句貼在「原文：」。"},
   {n:4,ph:1,who:["hq"],t:"出 10 題",s:"每條至少 1 題，用門市真的會遇到的情境來問。",d:"每題 1 個正確答案、2 個錯誤答案，並寫明答案在第幾條。"},
-  {n:5,ph:1,who:["hq"],t:"看預覽，用手機走一遍",q:"右邊「檢查」沒有紅字，自己走一遍也讀得順嗎？",d:"存成草稿後，自己從閱讀、問答走到簽名。",yes:"沒問題：送總經理核定",no:["有紅字，或讀起來不順","修改條文或題目","↩ 回到第 3 步"]},
-  {n:6,ph:2,who:["gm"],t:"總經理核定、發布",q:"條文和題目都可以發布了嗎？",d:"公告以營運管理部的名義發布，總經理只做核定。位置在「編輯公告」最下面。",yes:"可以：輸入核定密碼，按「確定簽核」，再按「發布」",no:["還要修改","退回營運管理部","↩ 回到第 3 步"]},
+  {n:5,ph:1,who:["hq"],t:"看預覽，用手機走一遍",q:"「檢查」沒有紅字，自己走一遍也讀得順嗎？",d:"按畫面最下面的「存成草稿」。存好後，自己從閱讀、問答走到簽名。",yes:"沒問題：送總經理核定",no:["有紅字，或讀起來不順","修改條文或題目","↩ 回到第 3 步"]},
+  {n:6,ph:2,who:["gm"],t:"總經理核定、發布",q:"條文和題目都可以發布了嗎？",d:"公告以營運管理部的名義發布，總經理只做核定。位置在「編輯公告」最下面。",yes:"可以：輸入核定密碼，按「確定簽核」，再按畫面最下面的「發布」",no:["還要修改","退回營運管理部","↩ 回到第 3 步"]},
   {n:7,ph:2,who:["hq"],t:"LINE 發公告全圖、連結和截止日",s:"寫明哪一天前要簽完。",d:"到「簽收狀況」按「生成公告全圖」，把有總經理核定簽名的圖和連結貼到群組。不用再請大家回「已了解」。"},
   {n:8,ph:3,who:["sv"],t:"主管依序率先簽收",s:"重大公告才有這一步。區督導先簽，各門市的率先簽收人再簽，同仁最後。",d:"誰是率先簽收人，在「主管設定」點選。這一則公告遇到主管休假，到「簽收狀況」的「簽收順序」改指定別人。"},
   {n:9,ph:3,who:["hq","sv"],t:"截止日追蹤",q:"截止日當天，全員都簽完了嗎？",d:"到「簽收狀況」可以直接複製未簽收名單。",yes:"全員簽完",no:["還有人沒簽","把未簽收名單貼到群組提醒；隔天還沒簽，由門市主管或區督導當面處理","↩ 簽完才能結案"]},
@@ -1013,7 +1130,7 @@ function loadFonts(text){
 function loadImg(url){ return new Promise(function(res){ if(!url){ res(null); return; } var im=new Image(); im.onload=function(){ res(im); }; im.onerror=function(){ res(null); }; im.src=url; }); }
 function makePoster(id){
   var raw=rawAnn(id); if(!raw) return;
-  if(!raw.sig){ S.msg="這則公告還沒有總經理核定。請在下面的編輯區最底下按「確定簽核」，再按「更新」後生成全圖。"; openEditor(id); S.adminTab="edit"; render(); return; }
+  if(!raw.sig){ S.msg="這則公告還沒有總經理核定。請在下面的編輯區最底下按「確定簽核」，再按畫面最下面的「更新」，就可以生成全圖。"; openEditor(id); S.adminTab="edit"; render(); return; }
   var a=compile(raw); S.poster={id:id, url:null}; S.adminAnn=id; S.adminTab="status"; render();
   var all="倚盟電訊有限公司發布單位核定總經理公告號第版人簽核同仁請到公告簽收逐條閱讀、作答並簽名。0123456789/"+a.level+a.title+a.by+raw.src;
   loadFonts(all).then(function(){ return loadImg(raw.sig); }).then(function(img){
@@ -1113,12 +1230,12 @@ function paintSync(state, msg){
   var el=document.getElementById("syncbar"); if(!el) return;
   el.hidden=false;
   if(state==="busy"){ el.className="note syncbar"; el.textContent="儲存中…"; }
-  else if(state==="ok"){ el.className="note syncbar ok"; el.textContent="已存到試算表。"; setTimeout(function(){ if(!S.sync) el.hidden=true; }, 2500); }
+  else if(state==="ok"){ el.className="note syncbar ok"; el.textContent=msg||"已存到試算表。"; clearTimeout(S.syncT); S.syncT=setTimeout(function(){ if(!S.sync) el.hidden=true; }, msg?8000:2500); }
   else { el.className="note syncbar bad"; el.innerHTML='沒有存成功：'+esc(msg)+'　<button class="btn sm" data-act="syncRetry">再試一次</button>'; }
 }
-function syncSave(action, payload){
-  S.sync={action:action, payload:payload}; paintSync("busy");
-  api(action, payload).then(function(){ S.sync=null; paintSync("ok"); }, function(e){ paintSync("err", errText(e)); });
+function syncSave(action, payload, onOk, okMsg){
+  S.sync={action:action, payload:payload, onOk:onOk, okMsg:okMsg}; paintSync("busy");
+  api(action, payload).then(function(){ S.sync=null; paintSync("ok", okMsg); if(onOk) onOk(); }, function(e){ paintSync("err", errText(e)); });
 }
 
 /* ---------- 簽名板 ---------- */
@@ -1130,7 +1247,7 @@ function mountSig(id, onInk){
   ctx.lineWidth=2.6; ctx.lineCap="round"; ctx.lineJoin="round";
   ctx.strokeStyle=getComputedStyle(document.documentElement).getPropertyValue("--sign-ink").trim()||"#14251F";
   var down=false, len=0, lx=0, ly=0, fired=false, pid0=null, pen=false;
-  function pos(e){ var b=cv.getBoundingClientRect(); return {x:e.clientX-b.left, y:e.clientY-b.top}; }
+  function pos(e){ var b=cv.getBoundingClientRect(), kx=b.width?(cv.width/dpr)/b.width:1, ky=b.height?(cv.height/dpr)/b.height:1; return {x:(e.clientX-b.left)*kx, y:(e.clientY-b.top)*ky}; }
   /* 平板上簽名時，不讓瀏覽器跳出「複製／貼上／選取」的選單，也不讓它把筆劃當成選字或捲動 */
   var box=cv.parentNode;
   ["contextmenu","selectstart","dragstart"].forEach(function(t){ box.addEventListener(t,function(e){ e.preventDefault(); }); });
@@ -1181,9 +1298,10 @@ function begin(annId){
   S.view="read"; render();
 }
 
+window.addEventListener("beforeunload",function(e){ if((S.ed && S.ed.dirty) || S.sync){ e.preventDefault(); e.returnValue=""; } });
 document.addEventListener("input",function(e){
   var f=e.target.getAttribute && e.target.getAttribute("data-ed");
-  if(f && S.ed){ S.ed[f]=e.target.value; paintPreview(); }
+  if(f && S.ed){ S.ed[f]=e.target.value; touch(); paintPreview(); }
   var rk=e.target.getAttribute && e.target.getAttribute("data-rec");
   if(rk){ if(!S.rec) S.rec={title:"",text:""}; S.rec[rk]=e.target.value; }
 });
@@ -1214,7 +1332,7 @@ document.addEventListener("click",function(e){
   else if(act==="pwGo"){ S.pw=String((document.getElementById("gate-pw")||{}).value||""); if(!S.pw){ S.adminErr="請輸入後台密碼。"; render(); return; } loadAdmin(); }
   else if(act==="reloadAdmin"){ loadAdmin(); }
   else if(act==="refreshHome"){ if(LIVE) doBoot(); else render(); }
-  else if(act==="syncRetry"){ if(S.sync) syncSave(S.sync.action, S.sync.payload); }
+  else if(act==="syncRetry"){ if(S.sync) syncSave(S.sync.action, S.sync.payload, S.sync.onOk, S.sync.okMsg); }
   else if(act==="pickStore"){ S.pickStore=t.getAttribute("data-id"); S.pickName=null; S.noScroll=true; render(); }
   else if(act==="pickName"){ S.pickName=t.getAttribute("data-name"); S.noScroll=true; render(); }
   else if(act==="confirmMe"){ if(S.pickStore&&S.pickName){ mem.me={store:S.pickStore, name:S.pickName}; save(); if(LIVE){ doBoot(); return; } render(); } }
@@ -1264,23 +1382,36 @@ document.addEventListener("click",function(e){
   }
   else if(act==="tab"){ S.adminTab=t.getAttribute("data-tab"); S.copyText=null; render(); }
   else if(act==="seeAnn"){ S.adminAnn=t.getAttribute("data-id"); S.adminTab="status"; render(); }
-  else if(act==="newAnn"){ openEditor(null); S.adminTab="edit"; render(); }
-  else if(act==="editAnn"){ openEditor(t.getAttribute("data-id")); S.adminTab="edit"; render(); }
+  else if(act==="newAnn"){ guard(function(){ openEditor(null); S.adminTab="edit"; render(); }); }
+  else if(act==="editAnn"){
+    var eid=t.getAttribute("data-id");
+    if(S.ed && S.ed.dirty && S.ed.id===eid){ S.adminTab="edit"; render(); }
+    else guard(function(){ openEditor(eid); S.adminTab="edit"; render(); });
+  }
+  else if(act==="askBack"){ S.ask=null; S.adminTab="edit"; render(); }
+  else if(act==="askGo"){ var af=S.ask; S.ask=null; if(S.ed) S.ed.dirty=false; bakClear(); if(af) af(); }
+  else if(act==="bakUse"){
+    var bk=bakLive(); if(!bk){ render(); return; }
+    openEditor(bk.id && rawAnn(bk.id) ? bk.id : null); EDF.forEach(function(k){ S.ed[k]=bk[k]==null?"":bk[k]; }); S.ed.dirty=true; render();
+  }
+  else if(act==="bakDrop"){ bakClear(); render(); }
+  else if(act==="seeCheck"){ var sc=document.getElementById("ed-prev"); if(sc) sc.scrollIntoView({behavior:"smooth", block:"start"}); }
+  else if(act==="seeSign"){ var sg=document.getElementById("ed-sign"); if(sg) sg.scrollIntoView({behavior:"smooth", block:"center"}); }
   else if(act==="ins"){
     ta=document.getElementById("ed-src"); if(!ta) return;
     var s=t.getAttribute("data-s"), a0=ta.selectionStart, b0=ta.selectionEnd, v=ta.value;
     if(s==="【】"){ ta.value=v.slice(0,a0)+"【"+v.slice(a0,b0)+"】"+v.slice(b0); ta.selectionStart=a0+1; ta.selectionEnd=b0+1; }
     else { ta.value=v.slice(0,a0)+s+v.slice(a0); ta.selectionStart=ta.selectionEnd=a0+s.length; }
-    S.ed.src=ta.value; ta.focus(); paintPreview();
+    S.ed.src=ta.value; touch(); ta.focus(); paintPreview();
   }
   else if(act==="insBlock"){
     var which=t.getAttribute("data-t"); ta=document.getElementById("ed-"+which); if(!ta) return;
     var n = which==="src" ? parseClauses(S.ed.src).length : 0;
     ta.value = ta.value.replace(/\s+$/,"") + (which==="src" ? "\n\n條：標籤｜標題\n• \n原文：" : "\n\n題：\n對：\n錯：\n錯：\n條：");
-    S.ed[which]=ta.value; ta.focus(); ta.selectionStart=ta.selectionEnd=ta.value.length; ta.scrollTop=ta.scrollHeight; paintPreview();
+    S.ed[which]=ta.value; ta.focus(); ta.selectionStart=ta.selectionEnd=ta.value.length; ta.scrollTop=ta.scrollHeight; touch(); paintPreview();
   }
   else if(act==="gmClear"){ paintSign(); }
-  else if(act==="gmResign"){ S.ed.resign=true; paintSign(); paintPreview(); }
+  else if(act==="gmResign"){ S.ed.resign=true; S.ed.dirty=true; paintSign(); paintPreview(); }
   else if(act==="gmChange"){ S.ed.changeSig=true; paintSign(); }
   else if(act==="gmCancel"){ S.ed.changeSig=false; paintSign(); }
   else if(act==="gmSave"){
@@ -1302,11 +1433,11 @@ document.addEventListener("click",function(e){
     if(!mem.gm) return;
     if(LIVE){
       t.disabled=true; t.textContent="核對中…";
-      api("gmApprove",{pin:pin1}).then(function(j){ S.ed.sig=j.sig; S.ed.sigAt=j.at||Date.now(); S.ed.sigNew=true; S.ed.resign=false; paintSign(); paintPreview(); }, function(e){ paintSign(errText(e)); });
+      api("gmApprove",{pin:pin1}).then(function(j){ S.ed.sig=j.sig; S.ed.sigAt=j.at||Date.now(); S.ed.sigNew=true; S.ed.resign=false; S.ed.dirty=true; paintSign(); paintPreview(); }, function(e){ paintSign(errText(e)); });
       return;
     }
     if(pinHash(pin1)!==mem.gm.pin){ paintSign("核定密碼不正確。"); return; }
-    S.ed.sig=mem.gm.sig; S.ed.sigAt=Date.now(); S.ed.sigNew=true; S.ed.resign=false; paintSign(); paintPreview();
+    S.ed.sig=mem.gm.sig; S.ed.sigAt=Date.now(); S.ed.sigNew=true; S.ed.resign=false; S.ed.dirty=true; paintSign(); paintPreview();
   }
   else if(act==="poster"){ makePoster(t.getAttribute("data-id")); }
   else if(act==="closePoster"){ S.poster=null; render(); }
@@ -1339,8 +1470,10 @@ document.addEventListener("click",function(e){
     p3.then(function(){ render(); }, function(){ S.copyMsg="這個畫面不能自動複製，請長按下面的文字全選後複製。"; render(); var o=document.getElementById("copyout"); if(o){ o.focus(); o.select(); } });
   }
   else if(act==="drToEdit"){
-    openEditor(null); S.ed.src=""; S.ed.qsrc=""; S.copyText=null; S.adminTab="edit";
-    S.msg="把 AI 給的「條文區」貼到條文，「題目區」貼到題目。"; render(); window.scrollTo(0,0);
+    guard(function(){
+      openEditor(null); S.ed.src=""; S.ed.qsrc=""; S.copyText=null; S.adminTab="edit";
+      S.msg="把 AI 給的「條文區」貼到條文，「題目區」貼到題目。"; render(); window.scrollTo(0,0);
+    });
   }
   else if(act==="recSave"){
     var rr=S.rec||{title:"",text:""}, rt=String(rr.text||"").trim();
