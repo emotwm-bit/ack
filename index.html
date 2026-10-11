@@ -522,16 +522,21 @@ function fmtDate(s){ var a=String(s||"").split("-"); return a.length===3 ? a[0]+
 function today(){ var d=new Date(); function p(n){return (n<10?"0":"")+n;} return d.getFullYear()+"-"+p(d.getMonth()+1)+"-"+p(d.getDate()); }
 function shuffle(a){ a=a.slice(); for(var i=a.length-1;i>0;i--){ var j=Math.floor(Math.random()*(i+1)); var t=a[i];a[i]=a[j];a[j]=t; } return a; }
 function dwell(c){ var n=(c.note||"").length+(c.route||[]).join("").length; c.items.forEach(function(it){ n+=plain(it.t).length; }); return Math.min(9, Math.max(4, Math.round(n/9))); }
-/* ---------- 簽收順序：區督導率先簽收 → 各門市的率先簽收人 → 同仁（只有重大公告） ---------- */
+/* ---------- 簽署方式：主管優先（區督導 → 各門市的率先簽收人 → 同仁）或全體皆可。每則公告自己選 ----------
+   營運管理部（門市代號 hq）不受順序限制，發布後就可以簽 */
 var TOP_STORE="sv";
+function isFree(sid){ return String(sid||"").toLowerCase()==="hq"; }
 function defaultChain(){
-  var c={topStore:TOP_STORE, top:"", leads:{}};
-  STORES.forEach(function(s){ if(s.id===TOP_STORE) c.top = s.lead || s.staff[0] || ""; else c.leads[s.id] = s.lead || ""; });
+  var c={mode:"lead", topStore:TOP_STORE, top:"", leads:{}};
+  STORES.forEach(function(s){ if(s.id===TOP_STORE) c.top = s.lead || s.staff[0] || ""; else if(!isFree(s.id)) c.leads[s.id] = s.lead || ""; });
   return c;
 }
+function hasOrder(raw){ return !!(raw && raw.chain && raw.chain.mode!=="all"); }
+function modeOf(raw){ return !raw ? "lead" : raw.chain ? (raw.chain.mode==="all"?"all":"lead") : (raw.status!=="published" && raw.level==="重大公告" ? "lead" : "all"); }
+var MODE_NAME={lead:"主管優先", all:"全體皆可"};
 function doneAt(a, sid, name){ if(!name) return 0; var r=rec(a.id,pid(sid,name)); return isDone(a,r) ? (r.finishedAt||1) : 0; }
 function chainState(a){
-  if(!a.chain) return null;
+  if(!hasOrder(a)) return null;
   if(LIVE && S.view!=="admin"){ var sv=(S.chains||{})[a.id]; if(sv) return sv; }
   var c=a.chain, ts=c.topStore||TOP_STORE, out={topStore:ts, top:{name:c.top||"", at:doneAt(a,ts,c.top||"")}, leads:{}};
   Object.keys(c.leads||{}).forEach(function(sid){ var nm=c.leads[sid]||""; out.leads[sid]={name:nm, at:doneAt(a,sid,nm)}; });
@@ -540,12 +545,14 @@ function chainState(a){
 /* blocked：0 可以開始、1 等區督導、2 等本門市的率先簽收人 */
 function gateFor(a, me){
   var st=chainState(a); if(!st || !me) return null;
+  if(isFree(me.store)) return {st:st, role:"free", lead:{name:"",at:0}, blocked:0};
   var isTop = me.store===st.topStore && me.name===st.top.name, l=st.leads[me.store]||{name:"",at:0}, isLead = !!l.name && l.name===me.name;
   var blocked = isTop ? 0 : (st.top.name && !st.top.at) ? 1 : (isLead || !l.name || l.at) ? 0 : 2;
   return {st:st, role:isTop?"top":isLead?"lead":"staff", lead:l, blocked:blocked};
 }
 function chainLines(g){
   var st=g.st, h="";
+  if(g.role==="free") return "";
   if(g.role==="top") h+='<div class="me"><span class="ic">★</span><span>你是這則公告的<b>率先簽收人</b>。你簽完，各門市才能開始。</span></div>';
   else if(st.top.name) h+='<div class="'+(st.top.at?"ok":"wait")+'"><span class="ic">'+(st.top.at?"✓":"…")+'</span><span>區督導 <b>'+esc(st.top.name)+'</b>　'+(st.top.at?'已於 '+fmt(st.top.at)+' 率先簽收':'尚未簽收')+'</span></div>';
   if(g.role==="lead") h+='<div class="me"><span class="ic">★</span><span>你是本門市的<b>率先簽收人</b>。你簽完，本門市同仁才能開始。</span></div>';
@@ -585,8 +592,8 @@ function stepsHtml(a, phase){
 function vHome(){
   var h;
   if(!mem.me){
-    h='<div class="narrow"><div><div class="eyebrow">簽收人</div><h1>請選擇你的門市和姓名</h1></div>';
-    h+='<div class="panel"><b>1　門市</b><div class="pick">';
+    h='<div class="narrow"><div><div class="eyebrow">簽收人</div><h1>請選擇你的門市或部門，和姓名</h1></div>';
+    h+='<div class="panel"><b>1　門市或部門</b><div class="pick">';
     STORES.forEach(function(s){ h+='<button id="st-'+s.id+'" data-act="pickStore" data-id="'+s.id+'" aria-pressed="'+(S.pickStore===s.id)+'">'+esc(s.name)+'</button>'; });
     h+='</div></div>';
     if(S.pickStore){
@@ -674,7 +681,7 @@ function vSign(){
   var a=S.A, me=mem.me, st=storeOf(me.store);
   var h='<div class="narrow">'+stepsHtml(a,"sign");
   h+='<div class="stepline"><span>'+a.quiz.length+' 題全部答對</span><span>最後一步：簽名</span></div>';
-  var g=gateFor(a,me), boss = g && g.role!=="staff";
+  var g=gateFor(a,me), boss = !!g && (g.role==="top" || g.role==="lead");
   h+='<div class="panel"><h2>'+(boss?"主管簽收確認":"簽收確認")+'</h2>';
   if(g && !boss) h+=chainLines(g);
   h+='<p class="declare">本人 <b>'+esc(me.name)+'</b>（'+esc(st.name)+'）已逐條閱讀「'+esc(a.title)+'」共 '+a.clauses.length+' 條，並通過 '+a.quiz.length+' 題問答，了解內容'+(boss?'，並<b>承諾帶領同仁確實執行</b>。':'並願意遵守。')+'</p>';
@@ -696,7 +703,7 @@ function vReview(){
 function vDone(){
   var a=S.A, me=mem.me, st=storeOf(me.store), r=rec(a.id,pid(me.store,me.name));
   var h='<div class="narrow"><div class="panel receipt"><div class="stamp">已簽收</div><div class="eyebrow">簽收單</div><h2 style="padding-right:110px">'+esc(a.title)+'</h2>';
-  h+='<dl><dt>姓名</dt><dd>'+esc(me.name)+'</dd><dt>店別</dt><dd>'+esc(st.name)+'</dd><dt>公告</dt><dd>'+fmtDate(a.date)+' 發布，第 '+a.version+' 版</dd><dt>簽收時間</dt><dd>'+fmt(r.finishedAt)+'</dd><dt>作答次數</dt><dd>第 '+r.attempts+' 次全對</dd></dl>';
+  h+='<dl><dt>姓名</dt><dd>'+esc(me.name)+'</dd><dt>單位</dt><dd>'+esc(st.name)+'</dd><dt>公告</dt><dd>'+fmtDate(a.date)+' 發布，第 '+a.version+' 版</dd><dt>簽收時間</dt><dd>'+fmt(r.finishedAt)+'</dd><dt>作答次數</dt><dd>第 '+r.attempts+' 次全對</dd></dl>';
   if(r.sig) h+='<img class="sigimg" alt="簽名" src="'+r.sig+'">';
   h+='</div><button id="btn-home" class="btn ghost" data-act="nav" data-to="home">回到公告列表</button></div>';
   return h;
@@ -714,15 +721,16 @@ function unreadText(a){
   return lines.join("\n");
 }
 var TABS=[["status","簽收狀況"],["log","公告紀錄"],["draft","起草公告"],["edit","編輯公告"],["leads","主管設定"],["sop","發布流程"]];
+function FREE_NOTE(){ var f=STORES.filter(function(s){ return isFree(s.id); }); return f.length ? '<div class="small muted">'+esc(f.map(function(s){ return s.name; }).join("、"))+'不受順序限制，公告一發布就可以簽。</div>' : ''; }
 function vLeads(){
-  var h='<div class="panel" style="max-width:720px"><h2>各門市的率先簽收人</h2><div class="small muted">重大公告發布後，區督導先簽，各門市的率先簽收人再簽，同仁最後。這裡設定的是預設名單，之後新發布的重大公告都照這份名單。已經發布的公告要改，請到「簽收狀況」的「簽收順序」。</div><div class="scroll"><table class="ctab"><thead><tr><th>順序</th><th>單位</th><th>率先簽收人</th></tr></thead><tbody>';
+  var h='<div class="panel" style="max-width:720px"><h2>各門市的率先簽收人</h2><div class="small muted">簽署方式選「主管優先」的公告，區督導先簽，各門市的率先簽收人再簽，同仁最後。這裡設定的是預設名單，之後新發布的公告都照這份名單。已經發布的公告要改，請到「簽收狀況」的「簽收順序」。</div><div class="scroll"><table class="ctab"><thead><tr><th>順序</th><th>單位</th><th>率先簽收人</th></tr></thead><tbody>';
   var row=function(layer, s){
     var opts='<option value="">不指定</option>'; s.staff.forEach(function(nm){ opts+='<option'+(nm===(s.lead||"")?" selected":"")+'>'+esc(nm)+'</option>'; });
     return '<tr><td class="small muted">'+layer+'</td><td>'+esc(s.name)+'</td><td><select id="lead-'+s.id+'" data-chg="lead" data-sid="'+s.id+'" aria-label="'+esc(s.name)+'的率先簽收人">'+opts+'</select></td></tr>';
   };
   STORES.forEach(function(s){ if(s.id===TOP_STORE) h+=row("第一層", s); });
-  STORES.forEach(function(s){ if(s.id!==TOP_STORE) h+=row("第二層", s); });
-  h+='</tbody></table></div><div class="small muted">選好就會自動儲存。門市沒有指定人時，那一家店的同仁在區督導簽完後就可以開始。</div></div>';
+  STORES.forEach(function(s){ if(s.id!==TOP_STORE && !isFree(s.id)) h+=row("第二層", s); });
+  h+='</tbody></table></div><div class="small muted">選好就會自動儲存。門市沒有指定人時，那一家店的同仁在區督導簽完後就可以開始。</div>'+FREE_NOTE()+'</div>';
   return h;
 }
 
@@ -748,7 +756,7 @@ function vStatus(){
   h+=posterHtml(a);
   h+='<div class="panel">';
   if(list.length>1){ h+='<label class="f wide">選擇公告<select id="sel-ann" data-chg="adminAnn">'; list.forEach(function(x){ h+='<option value="'+x.id+'"'+(x.id===a.id?" selected":"")+'>'+fmtDate(x.date)+'　'+esc(x.title)+'</option>'; }); h+='</select></label>'; }
-  h+='<div class="ann"><div class="meta"><span class="pill tag">'+esc(a.level)+'</span><span>'+fmtDate(a.date)+' 發布</span><span>公告 '+esc(a.no||"")+' 號</span><span>發布單位：'+esc(a.by)+'</span><span>總經理核定</span><span>第 '+a.version+' 版</span></div><h2>'+esc(a.title)+'</h2></div>';
+  h+='<div class="ann"><div class="meta"><span class="pill tag">'+esc(a.level)+'</span><span>'+fmtDate(a.date)+' 發布</span><span>公告 '+esc(a.no||"")+' 號</span><span>發布單位：'+esc(a.by)+'</span><span>簽署方式：'+MODE_NAME[modeOf(rawAnn(a.id))]+'</span><span>總經理核定</span><span>第 '+a.version+' 版</span></div><h2>'+esc(a.title)+'</h2></div>';
   h+='<div class="sum"><div><div class="small muted">已簽收</div><div class="big">'+done+' <small>/ '+total+' 人</small></div></div><div><div class="small muted">尚未簽收</div><div class="big">'+(total-done)+' <small>人</small></div></div></div>';
   h+='<div class="bar"><i style="width:'+Math.round(done/total*100)+'%"></i></div>';
   h+='<div class="row"><button id="btn-copy" class="btn sm" data-act="copyUnread">複製未簽收名單（貼到 LINE 提醒）</button><button id="btn-poster" class="btn ghost sm" data-act="poster" data-id="'+a.id+'">生成公告全圖</button>'+(LIVE?'<button id="btn-reload" class="btn quiet sm" data-act="reloadAdmin">重新整理</button>':'<button id="btn-demo" class="btn ghost sm" data-act="demo">填入示範資料</button><button id="btn-reset" class="btn quiet sm" data-act="reset">清除全部簽收紀錄</button>')+'</div>';
@@ -765,8 +773,8 @@ function vStatus(){
     h+='<div class="panel"><h2>簽收順序</h2><div class="small muted">區督導先簽，各門市的率先簽收人再簽，同仁最後。主管休假時，在這裡把這一則公告改指定別人，或選「不指定」直接開放。</div><div class="scroll"><table class="ctab"><thead><tr><th>順序</th><th>單位</th><th>率先簽收人</th><th>狀態</th></tr></thead><tbody>';
     var tsS=storeOf(cst.topStore);
     h+=crow("第一層", tsS?tsS.name:"區督導", cst.topStore, cst.top);
-    STORES.forEach(function(s){ if(s.id!==cst.topStore) h+=crow("第二層", s.name, s.id, cst.leads[s.id]||{name:"",at:0}); });
-    h+='</tbody></table></div></div>';
+    STORES.forEach(function(s){ if(s.id!==cst.topStore && !isFree(s.id)) h+=crow("第二層", s.name, s.id, cst.leads[s.id]||{name:"",at:0}); });
+    h+='</tbody></table></div>'+FREE_NOTE()+'</div>';
   }
   h+='<div class="panel"><div class="scroll"><table class="rtab"><thead><tr><th>姓名</th><th>狀態</th><th>簽收時間</th><th>作答次數</th><th>簽名</th></tr></thead><tbody>';
   STORES.forEach(function(s){
@@ -788,7 +796,7 @@ function vLog(){
   var h='<div class="panel"><div class="row"><button id="btn-new" class="btn sm" data-act="newAnn">新增公告</button></div><div class="scroll"><table class="ltab"><thead><tr><th>發布日期</th><th>公告</th><th>狀態</th><th>發布單位</th><th>內容</th><th>簽收進度</th><th></th></tr></thead><tbody>';
   mem.anns.forEach(function(raw){
     var a=compile(raw), pub=a.status==="published";
-    h+='<tr><td class="num">'+fmtDate(a.date)+'</td><td><span class="pill tag">'+esc(a.level)+'</span> <span class="small muted">'+esc(a.no||"")+' 號</span><br>'+esc(a.title)+'</td>';
+    h+='<tr><td class="num">'+fmtDate(a.date)+'</td><td><span class="pill tag">'+esc(a.level)+'</span> <span class="small muted">'+esc(a.no||"")+' 號・'+MODE_NAME[modeOf(raw)]+'</span><br>'+esc(a.title)+'</td>';
     h+='<td>'+(pub?'<span class="pill done">已發布</span> <span class="small muted">第 '+a.version+' 版</span>':'<span class="pill draft">草稿</span>')+(raw.updatedAt?'<br><span class="small muted">最後儲存 '+fmt(raw.updatedAt)+'</span>':'')+'</td>';
     h+='<td>'+esc(a.by)+'</td><td class="num">'+a.clauses.length+' 條／'+a.quiz.length+' 題</td><td class="num">'+(pub?countDone(a)+' / '+total:"—")+'</td>';
     h+='<td><div class="row" style="flex-wrap:nowrap"><button id="edit-'+a.id+'" class="btn ghost sm" data-act="editAnn" data-id="'+a.id+'">編輯</button>'+(pub?'<button id="see-'+a.id+'" class="btn quiet sm" data-act="seeAnn" data-id="'+a.id+'">看名單</button><button id="pst-'+a.id+'" class="btn quiet sm" data-act="poster" data-id="'+a.id+'">全圖</button>':'')+'</div></td></tr>';
@@ -801,12 +809,13 @@ function openEditor(id){
   S.ed = r ? {id:r.id, title:r.title, level:r.level, date:r.date, by:r.by, no:r.no||"", src:r.src, qsrc:r.qsrc}
            : {id:null, title:"", level:"重大公告", date:today(), by:"營運管理部", no:nextNo(), src:"條：標籤｜這一條的標題\n✓ 要做的事，【重點字】用括號框起來\n✕ 不可以做的事\n⚠ 違反的後果\n原文：這一條的公告原文", qsrc:"題：用門市會遇到的情境出題？\n對：正確答案\n錯：錯誤答案\n錯：錯誤答案\n條：1"};
   S.ed.sig = r&&r.sig ? r.sig : ""; S.ed.sigAt = r&&r.sigAt ? r.sigAt : 0; S.ed.sigNew=false; S.ed.resign=false; S.ed.changeSig=false; S.ed.dirty=false;
+  S.ed.mode = modeOf(r);
 }
 /* 還沒按儲存的修改，先在這台裝置留一份，重新整理或不小心關掉都拿得回來 */
 var EBK="ym-ack-edbak", EDF=["title","level","date","by","no","src","qsrc"];
 function bakGet(){ try{ return JSON.parse(localStorage.getItem(EBK)||"null"); }catch(_){ return null; } }
 function bakClear(){ try{ localStorage.removeItem(EBK); }catch(_){ } }
-function bakSave(){ var e=S.ed, o={id:e.id||null, at:Date.now()}; EDF.forEach(function(k){ o[k]=e[k]; }); try{ localStorage.setItem(EBK, JSON.stringify(o)); }catch(_){ } }
+function bakSave(){ var e=S.ed, o={id:e.id||null, at:Date.now()}; EDF.forEach(function(k){ o[k]=e[k]; }); o.mode=e.mode; try{ localStorage.setItem(EBK, JSON.stringify(o)); }catch(_){ } }
 function bakLive(){
   var bk=bakGet(); if(!bk || typeof bk.src!=="string") return null;
   var r=bk.id?rawAnn(bk.id):null;
@@ -824,8 +833,10 @@ function vEdit(){
   h+='<div class="row" style="justify-content:space-between;align-items:center"><h2>'+(raw?"編輯公告":"新增公告")+'</h2><button id="btn-new2" class="btn quiet sm" data-act="newAnn">寫一則新的</button></div>';
   h+='<div class="row"><label class="f wide" for="ed-title">公告標題<input type="text" id="ed-title" data-ed="title" value="'+esc(e.title)+'"></label>';
   h+='<label class="f" for="ed-level">等級<select id="ed-level" data-ed="level">'+["重大公告","一般公告"].map(function(v){return '<option'+(v===e.level?" selected":"")+'>'+v+'</option>';}).join("")+'</select></label>';
+  h+='<label class="f" for="ed-mode">簽署方式<select id="ed-mode" data-ed="mode"><option value="lead"'+(e.mode==="lead"?" selected":"")+'>主管優先</option><option value="all"'+(e.mode==="all"?" selected":"")+'>全體皆可</option></select></label>';
   h+='<label class="f" for="ed-date">發布日期<input type="date" id="ed-date" data-ed="date" value="'+esc(e.date)+'"></label>';
   h+='<label class="f" for="ed-by">發布單位<input type="text" id="ed-by" data-ed="by" value="'+esc(e.by)+'"></label><label class="f" for="ed-no">公告編號<input type="text" id="ed-no" data-ed="no" value="'+esc(e.no||"")+'"></label></div>';
+  h+='<div class="howto"><code>主管優先</code>　區督導先簽 → 各門市的率先簽收人 → 同仁。營運管理部不用等，發布後就可以簽。<br><code>全體皆可</code>　發布後大家同時可以簽，沒有先後。</div>';
   h+='<b>條文</b><div class="row ins"><button id="ins-ok" data-act="ins" data-s="✓ ">✓ 要做</button><button id="ins-no" data-act="ins" data-s="✕ ">✕ 不可以</button><button id="ins-warn" data-act="ins" data-s="⚠ ">⚠ 後果</button><button id="ins-dot" data-act="ins" data-s="• ">• 說明</button><button id="ins-hl" data-act="ins" data-s="【】">【重點字】</button><button id="ins-c" data-act="insBlock" data-t="src">＋新的一條</button></div>';
   h+='<textarea id="ed-src" data-ed="src" rows="16" spellcheck="false">'+esc(e.src)+'</textarea>';
   h+='<div class="howto"><code>條：標籤｜標題</code>　開始新的一條。<br>每行一個重點，行首放符號：<code>✓</code> 要做、<code>✕</code> 不可以、<code>⚠</code> 後果、<code>•</code> 說明。<br><code>【 】</code>框起來的字會變成彩色重點。<br><code>途徑：</code>用 → 隔開每一步，會顯示成一條有編號的路線。<br><code>例：</code>放範例，一行寫一個「例：」，會顯示在一個框裡。<br><code>註：</code>放補充說明，會用小字顯示在重點下面。<br><code>原文：</code>放公告原句，同仁點「看公告原文」才展開。</div>';
@@ -909,8 +920,8 @@ function edSave(mode){
   if(!raw){ raw={id:"a"+Date.now(), version:1, status:"draft"}; mem.anns.unshift(raw); e.id=raw.id; }
   raw.title=e.title.trim()||"未命名公告"; raw.level=e.level; raw.date=e.date||today(); raw.by=e.by.trim()||"營運管理部"; raw.no=(e.no||"").trim()||raw.no||nextNo(); raw.src=e.src; raw.qsrc=e.qsrc; raw.updatedAt=Date.now();
   if(e.sig&&!e.resign){ raw.sig=e.sig; raw.sigAt=e.sigAt; }
-  if((mode==="publish"||mode==="major") && raw.level==="重大公告" && !raw.chain) raw.chain=defaultChain();
-  if(raw.level!=="重大公告") raw.chain=null;
+  if(e.mode==="all") raw.chain={mode:"all"};
+  else if(mode==="publish" || mode==="draft" || !hasOrder(raw)) raw.chain=defaultChain();   /* 已發布、原本就是主管優先的，保留那一則指定過的人 */
   if(mode==="publish"){ raw.status="published"; S.msg="已發布「"+raw.title+"」。同仁入口現在看得到這則公告。"; }
   else if(mode==="major"){ raw.version++; S.msg="已改版為第 "+raw.version+" 版。所有人需要重新閱讀並簽收。"; }
   else if(mode==="minor"){ S.msg="已更新內容。之前的簽收紀錄維持有效。"; }
@@ -931,7 +942,7 @@ var FLOW=[
   {n:5,ph:1,who:["hq"],t:"看預覽，用手機走一遍",q:"「檢查」沒有紅字，自己走一遍也讀得順嗎？",d:"按畫面最下面的「存成草稿」。存好後，自己從閱讀、問答走到簽名。",yes:"沒問題：送總經理核定",no:["有紅字，或讀起來不順","修改條文或題目","↩ 回到第 3 步"]},
   {n:6,ph:2,who:["gm"],t:"總經理核定、發布",q:"條文和題目都可以發布了嗎？",d:"公告以營運管理部的名義發布，總經理只做核定。位置在「編輯公告」最下面。",yes:"可以：輸入核定密碼，按「確定簽核」，再按畫面最下面的「發布」",no:["還要修改","退回營運管理部","↩ 回到第 3 步"]},
   {n:7,ph:2,who:["hq"],t:"LINE 發公告全圖、連結和截止日",s:"寫明哪一天前要簽完。",d:"到「簽收狀況」按「生成公告全圖」，把有總經理核定簽名的圖和連結貼到群組。不用再請大家回「已了解」。"},
-  {n:8,ph:3,who:["sv"],t:"主管依序率先簽收",s:"重大公告才有這一步。區督導先簽，各門市的率先簽收人再簽，同仁最後。",d:"誰是率先簽收人，在「主管設定」點選。這一則公告遇到主管休假，到「簽收狀況」的「簽收順序」改指定別人。"},
+  {n:8,ph:3,who:["sv"],t:"主管依序率先簽收",s:"簽署方式選「主管優先」才有這一步。區督導先簽，各門市的率先簽收人再簽，同仁最後。",d:"誰是率先簽收人，在「主管設定」點選。這一則公告遇到主管休假，到「簽收狀況」的「簽收順序」改指定別人。"},
   {n:9,ph:3,who:["hq","sv"],t:"截止日追蹤",q:"截止日當天，全員都簽完了嗎？",d:"到「簽收狀況」可以直接複製未簽收名單。",yes:"全員簽完",no:["還有人沒簽","把未簽收名單貼到群組提醒；隔天還沒簽，由門市主管或區督導當面處理","↩ 簽完才能結案"]},
   {n:10,ph:3,who:["hq"],t:"結案，留存紀錄",s:"紀錄留在後台，之後隨時可以調閱。",d:"之後有人違規，到「簽收狀況」調出他的簽收時間、作答次數和簽名。"}
 ];
@@ -1406,7 +1417,7 @@ document.addEventListener("click",function(e){
   else if(act==="askGo"){ var af=S.ask; S.ask=null; if(S.ed) S.ed.dirty=false; bakClear(); if(af) af(); }
   else if(act==="bakUse"){
     var bk=bakLive(); if(!bk){ render(); return; }
-    openEditor(bk.id && rawAnn(bk.id) ? bk.id : null); EDF.forEach(function(k){ S.ed[k]=bk[k]==null?"":bk[k]; }); S.ed.dirty=true; render();
+    openEditor(bk.id && rawAnn(bk.id) ? bk.id : null); EDF.forEach(function(k){ S.ed[k]=bk[k]==null?"":bk[k]; }); if(bk.mode) S.ed.mode=bk.mode; S.ed.dirty=true; render();
   }
   else if(act==="bakDrop"){ bakClear(); render(); }
   else if(act==="seeCheck"){ var sc=document.getElementById("ed-prev"); if(sc) sc.scrollIntoView({behavior:"smooth", block:"start"}); }
