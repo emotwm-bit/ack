@@ -274,6 +274,15 @@ label.f.wide{flex-basis:100%}
 .fmini{border-left:6px solid var(--c);background:var(--cs);border-radius:8px;padding:8px 10px;font-weight:700;font-size:15px;line-height:1.5;display:flex;flex-direction:column;gap:2px}
 .fmini small{font-weight:700;font-size:12px;color:var(--c)}
 .fkc .fend{align-self:center;margin:0}
+.chain{display:flex;flex-direction:column;gap:6px;font-size:15px;border-top:1px solid var(--line);padding-top:10px}
+.chain div{display:grid;grid-template-columns:24px minmax(0,1fr);gap:8px;align-items:start}
+.chain .ic{width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;margin-top:2px}
+.chain .ok .ic{background:var(--ok-soft);color:var(--ok)}
+.chain .wait .ic{background:var(--warn-soft);color:var(--warn)}
+.chain .me .ic{background:var(--accent);color:var(--accent-ink)}
+.chain .wait b{color:var(--warn)}
+.ctab td{vertical-align:middle}
+.ctab select{max-width:220px}
 .syncbar{position:sticky;top:8px;z-index:5;color:var(--ink);background:var(--surface-2);border:1px solid var(--line)}
 .syncbar.ok{color:var(--ok);background:var(--ok-soft);border-color:transparent}
 .syncbar.bad{color:var(--seal);background:var(--seal-soft);border-color:transparent;font-weight:700}
@@ -333,6 +342,7 @@ function load(){
 function save(){ try{ if(LIVE){ L.me=mem.me; localStorage.setItem(LKEY, JSON.stringify(L)); } else localStorage.setItem(KEY, JSON.stringify(mem)); }catch(e){} }
 load();
 if(LIVE){ STORES=[]; mem={records:{}, me:L.me, anns:[], drafts:[], gm:null, seedRev:999, rec2:1}; }
+else if(mem.leadMap){ STORES.forEach(function(x){ x.lead=mem.leadMap[x.id]||""; }); }
 var SEED_REV=20;
 (function(){ if((mem.seedRev||1)<SEED_REV){ mem.anns.forEach(function(a){ if(a.id==="2026-10-09-cancel"){ a.src=SEED_SRC; a.qsrc=SEED_QSRC; a.title=SEED_TITLE; } }); if(!mem.anns.some(function(a){ return a.id==="2026-10-10-open"; })) mem.anns.push(seed2()); mem.seedRev=SEED_REV; save(); } })();
 (function(){ if(!mem.drafts) mem.drafts=[]; if(!mem.rec2){ mem.drafts.unshift({id:"d-open-1010", at:Date.now(), title:"門市準時開門與全店出勤", text:SEED2_REC}); mem.rec2=1; save(); } })();
@@ -427,6 +437,38 @@ function fmtDate(s){ var a=String(s||"").split("-"); return a.length===3 ? a[0]+
 function today(){ var d=new Date(); function p(n){return (n<10?"0":"")+n;} return d.getFullYear()+"-"+p(d.getMonth()+1)+"-"+p(d.getDate()); }
 function shuffle(a){ a=a.slice(); for(var i=a.length-1;i>0;i--){ var j=Math.floor(Math.random()*(i+1)); var t=a[i];a[i]=a[j];a[j]=t; } return a; }
 function dwell(c){ var n=(c.note||"").length+(c.route||[]).join("").length; c.items.forEach(function(it){ n+=plain(it.t).length; }); return Math.min(9, Math.max(4, Math.round(n/9))); }
+/* ---------- 簽收順序：區督導率先簽收 → 各門市的率先簽收人 → 同仁（只有重大公告） ---------- */
+var TOP_STORE="sv";
+function defaultChain(){
+  var c={topStore:TOP_STORE, top:"", leads:{}};
+  STORES.forEach(function(s){ if(s.id===TOP_STORE) c.top = s.lead || s.staff[0] || ""; else c.leads[s.id] = s.lead || ""; });
+  return c;
+}
+function doneAt(a, sid, name){ if(!name) return 0; var r=rec(a.id,pid(sid,name)); return isDone(a,r) ? (r.finishedAt||1) : 0; }
+function chainState(a){
+  if(!a.chain) return null;
+  if(LIVE && S.view!=="admin"){ var sv=(S.chains||{})[a.id]; if(sv) return sv; }
+  var c=a.chain, ts=c.topStore||TOP_STORE, out={topStore:ts, top:{name:c.top||"", at:doneAt(a,ts,c.top||"")}, leads:{}};
+  Object.keys(c.leads||{}).forEach(function(sid){ var nm=c.leads[sid]||""; out.leads[sid]={name:nm, at:doneAt(a,sid,nm)}; });
+  return out;
+}
+/* blocked：0 可以開始、1 等區督導、2 等本門市的率先簽收人 */
+function gateFor(a, me){
+  var st=chainState(a); if(!st || !me) return null;
+  var isTop = me.store===st.topStore && me.name===st.top.name, l=st.leads[me.store]||{name:"",at:0}, isLead = !!l.name && l.name===me.name;
+  var blocked = isTop ? 0 : (st.top.name && !st.top.at) ? 1 : (isLead || !l.name || l.at) ? 0 : 2;
+  return {st:st, role:isTop?"top":isLead?"lead":"staff", lead:l, blocked:blocked};
+}
+function chainLines(g){
+  var st=g.st, h='<div class="chain">';
+  if(g.role==="top") h+='<div class="me"><span class="ic">★</span><span>你是這則公告的<b>率先簽收人</b>。你簽完，各門市才能開始。</span></div>';
+  else if(st.top.name) h+='<div class="'+(st.top.at?"ok":"wait")+'"><span class="ic">'+(st.top.at?"✓":"…")+'</span><span>區督導 <b>'+esc(st.top.name)+'</b>　'+(st.top.at?'已於 '+fmt(st.top.at)+' 率先簽收':'尚未簽收')+'</span></div>';
+  if(g.role==="lead") h+='<div class="me"><span class="ic">★</span><span>你是本門市的<b>率先簽收人</b>。你簽完，本門市同仁才能開始。</span></div>';
+  else if(g.role==="staff" && g.lead.name) h+='<div class="'+(g.lead.at?"ok":"wait")+'"><span class="ic">'+(g.lead.at?"✓":"…")+'</span><span>本門市主管 <b>'+esc(g.lead.name)+'</b>　'+(g.lead.at?'已於 '+fmt(g.lead.at)+' 簽收':'尚未簽收')+'</span></div>';
+  return h+'</div>';
+}
+var GATE_TEXT=["","等區督導簽收後才能開始","等本門市主管簽收後才能開始"];
+
 var ICON = {ok:"✓", no:"✕", warn:"!", dot:"•"};
 
 function clauseHtml(c, idx, withLaw){
@@ -485,7 +527,10 @@ function vHome(){
     h+='<div class="panel ann"><div class="meta"><span class="pill tag">'+esc(a.level)+'</span><span>'+fmtDate(a.date)+' 發布</span>'+pill+'</div>';
     h+='<h2>'+esc(a.title)+'</h2>';
     h+='<div class="small muted">共 '+a.clauses.length+' 條，讀完回答 '+a.quiz.length+' 題，全對後簽名。大約 5 分鐘。</div>';
+    var g=gateFor(a,me);
+    if(g) h+=chainLines(g);
     if(done) h+='<button id="open-'+a.id+'" class="btn ghost" data-act="receipt" data-id="'+a.id+'">查看簽收單</button>';
+    else if(g && g.blocked) h+='<button id="open-'+a.id+'" class="btn" disabled>'+GATE_TEXT[g.blocked]+'</button><button id="refresh-'+a.id+'" class="btn quiet sm" data-act="refreshHome" style="align-self:flex-start">重新整理</button>';
     else h+='<button id="open-'+a.id+'" class="btn" data-act="start" data-id="'+a.id+'">'+(r&&!redo?"繼續閱讀":"開始閱讀")+'</button>';
     h+='</div>';
   });
@@ -542,8 +587,10 @@ function vSign(){
   var a=S.A, me=mem.me, st=storeOf(me.store);
   var h='<div class="narrow">'+stepsHtml(a,"sign");
   h+='<div class="stepline"><span>'+a.quiz.length+' 題全部答對</span><span>最後一步：簽名</span></div>';
-  h+='<div class="panel"><h2>簽收確認</h2>';
-  h+='<p class="declare">本人 <b>'+esc(me.name)+'</b>（'+esc(st.name)+'）已逐條閱讀「'+esc(a.title)+'」共 '+a.clauses.length+' 條，並通過 '+a.quiz.length+' 題問答，了解內容並願意遵守。</p>';
+  var g=gateFor(a,me), boss = g && g.role!=="staff";
+  h+='<div class="panel"><h2>'+(boss?"主管簽收確認":"簽收確認")+'</h2>';
+  if(g && !boss) h+=chainLines(g);
+  h+='<p class="declare">本人 <b>'+esc(me.name)+'</b>（'+esc(st.name)+'）已逐條閱讀「'+esc(a.title)+'」共 '+a.clauses.length+' 條，並通過 '+a.quiz.length+' 題問答，了解內容'+(boss?'，並<b>承諾帶領同仁確實執行</b>。':'並願意遵守。')+'</p>';
   h+='<div class="signbox"><canvas id="sig" aria-label="簽名區"></canvas><div class="hint" id="sig-hint">請用觸控筆或手指在這裡簽名</div></div>';
   h+='<div class="row"><button id="btn-clear" class="btn quiet" data-act="clearSig">清除重簽</button><button id="btn-sign" class="btn grow" data-act="sign" disabled>確認簽收</button></div><div id="sign-msg" class="small" style="color:var(--seal);font-weight:700" hidden></div></div></div>';
   return h;
@@ -568,7 +615,18 @@ function unreadText(a){
   lines.push("請今天內完成閱讀與簽收。");
   return lines.join("\n");
 }
-var TABS=[["status","簽收狀況"],["log","公告紀錄"],["draft","起草公告"],["edit","編輯公告"],["sop","發布流程"]];
+var TABS=[["status","簽收狀況"],["log","公告紀錄"],["draft","起草公告"],["edit","編輯公告"],["leads","主管設定"],["sop","發布流程"]];
+function vLeads(){
+  var h='<div class="panel" style="max-width:720px"><h2>各門市的率先簽收人</h2><div class="small muted">重大公告發布後，區督導先簽，各門市的率先簽收人再簽，同仁最後。這裡設定的是預設名單，之後新發布的重大公告都照這份名單。已經發布的公告要改，請到「簽收狀況」的「簽收順序」。</div><div class="scroll"><table class="ctab"><thead><tr><th>順序</th><th>單位</th><th>率先簽收人</th></tr></thead><tbody>';
+  var row=function(layer, s){
+    var opts='<option value="">不指定</option>'; s.staff.forEach(function(nm){ opts+='<option'+(nm===(s.lead||"")?" selected":"")+'>'+esc(nm)+'</option>'; });
+    return '<tr><td class="small muted">'+layer+'</td><td>'+esc(s.name)+'</td><td><select id="lead-'+s.id+'" data-chg="lead" data-sid="'+s.id+'" aria-label="'+esc(s.name)+'的率先簽收人">'+opts+'</select></td></tr>';
+  };
+  STORES.forEach(function(s){ if(s.id===TOP_STORE) h+=row("第一層", s); });
+  STORES.forEach(function(s){ if(s.id!==TOP_STORE) h+=row("第二層", s); });
+  h+='</tbody></table></div><div class="small muted">選好就會自動儲存。門市沒有指定人時，那一家店的同仁在區督導簽完後就可以開始。</div></div>';
+  return h;
+}
 
 function vAdmin(){
   var h='<div><h1 style="margin-bottom:12px">管理後台</h1><div class="tabs" role="tablist">';
@@ -579,6 +637,7 @@ function vAdmin(){
   if(S.adminTab==="edit") return h+vEdit();
   if(S.adminTab==="sop") return h+vSop();
   if(S.adminTab==="draft") return h+vDraft();
+  if(S.adminTab==="leads") return h+vLeads();
   return h+vStatus();
 }
 
@@ -596,6 +655,20 @@ function vStatus(){
   h+='<div class="row"><button id="btn-copy" class="btn sm" data-act="copyUnread">複製未簽收名單（貼到 LINE 提醒）</button><button id="btn-poster" class="btn ghost sm" data-act="poster" data-id="'+a.id+'">生成公告全圖</button>'+(LIVE?'<button id="btn-reload" class="btn quiet sm" data-act="reloadAdmin">重新整理</button>':'<button id="btn-demo" class="btn ghost sm" data-act="demo">填入示範資料</button><button id="btn-reset" class="btn quiet sm" data-act="reset">清除全部簽收紀錄</button>')+'</div>';
   if(S.copyText!==null) h+='<div><div class="small muted">'+esc(S.copyMsg)+'</div><textarea id="copyout" class="copyout" readonly>'+esc(S.copyText)+'</textarea></div>';
   h+='</div>';
+  var cst=chainState(a);
+  if(cst){
+    var crow=function(layer, label, sid, cur){
+      var st1=storeOf(sid), opts='<option value="">不指定（直接開放）</option>';
+      (st1?st1.staff:[]).forEach(function(nm){ opts+='<option'+(nm===cur.name?" selected":"")+'>'+esc(nm)+'</option>'; });
+      var stt = !cur.name ? '<span class="small muted">不指定，直接開放</span>' : cur.at ? '<span class="pill done">已簽收 '+fmt(cur.at)+'</span>' : '<span class="pill todo">尚未簽收</span>';
+      return '<tr><td class="small muted">'+layer+'</td><td>'+esc(label)+'</td><td><select id="chain-'+sid+'" data-chg="chain" data-sid="'+sid+'" aria-label="'+esc(label)+'的率先簽收人">'+opts+'</select></td><td>'+stt+'</td></tr>';
+    };
+    h+='<div class="panel"><h2>簽收順序</h2><div class="small muted">區督導先簽，各門市的率先簽收人再簽，同仁最後。主管休假時，在這裡把這一則公告改指定別人，或選「不指定」直接開放。</div><div class="scroll"><table class="ctab"><thead><tr><th>順序</th><th>單位</th><th>率先簽收人</th><th>狀態</th></tr></thead><tbody>';
+    var tsS=storeOf(cst.topStore);
+    h+=crow("第一層", tsS?tsS.name:"區督導", cst.topStore, cst.top);
+    STORES.forEach(function(s){ if(s.id!==cst.topStore) h+=crow("第二層", s.name, s.id, cst.leads[s.id]||{name:"",at:0}); });
+    h+='</tbody></table></div></div>';
+  }
   h+='<div class="panel"><div class="scroll"><table><thead><tr><th>姓名</th><th>狀態</th><th>簽收時間</th><th>作答次數</th><th>簽名</th></tr></thead><tbody>';
   STORES.forEach(function(s){
     var dn=s.staff.filter(function(nm){ return isDone(a,rec(a.id,pid(s.id,nm))); }).length;
@@ -604,7 +677,8 @@ function vStatus(){
       var r=rec(a.id,pid(s.id,nm)), d=isDone(a,r), old = r&&r.status==="done"&&!d;
       var pill = d ? '<span class="pill done">已簽收</span>' : old ? '<span class="pill todo">改版後未重簽</span>' : r ? '<span class="pill doing">閱讀中</span>' : '<span class="pill todo">尚未閱讀</span>';
       var sig = d ? (r.sig ? '<img class="sigimg" alt="'+esc(nm)+' 的簽名" src="'+r.sig+'">' : (LIVE?'':'<span class="small muted">示範資料</span>')) : "";
-      h+='<tr><td>'+esc(nm)+'</td><td>'+pill+'</td><td class="num">'+(d?fmt(r.finishedAt):"—")+'</td><td class="num">'+(r?r.attempts+" 次":"—")+'</td><td>'+sig+'</td></tr>';
+      var isL = cst && ((s.id===cst.topStore && nm===cst.top.name) || ((cst.leads[s.id]||{}).name===nm));
+      h+='<tr><td>'+esc(nm)+(isL?' <span class="pill tag">率先簽收</span>':'')+'</td><td>'+pill+'</td><td class="num">'+(d?fmt(r.finishedAt):"—")+'</td><td class="num">'+(r?r.attempts+" 次":"—")+'</td><td>'+sig+'</td></tr>';
     });
   });
   return h+'</tbody></table></div></div>';
@@ -707,6 +781,8 @@ function edSave(mode){
   if(!raw){ raw={id:"a"+Date.now(), version:1, status:"draft"}; mem.anns.unshift(raw); e.id=raw.id; }
   raw.title=e.title.trim()||"未命名公告"; raw.level=e.level; raw.date=e.date||today(); raw.by=e.by.trim()||"營運管理部"; raw.no=(e.no||"").trim()||raw.no||nextNo(); raw.src=e.src; raw.qsrc=e.qsrc; raw.updatedAt=Date.now();
   if(e.sig&&!e.resign){ raw.sig=e.sig; raw.sigAt=e.sigAt; }
+  if((mode==="publish"||mode==="major") && raw.level==="重大公告" && !raw.chain) raw.chain=defaultChain();
+  if(raw.level!=="重大公告") raw.chain=null;
   if(mode==="publish"){ raw.status="published"; S.msg="已發布「"+raw.title+"」。同仁入口現在看得到這則公告。"; }
   else if(mode==="major"){ raw.version++; S.msg="已改版為第 "+raw.version+" 版。所有人需要重新閱讀並簽收。"; }
   else if(mode==="minor"){ S.msg="已更新內容。之前的簽收紀錄維持有效。"; }
@@ -725,8 +801,9 @@ var FLOW=[
   {n:5,ph:1,who:["hq"],t:"看預覽，用手機走一遍",q:"右邊「檢查」沒有紅字，自己走一遍也讀得順嗎？",d:"存成草稿後，自己從閱讀、問答走到簽名。",yes:"沒問題：送總經理核定",no:["有紅字，或讀起來不順","修改條文或題目","↩ 回到第 3 步"]},
   {n:6,ph:2,who:["gm"],t:"總經理核定、發布",q:"條文和題目都可以發布了嗎？",d:"公告以營運管理部的名義發布，總經理只做核定。位置在「編輯公告」最下面。",yes:"可以：輸入核定密碼，按「確定簽核」，再按「發布」",no:["還要修改","退回營運管理部","↩ 回到第 3 步"]},
   {n:7,ph:2,who:["hq"],t:"LINE 發公告全圖、連結和截止日",s:"寫明哪一天前要簽完。",d:"到「簽收狀況」按「生成公告全圖」，把有總經理核定簽名的圖和連結貼到群組。不用再請大家回「已了解」。"},
-  {n:8,ph:3,who:["hq","sv"],t:"截止日追蹤",q:"截止日當天，全員都簽完了嗎？",d:"到「簽收狀況」可以直接複製未簽收名單。",yes:"全員簽完",no:["還有人沒簽","把未簽收名單貼到群組提醒；隔天還沒簽，由門市主管或區督導當面處理","↩ 簽完才能結案"]},
-  {n:9,ph:3,who:["hq"],t:"結案，留存紀錄",s:"紀錄留在後台，之後隨時可以調閱。",d:"之後有人違規，到「簽收狀況」調出他的簽收時間、作答次數和簽名。"}
+  {n:8,ph:3,who:["sv"],t:"主管依序率先簽收",s:"重大公告才有這一步。區督導先簽，各門市的率先簽收人再簽，同仁最後。",d:"誰是率先簽收人，在「主管設定」點選。這一則公告遇到主管休假，到「簽收狀況」的「簽收順序」改指定別人。"},
+  {n:9,ph:3,who:["hq","sv"],t:"截止日追蹤",q:"截止日當天，全員都簽完了嗎？",d:"到「簽收狀況」可以直接複製未簽收名單。",yes:"全員簽完",no:["還有人沒簽","把未簽收名單貼到群組提醒；隔天還沒簽，由門市主管或區督導當面處理","↩ 簽完才能結案"]},
+  {n:10,ph:3,who:["hq"],t:"結案，留存紀錄",s:"紀錄留在後台，之後隨時可以調閱。",d:"之後有人違規，到「簽收狀況」調出他的簽收時間、作答次數和簽名。"}
 ];
 var PHASES=["準備原文","做成簽收內容","核定與發布","追蹤到全員簽完"], PHN=["一","二","三","四"];
 var ELBOW='<svg viewBox="0 0 34 40" width="34" height="40" aria-hidden="true"><path d="M6 0V24H20" fill="none" stroke="currentColor" stroke-width="7"/><path d="M19 12L33 24L19 36Z" fill="currentColor"/></svg>';
@@ -749,7 +826,7 @@ function fLink(s, next){
 function fMini(who,t){ return '<div class="fmini w-'+who+'"><span>'+t+'</span><small>'+WHO[who]+'</small></div>'; }
 function vSop(){
   var h='<div class="flowwrap">';
-  h+='<div class="fhead"><h2>發一則公告的順序</h2><p class="muted small">從第 1 步照箭頭往下走到第 9 步。每一步的顏色代表由誰做。</p></div><div class="panel flegend"><h2>怎麼看這張圖</h2><ul>'
+  h+='<div class="fhead"><h2>發一則公告的順序</h2><p class="muted small">從第 1 步照箭頭往下走到第 10 步。每一步的顏色代表由誰做。</p></div><div class="panel flegend"><h2>怎麼看這張圖</h2><ul>'
     +'<li><span class="fsw w-gm"></span><span>金色：<b>總經理</b>做的事</span></li>'
     +'<li><span class="fsw w-hq"></span><span>綠色：<b>營運管理部</b>做的事</span></li>'
     +'<li><span class="fsw w-sv"></span><span>藍色：<b>區督導、門市主管、同仁</b>做的事</span></li>'
@@ -963,6 +1040,7 @@ try{
 /* ---------- 連線（正式上線才會用到） ---------- */
 var ERR={code:"通行碼不正確，請再輸入一次。", nocode:"系統還沒有設定通行碼，請通知營運管理部。", pw:"後台密碼不正確。", nopw:"試算表的「設定」分頁還沒有填後台密碼。", locked:"密碼錯太多次，請 10 分鐘後再試。",
   version:"這則公告剛剛改版了，請重新整理頁面再讀一次。", who:"名單裡找不到你的名字，請通知營運管理部。", ann:"這則公告已經不在發布中，請重新整理頁面。", sig:"簽名沒有成功讀取，請清除後重簽。", sigbig:"簽名檔太大，請清除後簽小一點。",
+  gate1:"要等區督導簽收之後才能開始，請回到首頁按「重新整理」。", gate2:"要等本門市主管簽收之後才能開始，請回到首頁按「重新整理」。",
   pin:"核定密碼不正確。", pinfmt:"核定密碼請輸入 4 到 8 位數字。", nosig:"這則公告還沒有總經理核定，不能發布。", nogm:"還沒有留存總經理簽名。"};
 function errText(e){ var c=e&&e.code; if(c&&ERR[c]) return ERR[c]; if(c==="server") return "系統忙碌中，請再試一次。"+(e.msg?"（"+e.msg+"）":""); return "連不上系統，請檢查網路後再試一次。"; }
 function api(action, data){
@@ -985,7 +1063,7 @@ function setMine(mine){ mem.records={}; if(!mem.me) return; var p=pid(mem.me.sto
 function doBoot(){
   S.boot="loading"; S.bootErr=""; render();
   api("boot",{me:mem.me}).then(function(j){
-    STORES=j.stores||[]; mem.anns=j.anns||[];
+    STORES=j.stores||[]; mem.anns=j.anns||[]; S.chains=j.chains||{};
     if(mem.me){ var st=storeOf(mem.me.store); if(!st || st.staff.indexOf(mem.me.name)<0) mem.me=null; }
     setMine(j.mine); S.boot="ok"; save(); flushOutbox(); render();
   }).catch(function(e){ if(e.code==="code"){ L.code=""; save(); } S.boot="need"; S.bootErr=errText(e); render(); });
@@ -1095,6 +1173,7 @@ function render(){
 }
 function begin(annId){
   var a=ann(annId), p=pid(mem.me.store,mem.me.name), r=rec(annId,p), same = r && r.version===a.version && r.status!=="done";
+  var g0=gateFor(a,mem.me); if(g0 && g0.blocked){ render(); return; }
   S.A=a; S.ci=0; S.seen=-1; S.attempts = same && r.attempts ? r.attempts : 1;
   S.startedAt = same && r.startedAt ? r.startedAt : Date.now();
   setRec(annId,p,{status:"reading", version:a.version, startedAt:S.startedAt, attempts:S.attempts});
@@ -1109,7 +1188,19 @@ document.addEventListener("input",function(e){
   if(rk){ if(!S.rec) S.rec={title:"",text:""}; S.rec[rk]=e.target.value; }
 });
 document.addEventListener("change",function(e){
-  if(e.target.getAttribute && e.target.getAttribute("data-chg")==="adminAnn"){ S.adminAnn=e.target.value; S.copyText=null; render(); }
+  var chg=e.target.getAttribute && e.target.getAttribute("data-chg");
+  if(chg==="adminAnn"){ S.adminAnn=e.target.value; S.copyText=null; render(); }
+  else if(chg==="lead"){
+    var ls=storeOf(e.target.getAttribute("data-sid")); if(!ls) return;
+    ls.lead=e.target.value; var lm={}; STORES.forEach(function(x){ if(x.lead) lm[x.id]=x.lead; });
+    if(LIVE) syncSave("setLeads",{leads:lm}); else { mem.leadMap=lm; save(); }
+  }
+  else if(chg==="chain"){
+    var ra=rawAnn(S.adminAnn); if(!ra || !ra.chain) return;
+    var csid=e.target.getAttribute("data-sid"), c2=JSON.parse(JSON.stringify(ra.chain)); if(!c2.leads) c2.leads={};
+    if(csid===(c2.topStore||TOP_STORE)) c2.top=e.target.value; else c2.leads[csid]=e.target.value;
+    ra.chain=c2; save(); if(LIVE) syncSave("setChain",{id:ra.id, chain:c2}); render();
+  }
 });
 document.addEventListener("click",function(e){
   var t=e.target.closest("[data-act]"); if(!t) return;
@@ -1122,6 +1213,7 @@ document.addEventListener("click",function(e){
   else if(act==="gateGo"){ L.code=String((document.getElementById("gate-code")||{}).value||"").trim(); if(!L.code){ S.bootErr="請輸入通行碼。"; render(); return; } save(); doBoot(); }
   else if(act==="pwGo"){ S.pw=String((document.getElementById("gate-pw")||{}).value||""); if(!S.pw){ S.adminErr="請輸入後台密碼。"; render(); return; } loadAdmin(); }
   else if(act==="reloadAdmin"){ loadAdmin(); }
+  else if(act==="refreshHome"){ if(LIVE) doBoot(); else render(); }
   else if(act==="syncRetry"){ if(S.sync) syncSave(S.sync.action, S.sync.payload); }
   else if(act==="pickStore"){ S.pickStore=t.getAttribute("data-id"); S.pickName=null; S.noScroll=true; render(); }
   else if(act==="pickName"){ S.pickName=t.getAttribute("data-name"); S.noScroll=true; render(); }
