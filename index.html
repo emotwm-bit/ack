@@ -137,8 +137,8 @@ ol.croute li span{padding-top:2px}
 .fail{border-color:var(--seal)}
 .fail h2{color:var(--seal)}
 
-.signbox{background:var(--sign-paper);border:1px dashed var(--line);border-radius:var(--r);position:relative}
-.signbox canvas{display:block;width:100%;height:170px;touch-action:none;border-radius:var(--r);cursor:crosshair}
+.signbox{background:var(--sign-paper);border:1px dashed var(--line);border-radius:var(--r);position:relative;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none;touch-action:none}
+.signbox canvas{display:block;width:100%;height:170px;touch-action:none;border-radius:var(--r);cursor:crosshair;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none;-webkit-tap-highlight-color:transparent;outline:none}
 @media (min-width:700px){.signbox canvas{height:220px}}
 .signbox .hint{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:#9aa5a1;pointer-events:none;font-size:15px}
 .declare{font-size:17px;line-height:1.9;margin:0}
@@ -544,7 +544,7 @@ function vSign(){
   h+='<div class="stepline"><span>'+a.quiz.length+' 題全部答對</span><span>最後一步：簽名</span></div>';
   h+='<div class="panel"><h2>簽收確認</h2>';
   h+='<p class="declare">本人 <b>'+esc(me.name)+'</b>（'+esc(st.name)+'）已逐條閱讀「'+esc(a.title)+'」共 '+a.clauses.length+' 條，並通過 '+a.quiz.length+' 題問答，了解內容並願意遵守。</p>';
-  h+='<div class="signbox"><canvas id="sig" tabindex="0" aria-label="簽名區"></canvas><div class="hint" id="sig-hint">請用觸控筆或手指在這裡簽名</div></div>';
+  h+='<div class="signbox"><canvas id="sig" aria-label="簽名區"></canvas><div class="hint" id="sig-hint">請用觸控筆或手指在這裡簽名</div></div>';
   h+='<div class="row"><button id="btn-clear" class="btn quiet" data-act="clearSig">清除重簽</button><button id="btn-sign" class="btn grow" data-act="sign" disabled>確認簽收</button></div><div id="sign-msg" class="small" style="color:var(--seal);font-weight:700" hidden></div></div></div>';
   return h;
 }
@@ -694,7 +694,7 @@ function paintSign(msg){
     h+='<div class="row"><button id="btn-gmchg" class="btn quiet sm" data-act="gmChange">更換留存的簽名</button></div>';
   } else {
     h+='<div class="small muted">'+(gm?'請簽下新的簽名，並輸入原本的核定密碼。':'第一次使用，請先留存簽名並設定核定密碼。之後每則公告只要輸入密碼、按「確定簽核」，簽名就會出現。')+'</div>';
-    h+='<div class="signbox"><canvas id="gmsig" tabindex="0" aria-label="總經理簽名區"></canvas><div class="hint" id="gmsig-hint">總經理請在這裡簽名</div></div>';
+    h+='<div class="signbox"><canvas id="gmsig" aria-label="總經理簽名區"></canvas><div class="hint" id="gmsig-hint">總經理請在這裡簽名</div></div>';
     h+='<label class="f" for="gm-pin">'+(gm?'原本的核定密碼':'設定核定密碼（4 到 8 位數字，只有總經理知道）')+'<input type="password" inputmode="numeric" autocomplete="off" id="gm-pin"></label>';
     h+='<div class="row"><button id="btn-gmclear" class="btn quiet sm" data-act="gmClear">清除</button><button id="btn-gmsave" class="btn sm" data-act="gmSave" disabled>留存簽名</button>'+(gm?'<button id="btn-gmcancel" class="btn quiet sm" data-act="gmCancel">取消</button>':'')+'</div>';
   }
@@ -1053,8 +1053,14 @@ function mountSig(id, onInk){
   ctx.strokeStyle=getComputedStyle(document.documentElement).getPropertyValue("--sign-ink").trim()||"#14251F";
   var down=false, len=0, lx=0, ly=0, fired=false, pid0=null, pen=false;
   function pos(e){ var b=cv.getBoundingClientRect(); return {x:e.clientX-b.left, y:e.clientY-b.top}; }
+  /* 平板上簽名時，不讓瀏覽器跳出「複製／貼上／選取」的選單，也不讓它把筆劃當成選字或捲動 */
+  var box=cv.parentNode;
+  ["contextmenu","selectstart","dragstart"].forEach(function(t){ box.addEventListener(t,function(e){ e.preventDefault(); }); });
+  ["touchstart","touchmove","touchend"].forEach(function(t){ cv.addEventListener(t,function(e){ if(e.cancelable) e.preventDefault(); },{passive:false}); });
   /* 一次只認一支筆或一根手指；用過觸控筆之後，手掌碰到螢幕不算 */
   cv.addEventListener("pointerdown",function(e){ e.preventDefault();
+    try{ var sel=window.getSelection(); if(sel && sel.removeAllRanges) sel.removeAllRanges(); }catch(_){ }
+    var ae=document.activeElement; if(ae && ae!==document.body && ae.blur && /^(INPUT|TEXTAREA|SELECT)$/.test(ae.tagName)) ae.blur();
     if(e.pointerType==="pen") pen=true;
     if(down || (pen && e.pointerType==="touch")) return;
     down=true; pid0=e.pointerId; var p=pos(e); lx=p.x; ly=p.y; try{cv.setPointerCapture(e.pointerId);}catch(_){ } });
