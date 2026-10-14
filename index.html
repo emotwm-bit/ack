@@ -986,7 +986,7 @@ function vLog(){
     h+='<td>'+(pub?'<span class="pill done">已發布</span><br><span class="small muted nw">第 '+a.version+' 版</span>':'<span class="pill draft">草稿</span>')+(raw.updatedAt?'<br><span class="small muted nw">最後儲存 '+fmt(raw.updatedAt)+'</span>':'')+'</td>';
     h+='<td class="nw"><span class="nx '+nx.cls+'">'+esc(nx.t)+'</span>'+(pub?'<br><span class="small muted">已簽 '+countDone(a)+' / '+total+'</span>':'')+'</td>';
     h+='<td class="num">'+(di?di.md:"—")+'</td>';
-    h+='<td><div class="row" style="flex-wrap:nowrap;justify-content:flex-end">'+(pub?'<button id="see-'+a.id+'" class="btn sm" data-act="seeAnn" data-id="'+a.id+'">看誰還沒簽</button>':'')+'<button id="edit-'+a.id+'" class="btn '+(pub?'quiet':'')+' sm" data-act="editAnn" data-id="'+a.id+'">'+(nx.btn||"編輯")+'</button>'+(pub?'<button id="pst-'+a.id+'" class="btn quiet sm" data-act="poster" data-id="'+a.id+'">全圖</button>':'')+'</div></td></tr>';
+    h+='<td><div class="row" style="flex-wrap:nowrap;justify-content:flex-end">'+(pub?'<button id="see-'+a.id+'" class="btn sm" data-act="seeAnn" data-id="'+a.id+'">看誰還沒簽</button>':'')+'<button id="edit-'+a.id+'" class="btn '+(pub?'quiet':'')+' sm" data-act="editAnn" data-id="'+a.id+'">'+(nx.btn||"編輯")+'</button>'+(pub?'<button id="pst-'+a.id+'" class="btn quiet sm" data-act="poster" data-id="'+a.id+'">全圖</button>':(S.delAsk===a.id?'<button id="btn-delno" class="btn quiet sm" data-act="delAnnNo">取消</button><button id="btn-delyes" class="btn sm" style="background:var(--seal)" data-act="delAnnYes" data-id="'+a.id+'">確定刪除</button>':'<button id="del-'+a.id+'" class="btn quiet sm" data-act="delAnnAsk" data-id="'+a.id+'">刪除</button>'))+'</div></td></tr>';
   });
   return h+'</tbody></table></div></div>';
 }
@@ -1082,6 +1082,9 @@ function paintBar(ck, signed){
     h+='<button id="btn-major" class="btn ghost" data-act="edSave" data-mode="major"'+(bad||!signed||!e.sigNew?" disabled":"")+'>改版（全員重簽）</button>';
     h+='<button id="btn-minor" class="btn" data-act="edSave" data-mode="minor"'+(bad?" disabled":"")+'>更新（不用重簽）</button>';
   } else {
+    if(raw) h+= S.delAsk===raw.id
+      ? '<span class="why" style="color:var(--seal)">確定刪除「'+esc(raw.title)+'」？刪了找不回來。</span><button id="btn-delno" class="btn quiet sm" data-act="delAnnNo">取消</button><button id="btn-delyes" class="btn sm" style="background:var(--seal)" data-act="delAnnYes" data-id="'+raw.id+'">確定刪除</button>'
+      : '<button id="btn-del" class="btn quiet sm" data-act="delAnnAsk" data-id="'+raw.id+'">刪除草稿</button>';
     h+='<button id="btn-draft" class="btn ghost" data-act="edSave" data-mode="draft">存成草稿</button>';
     h+='<button id="btn-pub" class="btn" data-act="edSave" data-mode="publish"'+(bad||!signed?" disabled":"")+'>發布</button>';
   }
@@ -1386,7 +1389,7 @@ try{
 var ERR={code:"通行碼不正確，請再輸入一次。", nocode:"系統還沒有設定通行碼，請通知營運管理部。", pw:"後台密碼不正確。", nopw:"試算表的「設定」分頁還沒有填後台密碼。", locked:"密碼錯太多次，請 10 分鐘後再試。",
   version:"這則公告剛剛改版了，請重新整理頁面再讀一次。", who:"名單裡找不到你的名字，請通知營運管理部。", ann:"這則公告已經不在發布中，請重新整理頁面。", sig:"簽名沒有成功讀取，請清除後重簽。", sigbig:"簽名檔太大，請清除後簽小一點。",
   gate1:"要等區督導簽收之後才能開始，請回到首頁按「重新整理」。", gate2:"要等本門市主管簽收之後才能開始，請回到首頁按「重新整理」。",
-  dup:"這個單位已經有同名的人。", haslog:"這個人已經簽過公告，紀錄是用原本的名字記的，不能直接改名。", unit:"找不到這個單位。", name:"姓名不能空白，也不能有冒號、逗號這類符號。", op:"這個動作系統不認得，請重新整理頁面再試。",
+  dup:"這個單位已經有同名的人。", published:"已發布的公告不能刪除。", haslog:"這個人已經簽過公告，紀錄是用原本的名字記的，不能直接改名。", unit:"找不到這個單位。", name:"姓名不能空白，也不能有冒號、逗號這類符號。", op:"這個動作系統不認得，請重新整理頁面再試。",
   pin:"核定密碼不正確。", pinfmt:"核定密碼請輸入 4 到 8 位數字。", nosig:"這則公告還沒有總經理核定，不能發布。", nogm:"還沒有留存總經理簽名。"};
 function errText(e){ var c=e&&e.code; if(c&&ERR[c]) return ERR[c]; if(c==="server") return "系統忙碌中，請再試一次。"+(e.msg?"（"+e.msg+"）":""); return "連不上系統，請檢查網路後再試一次。"; }
 function api(action, data){
@@ -1731,6 +1734,18 @@ document.addEventListener("click",function(e){
     mem.drafts.unshift({id:"d"+Date.now().toString(36), at:Date.now(), title:String(rr.title||"").trim()||rt.split("\n")[0].slice(0,30), text:rt});
     save(); if(LIVE) syncSave("saveDraft",{d:mem.drafts[0]});
     S.rec=null; S.msg="已存檔。"; render();
+  }
+  else if(act==="delAnnAsk"){ S.delAsk=t.getAttribute("data-id"); render(); }
+  else if(act==="delAnnNo"){ S.delAsk=null; render(); }
+  else if(act==="delAnnYes"){
+    var did=t.getAttribute("data-id"), dr=rawAnn(did); S.delAsk=null;
+    if(!dr || dr.status==="published"){ S.msg="已發布的公告不能刪除。"; render(); return; }
+    mem.anns=mem.anns.filter(function(x){ return x.id!==did; }); save(); bakClear();
+    if(S.ed && S.ed.id===did) S.ed=null;
+    if(S.adminAnn===did) S.adminAnn=null;
+    S.msg="已刪除草稿「"+dr.title+"」。"; S.adminTab="log";
+    if(LIVE){ var dm="✓ "+S.msg+"（已從試算表移除）"; S.msg=""; syncSave("delAnn",{id:did}, null, dm); }
+    render();
   }
   else if(act==="drDel"){
     var di=t.getAttribute("data-id");
