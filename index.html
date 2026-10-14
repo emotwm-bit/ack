@@ -332,6 +332,11 @@ details.fold>summary{cursor:pointer;font-weight:700;padding:6px 0}
 .due.late,.due.late small{color:var(--seal)}
 .dueline{font-size:15px;font-weight:700;color:var(--warn)}
 .dueline.late{color:var(--seal)}
+.newann{border:2px solid var(--seal);background:var(--seal-soft);gap:12px}
+.newann .na-h{display:flex;align-items:center;gap:10px;font-size:18px;font-weight:700;color:var(--seal);line-height:1.4}
+.newann .na-h i{flex:none;width:12px;height:12px;border-radius:50%;background:var(--seal)}
+.newann .na-i{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:14px 16px;display:flex;flex-direction:column;gap:6px}
+.newann .na-t{font-family:var(--display);font-weight:900;font-size:19px;line-height:1.45}
 .ugroup{display:flex;flex-direction:column;gap:8px;border-top:1px solid var(--line);padding-top:12px}
 h2+.ugroup{border-top:0;padding-top:0}
 .uhead{display:flex;gap:10px;align-items:baseline}
@@ -361,6 +366,8 @@ td.nw,span.nw{white-space:nowrap}
 @media (min-width:700px){
   .narrow{max-width:700px}
   .narrow h1{font-size:30px}
+  .newann .na-h{font-size:20px}
+  .newann .na-t{font-size:22px}
   .narrow h2{font-size:21px}
   .narrow .small,.narrow .stepline,.narrow .meta,.narrow .legend{font-size:15px}
   .narrow .pill{font-size:14px}
@@ -635,10 +642,29 @@ function stepsHtml(a, phase){
 }
 
 /* ---------- 同仁入口 ---------- */
+/* 選門市和姓名之前先提醒：目前有哪些公告在簽收期間（還不知道是誰，所以不顯示個人簽了沒） */
+function annBanner(){
+  var t=today().split("-"), t0=new Date(Number(t[0]),Number(t[1])-1,Number(t[2])).getTime();
+  var list=published().filter(function(a){
+    var di=dueInfo(a); if(di) return di.n>=-7;
+    var p=String(a.date||"").split("-"); if(p.length!==3) return false;
+    var k=Math.round((t0-new Date(Number(p[0]),Number(p[1])-1,Number(p[2])).getTime())/86400000); return k>=0 && k<=14;
+  }).sort(function(x,y){ return String(x.due||"9999").localeCompare(String(y.due||"9999")) || String(y.date).localeCompare(String(x.date)); }).slice(0,3);
+  if(!list.length) return "";
+  var h='<div class="panel newann" id="newann"><div class="na-h"><i></i><span>有 '+list.length+' 則重要公告，請第一時間完成</span></div>';
+  list.forEach(function(a){
+    var di=dueInfo(a);
+    h+='<div class="na-i"><div class="meta"><span class="pill tag">'+esc(a.level)+'</span>'+(a.no?'<span>'+esc(a.no)+' 號</span>':'')+'<span>'+fmtDate(a.date)+' 發布</span></div>';
+    h+='<div class="na-t">'+esc(a.title)+'</div>';
+    if(di) h+='<div class="'+(di.late?'dueline late':'dueline')+'">請在 '+di.md+'前簽完（'+di.text+'）</div>';
+    h+='</div>';
+  });
+  return h+'<div class="small muted">在下面選好門市和姓名，就可以開始。已經簽過的人不用再簽。</div></div>';
+}
 function vHome(){
   var h;
   if(!mem.me){
-    h='<div class="narrow"><div><div class="eyebrow">簽收人</div><h1>請選擇你的門市或部門，和姓名</h1></div>';
+    h='<div class="narrow">'+annBanner()+'<div><div class="eyebrow">簽收人</div><h1>請選擇你的門市或部門，和姓名</h1></div>';
     h+='<div class="panel"><b>1　門市或部門</b><div class="pick">';
     STORES.forEach(function(s){ h+='<button id="st-'+s.id+'" data-act="pickStore" data-id="'+s.id+'" aria-pressed="'+(S.pickStore===s.id)+'">'+esc(s.name)+'</button>'; });
     h+='</div></div>';
@@ -1221,6 +1247,10 @@ function vDraft(){
 
 /* ---------- 公告全圖 ---------- */
 var DL=null, posterCanvas=null;
+var IN_LINE=/\bLine\//i.test(navigator.userAgent);   /* 從 LINE 點連結打開的內建瀏覽器，不能下載檔案 */
+function canShareFile(){ try{ if(!navigator.share || !navigator.canShare || typeof File!=="function") return false; return navigator.canShare({files:[new File(["x"],"x.png",{type:"image/png"})]}); }catch(_){ return false; } }
+function extUrl(){ var u=location.href.split("#")[0]; return u+(u.indexOf("?")>=0?"&":"?")+"openExternalBrowser=1"; }
+function saveBlob(blob, nm){ var u=URL.createObjectURL(blob), al=document.createElement("a"); al.href=u; al.download=nm; al.rel="noopener"; document.body.appendChild(al); al.click(); setTimeout(function(){ al.remove(); URL.revokeObjectURL(u); }, 60000); }
 var PC={paper:"#FFFFFF", ink:"#14251F", muted:"#586962", line:"#D3DCD7", band:"#0E6A5B", bandInk:"#FFFFFF", bandSoft:"#CFE6DF",
   ok:["#1C7448","#DDF1E5"], no:["#BF3A2B","#F8E3DF"], warn:["#8A5A00","#FAEDCB"], dot:["#1F5FA8","#DEE9F7"]};
 var SERIF='"Noto Serif TC","Songti TC","PMingLiU",serif', SANS='"Noto Sans TC","PingFang TC","Microsoft JhengHei",sans-serif';
@@ -1332,7 +1362,9 @@ function makePoster(id){
     var cv=document.createElement("canvas"); cv.width=1080; cv.height=300;
     var h=Math.ceil(drawPoster(cv.getContext("2d"), a, img, 300));
     cv.height=h; drawPoster(cv.getContext("2d"), a, img, h);
-    posterCanvas=cv; S.poster={id:id, url:cv.toDataURL("image/png"), name:"公告_"+a.date+"_"+a.title+".png"}; render();
+    posterCanvas=cv; S.poster={id:id, url:cv.toDataURL("image/png"), name:"ack_"+(String(a.no||"").replace(/[^0-9A-Za-z-]/g,"")||"ann")+"_"+a.date+".png", blob:null};
+    try{ cv.toBlob(function(b){ if(S.poster && S.poster.id===id) S.poster.blob=b; }, "image/png"); }catch(_){ }
+    render();
   }).catch(function(){ S.poster=null; S.msg="全圖沒有產生成功，請再按一次。"; render(); });
 }
 function posterHtml(a){
@@ -1340,8 +1372,9 @@ function posterHtml(a){
   var h='<div class="panel poster"><div class="row" style="justify-content:space-between;align-items:center"><h2>公告全圖</h2><button id="btn-pclose" class="btn quiet sm" data-act="closePoster">關閉</button></div>';
   if(S.poster.url){
     h+='<img alt="'+esc(a.title)+' 公告全圖" src="'+S.poster.url+'">';
-    if(DL||LIVE) h+='<div class="row" style="justify-content:center"><button id="btn-savepng" class="btn sm" data-act="savePoster">儲存圖片</button></div>';
-    h+='<div class="small muted" style="text-align:center">手機長按圖片也可以儲存，再貼到 LINE 群組。</div>';
+    if(DL||LIVE) h+='<div class="row" style="justify-content:center"><button id="btn-savepng" class="btn sm" data-act="savePoster">'+(canShareFile()?"儲存或分享圖片":"儲存圖片")+'</button></div>';
+    if(IN_LINE) h+='<div class="note" style="text-align:center">LINE 裡面打開的網頁不能存檔。請<a id="open-ext" href="'+esc(extUrl())+'" target="_blank" rel="noopener">改用手機瀏覽器開啟</a>，再按一次「儲存圖片」。</div>';
+    h+='<div class="small muted" style="text-align:center">'+(canShareFile()?"按了會跳出分享選單，可以存到相簿，或直接傳到 LINE 群組。":"手機長按圖片也可以儲存，再貼到 LINE 群組。")+'</div>';
   } else h+='<div class="muted">產生中…</div>';
   return h+'</div>';
 }
@@ -1648,8 +1681,19 @@ document.addEventListener("click",function(e){
   else if(act==="closePoster"){ S.poster=null; render(); }
   else if(act==="savePoster"){
     if(!posterCanvas || !S.poster) return;
-    if(!DL){ var al=document.createElement("a"); al.href=S.poster.url; al.download=S.poster.name; document.body.appendChild(al); al.click(); al.remove(); return; }
     var nm=S.poster.name;
+    if(!DL){
+      var blob=S.poster.blob;
+      if(!blob){ S.msg="圖片還在準備，請再按一次。"; render(); return; }
+      if(canShareFile()){
+        var f=new File([blob], nm, {type:"image/png"});
+        navigator.share({files:[f], title:nm}).then(function(){}, function(err){ if(err && err.name==="AbortError") return; saveBlob(blob, nm); });
+        return;
+      }
+      saveBlob(blob, nm);
+      if(IN_LINE){ S.msg="LINE 裡面打開的網頁不能存檔。請用上面的連結改用手機瀏覽器開啟。"; render(); }
+      return;
+    }
     posterCanvas.toBlob(function(blob){
       if(!blob) return;
       DL.save({filename:nm, data:blob}).then(function(){ S.msg="圖片已儲存。"; render(); }, function(err){
