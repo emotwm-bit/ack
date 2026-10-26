@@ -527,6 +527,40 @@ function parseQuiz(src){
   });
   return out;
 }
+/* ---------- 依條文自動出題：每條至少一題，共 5 到 8 題。只用條文裡寫的內容，不自己加規定 ---------- */
+var GEN_WRONG_OK=["先做了再說，之後再補","等主管問起來再處理","看當天忙不忙再決定","自己判斷就好，不用問人","請同事幫忙處理就好"];
+var GEN_WRONG_WARN=["沒關係，下次注意就好","只要沒有人發現就沒事","口頭提醒一下就好","第一次不算，再犯才處理"];
+function qStrip(t){ return String(t||"").replace(/【|】/g,"").replace(/[。．]+$/,"").trim(); }
+function qKey(t){ var m=String(t||"").match(/【(.+?)】/); return m?m[1].trim():""; }
+function qNoNeg(t){ return qStrip(t).replace(/^(不可以|不可|不得|不能|不要|禁止|請勿|嚴禁|不准)\s*/,""); }
+function genQuiz(clauses){
+  var cl=clauses.filter(function(c){ return c.items.length && !(c.route&&c.route.length&&c.items.length<=1); });
+  if(!cl.length) return "";
+  var allOk=[], allNo=[], allKey=[];
+  clauses.forEach(function(c,ci){ c.items.forEach(function(it){ var t=qStrip(it.t); if(!t) return; if(it.k==="ok") allOk.push({t:t,ci:ci}); if(it.k==="no"){ var nn=qNoNeg(it.t); if(nn!==t) allNo.push({t:nn,ci:ci}); } var k=qKey(it.t); if(k&&k.length>=2&&k.length<=14) allKey.push({t:k,ci:ci}); }); });
+  function pick(pool, avoid, ci, n){ var out=[], seen={}; avoid.forEach(function(a){ seen[a]=1; });
+    var ordered=pool.filter(function(x){return x.ci===ci;}).concat(pool.filter(function(x){return x.ci!==ci;}));
+    ordered.forEach(function(x){ if(out.length<n && !seen[x.t]){ seen[x.t]=1; out.push(x.t); } }); return out; }
+  var gi=0;
+  function fill(wrong, generic, avoid){ var seen={}; avoid.concat(wrong).forEach(function(a){ seen[a]=1; }); var g2=generic.slice(gi%generic.length).concat(generic.slice(0,gi%generic.length)); gi++; g2.forEach(function(g){ if(wrong.length<2 && !seen[g]){ seen[g]=1; wrong.push(g); } }); return wrong; }
+  var cands=[];
+  clauses.forEach(function(c,ci){
+    if(cl.indexOf(c)<0) return; var list=[];
+    c.items.forEach(function(it){
+      var t=qStrip(it.t); if(!t) return;
+      if(it.k==="warn"){ list.push({p:3,ci:ci,q:"「"+c.title+"」這一條，公告提醒的後果或風險是什麼？",ok:t,wrong:fill([],GEN_WRONG_WARN,[t])}); }
+      else if(it.k==="no"){ var w=pick(allOk,[t],ci,2); list.push({p:2,ci:ci,q:"關於「"+c.title+"」，下面哪一件事是不可以做的？",ok:t,wrong:fill(w,["照公告寫的步驟做","不確定時先問門市主管"],[t])}); }
+      else if(it.k==="ok"){ var w2=pick(allNo,[t],ci,2); list.push({p:1,ci:ci,q:"關於「"+c.title+"」，正確的做法是哪一個？",ok:t,wrong:fill(w2,GEN_WRONG_OK,[t])}); }
+      var k=qKey(it.t);
+      if(k && k.length>=2 && k.length<=14){ var w3=[], sn={}; sn[k]=1; allKey.slice().sort(function(a,b){ return Math.abs(a.t.length-k.length)-Math.abs(b.t.length-k.length); }).forEach(function(x){ if(w3.length<2 && !sn[x.t]){ sn[x.t]=1; w3.push(x.t); } }); if(w3.length>=2) list.push({p:4,ci:ci,q:"「"+qStrip(it.t.replace(/【.+?】/,"＿＿＿"))+"」，空格裡應該是什麼？",ok:k,wrong:w3}); }
+    });
+    list.sort(function(a,b){ return a.p-b.p; }); cands.push(list);
+  });
+  var target=Math.min(8, Math.max(5, cands.length)), out=[], round=0, more=true;
+  while(out.length<target && more){ more=false; cands.forEach(function(list){ if(out.length<target && list[round]){ out.push(list[round]); more=true; } }); round++; }
+  out.sort(function(a,b){ return a.ci-b.ci; });
+  return out.map(function(q){ return "題："+q.q+"\n對："+q.ok+"\n錯："+q.wrong[0]+"\n錯："+q.wrong[1]+"\n條："+(q.ci+1); }).join("\n\n");
+}
 function check(clauses, quiz){
   var e=[], w=[];
   if(!clauses.length) e.push("還沒有條文。用「條：」開頭寫第一條。");
@@ -544,7 +578,7 @@ function check(clauses, quiz){
     if(q.c===null) e.push(n+"沒寫「條：」，答錯時無法告訴同仁答案在哪一條。");
     else if(q.c<0||q.c>=clauses.length) e.push(n+"寫的「條："+(q.c+1)+"」不存在。");
   });
-  if(quiz.length && quiz.length!==10) w.push("題目現在有 "+quiz.length+" 題，公司的標準是 10 題。");
+  if(quiz.length && (quiz.length<5 || quiz.length>10)) w.push("題目現在有 "+quiz.length+" 題，建議 5 到 10 題。");
   clauses.forEach(function(c,i){ if(quiz.length && !(c.route&&c.route.length) && !quiz.some(function(q){return q.c===i;})) w.push("第 "+(i+1)+" 條沒有對應的題目。"); });
   return {e:e, w:w};
 }
@@ -1010,6 +1044,12 @@ function bakLive(){
   return bk;
 }
 function touch(){ if(!S.ed) return; S.ed.dirty=true; bakSave(); }
+function doGenQuiz(){
+  var cl=parseClauses(S.ed.src), q=genQuiz(cl);
+  if(!q){ S.msg="條文還沒有內容，先寫條文再產生題目。"; render(); return; }
+  S.ed.qsrc=q; touch(); S.msg="已依條文產生 "+parseQuiz(q).length+" 題。請看右邊預覽，不順的字可以直接在左邊改。"; render();
+  var ta=document.getElementById("ed-qsrc"); if(ta) ta.scrollIntoView({block:"start"});
+}
 function guard(fn){ if(S.ed && S.ed.dirty){ S.ask=fn; render(); } else fn(); }
 function secHead(n, title, who, note){ return '<div class="sech"><span class="secn">'+n+'</span><h2>'+title+'</h2><span class="fwho w-'+who+'">'+WHO[who]+'</span>'+(note?'<span class="small muted">'+note+'</span>':'')+'</div>'; }
 function vEdit(){
@@ -1033,9 +1073,9 @@ function vEdit(){
   h+='<textarea id="ed-src" data-ed="src" rows="20" spellcheck="false">'+esc(e.src)+'</textarea>';
   h+='<details class="fold"><summary>條文怎麼寫（格式說明）</summary><div class="howto"><code>條：標籤｜標題</code>　開始新的一條。<br>每行一個重點，行首放符號：<code>✓</code> 要做、<code>✕</code> 不可以、<code>⚠</code> 後果、<code>•</code> 說明。<br><code>【 】</code>框起來的字會變成彩色重點。<br><code>途徑：</code>用 → 隔開每一步，會顯示成一條有編號的路線。<br><code>例：</code>放範例，一行寫一個「例：」，會顯示在一個框裡。<br><code>註：</code>放補充說明，會用小字顯示在重點下面。<br><code>原文：</code>放公告原句，同仁點「看公告原文」才展開。</div></details></div>';
   h+='<div><div class="small muted" style="margin-bottom:6px">同仁會看到的條文（一次只看一條）</div><div id="ed-prev-c" class="prev pvbox"></div></div></div>';
-  h+='<div class="edsub">題目</div><div class="edgrid"><div class="edcol"><div class="row ins"><button id="ins-q" data-act="insBlock" data-t="qsrc">＋新的一題</button></div>';
+  h+='<div class="edsub">題目</div><div class="edgrid"><div class="edcol"><div class="row ins"><button id="ins-q" data-act="insBlock" data-t="qsrc">＋新的一題</button>'+(S.genAsk?'<span class="small" style="color:var(--seal)">會蓋掉現在的題目，確定？</span><button id="gen-yes" class="btn sm" data-act="genQuizYes">確定產生</button><button id="gen-no" class="btn quiet sm" data-act="genQuizNo">取消</button>':'<button id="gen-q" class="btn sm" data-act="genQuizAsk">依條文自動產生題目</button>')+'</div>';
   h+='<textarea id="ed-qsrc" data-ed="qsrc" rows="20" spellcheck="false">'+esc(e.qsrc)+'</textarea>';
-  h+='<details class="fold"><summary>題目怎麼寫（格式說明）</summary><div class="howto"><code>題：</code>題目　<code>對：</code>正確答案（1 個）　<code>錯：</code>錯誤答案（至少 2 個）　<code>條：</code>答案在第幾條。<br>出題時題目和選項的順序會自動打亂。</div></details></div>';
+  h+='<details class="fold"><summary>題目怎麼寫（格式說明）</summary><div class="howto">條文寫好後按「依條文自動產生題目」，系統會從每一條出 1 到 2 題，共 5 到 8 題，不用另外請 AI 寫。產生後可以直接在這裡改字。存檔時題目是空的，系統也會自動補上。<br><code>題：</code>題目　<code>對：</code>正確答案（1 個）　<code>錯：</code>錯誤答案（至少 2 個）　<code>條：</code>答案在第幾條。<br>出題時題目和選項的順序會自動打亂。</div></details></div>';
   h+='<div><div class="small muted" style="margin-bottom:6px">同仁會答的題目</div><div id="ed-prev-q" class="prev pvbox"></div></div></div></div>';
   /* ③ 檢查、核定、發布 */
   h+='<div class="panel" id="ed-step3">'+secHead(3,"檢查、核定、發布","gm","左邊沒有紅字，總經理再簽核");
@@ -1118,6 +1158,7 @@ function paintSign(msg){
 function edSave(mode){
   var e=S.ed, raw=e.id?rawAnn(e.id):null;
   if(!raw){ raw={id:"a"+Date.now(), version:1, status:"draft"}; mem.anns.unshift(raw); e.id=raw.id; }
+  if(!parseQuiz(e.qsrc).length){ var gq=genQuiz(parseClauses(e.src)); if(gq){ e.qsrc=gq; var tq=document.getElementById("ed-qsrc"); if(tq) tq.value=gq; } }
   raw.title=e.title.trim()||"未命名公告"; raw.level=e.level; raw.date=e.date||today(); raw.by=e.by.trim()||"營運管理部"; raw.no=(e.no||"").trim()||raw.no||nextNo(); raw.src=e.src; raw.qsrc=e.qsrc; raw.due=e.due||""; raw.updatedAt=Date.now();
   if(e.sig&&!e.resign){ raw.sig=e.sig; raw.sigAt=e.sigAt; }
   if(e.mode==="all") raw.chain={mode:"all"};
@@ -1195,7 +1236,7 @@ function vSop(){
 }
 
 /* ---------- 起草公告：一份訪談指令。AI 先確認身分、聽老闆直覺講、給摘要，再問十個細節問題 ---------- */
-var DRAFT_RULES="你是倚盟電訊營運管理部的公告編輯助理。倚盟電訊是台灣大哥大的特約服務中心，在高雄有五家門市。\n\n公司裡發生了一件事，老闆（總經理）想把它訂成全體同仁要「逐條閱讀、答題、簽名」的公告。你的工作是用聊天的方式訪談他，把事情問清楚，再寫成公告。請照下面五段的順序進行，一段做完才做下一段。\n\n【整段對話的規矩】\n- 用繁體中文，口語、簡短、有禮貌。對方是老闆就稱呼「老闆」；不是老闆，照他說的身分稱呼。\n- 一次只問一題，問完就停下來等回答。不可以一次列出好幾題。\n- 一則訊息只能問一件事，只能有一個問號。下面的題目如果一題裡有兩個問句，拆成兩則訊息：先問第一個，他回答之後再問第二個。\n- 對方會用語音輸入，講得亂、順序顛倒都沒關係。你聽不懂，或一句話有兩種意思時，用一句話反問，例如：「您的意思是 A 還是 B？」\n- 每次他回答後，先用一句話說出你聽到的重點，再問下一題。\n- 他前面已經講過的事，不要再問一次，改成確認：「您剛才提到……，我理解成……，對嗎？」\n- 不可以替老闆決定任何規定。他沒講的就問；他說還沒想好，就記下來，最後列在「請總經理確認」。\n- 公司的稱呼請照用：門市（不說分店）、門市主管、區督導、營運管理部、總經理。公告由營運管理部發布，總經理核定。\n- 對方如果上傳錄音檔而你沒辦法聽，直接說明，請他改用鍵盤上的麥克風做語音輸入。\n\n【第一段：開場】\n1. 你的第一則回覆只說這一句：「請問您是哪一位？您是老闆嗎？」\n2. 他回答是老闆，就說：「老闆辛苦了。應該是有事情發生了，接下來我會請您回答幾個問題。先不用管順序：您現在直覺想公告的是什麼？用語音簡單講給我聽就好，前後順序不用在意，我會幫您整理。」\n   他不是老闆（例如營運管理部同仁代為整理），一樣進行，並記住：最後的公告原文要註明「需送總經理確認」。\n3. 他講完後，給一份摘要：用 3 到 5 行條列你聽到的重點（發生了什麼事、他最在意什麼、他希望大家怎麼做），然後問：「我整理的對嗎？有沒有漏掉的？」\n4. 他確認後說：「接下來我需要更明確的細節，讓整份公告有情境、同仁看得懂。一共十個問題，我一題一題問。」然後問第 1 題。\n\n【第二段：十個問題】\n照順序問。句子可以依他前面講過的內容調整，但意思不能變。有選項的題目，把選項列出來，並說也可以用自己的話回答。\n\n第 1 題　發生了什麼事\n「會有這則公告，一定是有事情發生了。可以告訴我發生了什麼事嗎？用您平常講話的方式說就好，我聽不懂會再問您。」\n（開場時他已經講過，就改成確認你的理解，再問還缺的細節。）\n\n第 2 題　情境與頻率\n「這件事是在什麼情況下發生的？它是每天都有、經常發生，還是偶爾一次？」\n\n第 3 題　造成的傷害\n「這件事讓您不開心，是因為它影響了什麼？例如獎金、客人、帳務，或其他狀況。造成的傷害是什麼？講得出金額最好。」\n\n第 4 題　公告裡要不要寫出是誰\n「這件事是哪一家門市發生的？公告裡您希望怎麼寫？\nA. 寫出門市和人員\nB. 只寫門市，不寫是誰\nC. 都不寫，用『公司發現』帶過」\n他選 A 時，提醒一句：「寫出同仁的姓名，容易在同仁之間引起爭議，我會把這一點列在『請總經理確認』。」然後照他的決定做。\n\n第 5 題　正確的做法\n「以後遇到同樣的情況，您希望同仁正確的做法是什麼？」\n\n第 6 題　呈報的流程（這一題拆成幾個小問題，一樣一次只問一個）\n先說：「接下來要把流程定下來。這是以後長期要照著走的，所以我會問得比較細，問完畫成流程圖給您看。」\n6-1「門市同仁要向誰呈報？」\n6-2「用什麼方式呈報？例如 LINE 群組、表單、當面講。要不要留下文字紀錄？」\n6-3「那位主管收到之後要做什麼？他自己就可以決定，還是要再往上呈報？」\n6-4（要往上時才問）「往上是呈報給哪一位主管？他多久之內要回覆？」\n6-5「主管決定之後，要怎麼回覆同仁？多久之內要回覆？」\n6-6「事情做完之後，還需要回報結案嗎？向誰回報？」\n問完後，把流程排成流程圖給他看，每一步寫清楚「誰、做什麼、在哪裡、多久之內」，格式像這樣：\n① 門市同仁｜在 LINE 群組貼申請｜動手之前\n　↓\n② 門市主管｜在群組回覆核准或不核准｜一個工作天內\n　↓\n③ ……\n然後問：「流程是這樣嗎？要改哪一步？」改到他說對為止。\n\n第 7 題　急件\n7-1「如果負責核准的主管沒辦法及時回覆，同仁可以找誰？」\n7-2「同仁對這個規定有疑問時，要問誰？」\n\n第 8 題　沒有照做的處置\n「如果有人沒有照這個程序做，公司會怎麼處理？第一次和再犯，處理方式一樣嗎？」\n\n第 9 題　公告給誰\n「這則公告要給誰看？\nA. 全公司\nB. 門市同仁\nC. 營運管理部\nD. 特別指定的人（請告訴我是誰）\n可以選不只一個。」\n\n第 10 題　從哪一天開始\n「從哪一天開始？\nA. 公告當天\nB. 下個月 1 號\nC. 另外指定日期（請告訴我日期）」\n\n【第三段：整理給他確認】\n十題問完後，給一份「訪談整理」：\n- 十題的答案，每題一到兩行\n- 流程圖（最後確認的版本）\n- 還沒決定的事\n然後問：「這樣對嗎？對的話我就開始寫公告原文。」他說對，才進第四段。\n\n【第四段：寫公告原文，請他確認】\n1. 用完整的句子寫。不用簡稱、不用術語、不用「依規定辦理」這種空話。每一句都要讓第一天上班的新人看得懂要做什麼。\n2. 內部用語第一次出現時，用一句話說明它的意思。\n3. 順序：為什麼訂這個規定（發生了什麼事、造成什麼傷害）→ 適用誰 → 要怎麼做（照流程圖一步一步寫）→ 不可以做什麼 → 急件怎麼辦 → 沒有照做的處置 → 有疑問找誰 → 哪一天開始。\n4. 事發的門市和人員，照第 4 題的決定寫。\n5. 只寫他講過的內容，不可以自己加規定。語氣是說明規定，不是責備。\n6. 原文前面先建議一個公告標題，不用簡稱和術語。\n7. 原文後面另外列「請總經理確認」：\n   - 還沒決定或你覺得不夠清楚的地方\n   - 出現「扣薪、罰款、賠償、追回、分攤」這類字眼的句子。照他的原意寫，並提醒「執行前建議先請勞資顧問或律師看過」\n   - 公告裡寫出同仁姓名的地方\n   沒有就寫「無」。\n8. 最後問：「這份原文可以定稿嗎？要改哪裡？」然後停下來。他說可以定稿，才進第五段。\n\n【第五段：轉成公告簽收系統要用的三段文字】\n\n條文區的寫法：\n- 一條只講一件事。整則公告拆成 4 到 11 條。\n- 每條第一行：條：標籤｜標題\n  標籤 2 到 4 個字，例如 目的、觀念、規範一、規範二、步驟、說明、提醒。標題 14 個字以內。\n- 接著每行寫一個重點。每條 2 到 4 個重點，每個重點 30 個字以內。\n- 每個重點的行首放一個符號，再空一格：\n  ✓ 要做的事\n  ✕ 不可以做的事\n  ⚠ 違反的後果或風險\n  • 背景或說明\n- 每個重點用【】框出最重要的 2 到 10 個字，一行只框一處。字數太緊時把句子寫短，【】不能省。\n- 需要時可以多加這三種行：\n  註：補充說明，系統會用小字顯示\n  例：要同仁照著填的格式或範例，一行寫一個「例：」\n  途徑：第一步 → 第二步 → 第三步（把流程圖排成一條路線，放在最後一條。這一條只要一個 • 重點、一行途徑、一行原文，不用出題）\n- 每條最後一行：原文：把這一條對應的原文句子照抄；對應到好幾句時，照抄最主要的一兩句。\n- 條與條之間空一行。\n\n題目區的寫法：\n- 一共 10 題。每一條至少要有 1 題（只有「途徑：」的那一條除外）。\n- 用門市實際會遇到的情境出題，不要考背誦。\n- 每題五行，每行開頭的字不能改：\n  題：題目\n  對：正確答案\n  錯：錯誤答案\n  錯：錯誤答案\n  條：數字\n  「條：」只寫數字，代表答案在條文區由上往下數的第幾條，不是標籤裡的數字。\n- 每題剛好 1 個「對」、2 個「錯」。\n- 錯誤答案要像同仁真的會有的想法，但依公告內容明確是錯的。不可以有兩個選項都說得通。\n- 三個選項的長度盡量接近，不要讓正確答案總是最長。\n- 題與題之間空一行。\n\n格式範例。條文區的一條長這樣：\n條：規範二｜事先回報\n• 客戶要求取消，或遇到特殊狀況\n✓ 作業前【先通報門市主管】\n✕ 不可以【先做再報】\n原文：遇客戶要求或特殊狀況需要取消，作業前務必先通報門市主管。\n\n題目區的一題長這樣：\n題：客人回到門市，要求取消昨天辦好的申辦。你的第一步是？\n對：先通報門市主管\n錯：先幫客人取消，下班前再跟主管說\n錯：請同事幫忙操作取消\n條：4\n\n訪談紀錄的寫法（給公司存檔，之後查得到當初為什麼訂這條規定）：\n訪談對象：\n想公告的事（一句話）：\n1 發生了什麼事：\n2 情境與頻率：\n3 造成的傷害：\n4 公告裡怎麼寫是誰：\n5 正確的做法：\n6 流程：第一步 → 第二步 → 第三步\n7 急件找誰：\n8 沒有照做的處置：\n9 公告對象：\n10 開始日期：\n請總經理確認的事：\n\n第五段的輸出，依序給三樣東西，不要加其他說明：\n1. 條文區：放在一個程式碼區塊裡\n2. 題目區：放在另一個程式碼區塊裡\n3. 訪談紀錄：放在第三個程式碼區塊裡\n最後加一句：「請把條文區和題目區貼到公告簽收系統的『編輯公告』，訪談紀錄貼到『起草公告』最下面存檔。」\n\n現在請從第一段開始。";
+var DRAFT_RULES="你是倚盟電訊營運管理部的公告編輯助理。倚盟電訊是台灣大哥大的特約服務中心，在高雄有五家門市。\n\n公司裡發生了一件事，老闆（總經理）想把它訂成全體同仁要「逐條閱讀、答題、簽名」的公告。你的工作是用聊天的方式訪談他，把事情問清楚，再寫成公告。請照下面五段的順序進行，一段做完才做下一段。\n\n【整段對話的規矩】\n- 用繁體中文，口語、簡短、有禮貌。對方是老闆就稱呼「老闆」；不是老闆，照他說的身分稱呼。\n- 一次只問一題，問完就停下來等回答。不可以一次列出好幾題。\n- 一則訊息只能問一件事，只能有一個問號。下面的題目如果一題裡有兩個問句，拆成兩則訊息：先問第一個，他回答之後再問第二個。\n- 對方會用語音輸入，講得亂、順序顛倒都沒關係。你聽不懂，或一句話有兩種意思時，用一句話反問，例如：「您的意思是 A 還是 B？」\n- 每次他回答後，先用一句話說出你聽到的重點，再問下一題。\n- 他前面已經講過的事，不要再問一次，改成確認：「您剛才提到……，我理解成……，對嗎？」\n- 不可以替老闆決定任何規定。他沒講的就問；他說還沒想好，就記下來，最後列在「請總經理確認」。\n- 公司的稱呼請照用：門市（不說分店）、門市主管、區督導、營運管理部、總經理。公告由營運管理部發布，總經理核定。\n- 對方如果上傳錄音檔而你沒辦法聽，直接說明，請他改用鍵盤上的麥克風做語音輸入。\n\n【第一段：開場】\n1. 你的第一則回覆只說這一句：「請問您是哪一位？您是老闆嗎？」\n2. 他回答是老闆，就說：「老闆辛苦了。應該是有事情發生了，接下來我會請您回答幾個問題。先不用管順序：您現在直覺想公告的是什麼？用語音簡單講給我聽就好，前後順序不用在意，我會幫您整理。」\n   他不是老闆（例如營運管理部同仁代為整理），一樣進行，並記住：最後的公告原文要註明「需送總經理確認」。\n3. 他講完後，給一份摘要：用 3 到 5 行條列你聽到的重點（發生了什麼事、他最在意什麼、他希望大家怎麼做），然後問：「我整理的對嗎？有沒有漏掉的？」\n4. 他確認後說：「接下來我需要更明確的細節，讓整份公告有情境、同仁看得懂。一共十個問題，我一題一題問。」然後問第 1 題。\n\n【第二段：十個問題】\n照順序問。句子可以依他前面講過的內容調整，但意思不能變。有選項的題目，把選項列出來，並說也可以用自己的話回答。\n\n第 1 題　發生了什麼事\n「會有這則公告，一定是有事情發生了。可以告訴我發生了什麼事嗎？用您平常講話的方式說就好，我聽不懂會再問您。」\n（開場時他已經講過，就改成確認你的理解，再問還缺的細節。）\n\n第 2 題　情境與頻率\n「這件事是在什麼情況下發生的？它是每天都有、經常發生，還是偶爾一次？」\n\n第 3 題　造成的傷害\n「這件事讓您不開心，是因為它影響了什麼？例如獎金、客人、帳務，或其他狀況。造成的傷害是什麼？講得出金額最好。」\n\n第 4 題　公告裡要不要寫出是誰\n「這件事是哪一家門市發生的？公告裡您希望怎麼寫？\nA. 寫出門市和人員\nB. 只寫門市，不寫是誰\nC. 都不寫，用『公司發現』帶過」\n他選 A 時，提醒一句：「寫出同仁的姓名，容易在同仁之間引起爭議，我會把這一點列在『請總經理確認』。」然後照他的決定做。\n\n第 5 題　正確的做法\n「以後遇到同樣的情況，您希望同仁正確的做法是什麼？」\n\n第 6 題　呈報的流程（這一題拆成幾個小問題，一樣一次只問一個）\n先說：「接下來要把流程定下來。這是以後長期要照著走的，所以我會問得比較細，問完畫成流程圖給您看。」\n6-1「門市同仁要向誰呈報？」\n6-2「用什麼方式呈報？例如 LINE 群組、表單、當面講。要不要留下文字紀錄？」\n6-3「那位主管收到之後要做什麼？他自己就可以決定，還是要再往上呈報？」\n6-4（要往上時才問）「往上是呈報給哪一位主管？他多久之內要回覆？」\n6-5「主管決定之後，要怎麼回覆同仁？多久之內要回覆？」\n6-6「事情做完之後，還需要回報結案嗎？向誰回報？」\n問完後，把流程排成流程圖給他看，每一步寫清楚「誰、做什麼、在哪裡、多久之內」，格式像這樣：\n① 門市同仁｜在 LINE 群組貼申請｜動手之前\n　↓\n② 門市主管｜在群組回覆核准或不核准｜一個工作天內\n　↓\n③ ……\n然後問：「流程是這樣嗎？要改哪一步？」改到他說對為止。\n\n第 7 題　急件\n7-1「如果負責核准的主管沒辦法及時回覆，同仁可以找誰？」\n7-2「同仁對這個規定有疑問時，要問誰？」\n\n第 8 題　沒有照做的處置\n「如果有人沒有照這個程序做，公司會怎麼處理？第一次和再犯，處理方式一樣嗎？」\n\n第 9 題　公告給誰\n「這則公告要給誰看？\nA. 全公司\nB. 門市同仁\nC. 營運管理部\nD. 特別指定的人（請告訴我是誰）\n可以選不只一個。」\n\n第 10 題　從哪一天開始\n「從哪一天開始？\nA. 公告當天\nB. 下個月 1 號\nC. 另外指定日期（請告訴我日期）」\n\n【第三段：整理給他確認】\n十題問完後，給一份「訪談整理」：\n- 十題的答案，每題一到兩行\n- 流程圖（最後確認的版本）\n- 還沒決定的事\n然後問：「這樣對嗎？對的話我就開始寫公告原文。」他說對，才進第四段。\n\n【第四段：寫公告原文，請他確認】\n1. 用完整的句子寫。不用簡稱、不用術語、不用「依規定辦理」這種空話。每一句都要讓第一天上班的新人看得懂要做什麼。\n2. 內部用語第一次出現時，用一句話說明它的意思。\n3. 順序：為什麼訂這個規定（發生了什麼事、造成什麼傷害）→ 適用誰 → 要怎麼做（照流程圖一步一步寫）→ 不可以做什麼 → 急件怎麼辦 → 沒有照做的處置 → 有疑問找誰 → 哪一天開始。\n4. 事發的門市和人員，照第 4 題的決定寫。\n5. 只寫他講過的內容，不可以自己加規定。語氣是說明規定，不是責備。\n6. 原文前面先建議一個公告標題，不用簡稱和術語。\n7. 原文後面另外列「請總經理確認」：\n   - 還沒決定或你覺得不夠清楚的地方\n   - 出現「扣薪、罰款、賠償、追回、分攤」這類字眼的句子。照他的原意寫，並提醒「執行前建議先請勞資顧問或律師看過」\n   - 公告裡寫出同仁姓名的地方\n   沒有就寫「無」。\n8. 最後問：「這份原文可以定稿嗎？要改哪裡？」然後停下來。他說可以定稿，才進第五段。\n\n【第五段：轉成公告簽收系統要用的兩段文字】\n\n條文區的寫法：\n- 一條只講一件事。整則公告拆成 4 到 11 條。\n- 每條第一行：條：標籤｜標題\n  標籤 2 到 4 個字，例如 目的、觀念、規範一、規範二、步驟、說明、提醒。標題 14 個字以內。\n- 接著每行寫一個重點。每條 2 到 4 個重點，每個重點 30 個字以內。\n- 每個重點的行首放一個符號，再空一格：\n  ✓ 要做的事\n  ✕ 不可以做的事\n  ⚠ 違反的後果或風險\n  • 背景或說明\n- 每個重點用【】框出最重要的 2 到 10 個字，一行只框一處。字數太緊時把句子寫短，【】不能省。\n- 需要時可以多加這三種行：\n  註：補充說明，系統會用小字顯示\n  例：要同仁照著填的格式或範例，一行寫一個「例：」\n  途徑：第一步 → 第二步 → 第三步（把流程圖排成一條路線，放在最後一條。這一條只要一個 • 重點、一行途徑、一行原文，不用出題）\n- 每條最後一行：原文：把這一條對應的原文句子照抄；對應到好幾句時，照抄最主要的一兩句。\n- 條與條之間空一行。\n\n題目區的寫法：\n- 題目不用你寫。公告簽收系統會依條文自動出題，所以條文裡每一條的 ✓ ✕ ⚠ 和【】要寫清楚，題目才會出得好。\n\n格式範例。條文區的一條長這樣：\n條：規範二｜事先回報\n• 客戶要求取消，或遇到特殊狀況\n✓ 作業前【先通報門市主管】\n✕ 不可以【先做再報】\n原文：遇客戶要求或特殊狀況需要取消，作業前務必先通報門市主管。\n\n訪談紀錄的寫法（給公司存檔，之後查得到當初為什麼訂這條規定）：\n訪談對象：\n想公告的事（一句話）：\n1 發生了什麼事：\n2 情境與頻率：\n3 造成的傷害：\n4 公告裡怎麼寫是誰：\n5 正確的做法：\n6 流程：第一步 → 第二步 → 第三步\n7 急件找誰：\n8 沒有照做的處置：\n9 公告對象：\n10 開始日期：\n請總經理確認的事：\n\n第五段的輸出，依序給兩樣東西，不要加其他說明：\n1. 條文區：放在一個程式碼區塊裡\n2. 訪談紀錄：放在另一個程式碼區塊裡\n最後加一句：「請把條文區貼到公告簽收系統的『編輯公告』，題目系統會自動產生；訪談紀錄貼到『起草公告』最下面存檔。」\n\n現在請從第一段開始。";
 var TEN=[["發生了什麼事","用平常講話的方式說，AI 聽不懂會反問"],["情境與頻率","什麼情況下發生；每天、經常，還是偶爾"],["造成的傷害","影響了獎金、客人、帳務或其他；講得出金額最好"],["公告裡要不要寫出是誰","寫出門市和人員、只寫門市，或用「公司發現」帶過"],["正確的做法","以後遇到同樣的情況，同仁該怎麼做"],["呈報的流程","向誰呈報、用什麼方式、主管要做什麼、多久回覆"],["急件","核准的主管沒辦法及時回覆時，可以找誰"],["沒有照做的處置","公司會怎麼處理；第一次和再犯是否一樣"],["公告給誰","全公司、門市同仁、營運管理部，或特別指定的人"],["從哪一天開始","公告當天、下個月 1 號，或另外指定日期"]];
 var IPH=["開場","十個細節問題","寫成公告"];
 var IFLOW=[
@@ -1205,8 +1246,8 @@ var IFLOW=[
   {n:4,ph:1,who:["boss"],t:"回答十個問題",s:"AI 一次只問一題。前面講過的，它只會確認，不會再問一次。",list:TEN},
   {n:5,ph:1,who:["ai"],t:"把第 6 題畫成流程圖",q:"流程是這樣嗎？",yes:"對",no:["要改","告訴 AI 改哪一步","↩ 改到對為止"]},
   {n:6,ph:2,who:["ai"],t:"寫出公告原文",q:"這份原文可以定稿嗎？",yes:"可以定稿",no:["要修改","告訴 AI 改哪裡","↩ 改到可以定稿"]},
-  {n:7,ph:2,who:["ai"],t:"給三段文字",s:"條文區、題目區、訪談紀錄。每一段都可以整段複製。"},
-  {n:8,ph:2,who:["hq"],t:"貼回這個系統",s:"條文區和題目區貼到「編輯公告」。訪談紀錄貼到這一頁的「起草紀錄」存檔。"}
+  {n:7,ph:2,who:["ai"],t:"給兩段文字",s:"條文區、訪談紀錄。每一段都可以整段複製。"},
+  {n:8,ph:2,who:["hq"],t:"貼回這個系統",s:"條文區貼到「編輯公告」，題目由系統自動產生。訪談紀錄貼到這一頁的「起草紀錄」存檔。"}
 ];
 function fChart(L, PH){
   var h='<div class="flow">';
@@ -1236,7 +1277,7 @@ function vDraft(){
   var h='<div class="dcol"><div class="panel"><h2>老闆用講的，AI 幫忙問、幫忙寫</h2><p style="margin:0">發生了一件事，想訂成公告，但不知道怎麼寫。照下面四步做，AI 會先聽您講，再一題一題把細節問清楚，最後寫出公告原文、條文和題目。</p>';
   h+=step(1,'<b>複製訪談指令</b><div class="row"><button id="dr-copy" class="btn" data-act="drCopy">複製訪談指令</button></div>'+(S.copyText!==null?'<div><div class="small muted">'+esc(S.copyMsg)+'</div><textarea id="copyout" class="copyout" readonly>'+esc(S.copyText)+'</textarea></div>':''));
   h+=step(2,'<b>貼給 AI，用語音回答</b><p>打開 AI 的 App，開一個新的對話，貼上送出。AI 會先問「您是老闆嗎？」，之後用語音回答就可以，前後順序不用在意。</p>');
-  h+=step(3,'<b>把條文和題目貼到「② 編輯公告」</b><p>AI 最後會給三段文字：條文區、題目區、訪談紀錄。前兩段貼到編輯公告。</p><div class="row"><button id="dr-toedit" class="btn ghost" data-act="drToEdit">到「② 編輯公告」貼上</button></div>');
+  h+=step(3,'<b>把條文貼到「② 編輯公告」</b><p>AI 最後會給兩段文字：條文區、訪談紀錄。條文區貼到編輯公告，題目由系統依條文自動產生，不用另外請 AI 寫。</p><div class="row"><button id="dr-toedit" class="btn ghost" data-act="drToEdit">到「② 編輯公告」貼上</button></div>');
   h+=step(4,'<b>把訪談紀錄存在這裡</b><p class="small muted">之後可以回來看當初為什麼訂這條規定。</p><label class="f wide" for="rec-title">這次訂的是什麼事<input type="text" id="rec-title" data-rec="title" value="'+esc(R.title)+'" placeholder="例如：取消跨月的客戶申辦"></label><label class="f wide" for="rec-text">訪談紀錄<textarea id="rec-text" data-rec="text" rows="5" placeholder="把 AI 給的第三段文字整段貼上">'+esc(R.text)+'</textarea></label><div class="row"><button id="rec-save" class="btn sm" data-act="recSave">存檔</button></div>');
   h+='</div>';
   h+='<div class="panel"><details class="fold" id="dr-flow"><summary>想知道 AI 會問什麼？打開看流程圖</summary><div class="dchart" style="margin-top:12px"><p class="muted small" style="margin:0">金色是老闆回答，藍色是 AI 做的事，綠色是營運管理部做的事。虛線框是 AI 會停下來請您確認的地方。</p>'+fChart(IFLOW,IPH)+'</div></details></div>';
@@ -1645,6 +1686,9 @@ document.addEventListener("click",function(e){
     else { ta.value=v.slice(0,a0)+s+v.slice(a0); ta.selectionStart=ta.selectionEnd=a0+s.length; }
     S.ed.src=ta.value; touch(); ta.focus(); paintPreview();
   }
+  else if(act==="genQuizAsk"){ if(parseQuiz(S.ed.qsrc).length){ S.genAsk=true; render(); } else doGenQuiz(); }
+  else if(act==="genQuizNo"){ S.genAsk=false; render(); }
+  else if(act==="genQuizYes"){ S.genAsk=false; doGenQuiz(); }
   else if(act==="insBlock"){
     var which=t.getAttribute("data-t"); ta=document.getElementById("ed-"+which); if(!ta) return;
     var n = which==="src" ? parseClauses(S.ed.src).length : 0;
@@ -1724,7 +1768,7 @@ document.addEventListener("click",function(e){
   else if(act==="drToEdit"){
     guard(function(){
       openEditor(null); S.ed.src=""; S.ed.qsrc=""; S.copyText=null; S.adminTab="edit";
-      S.msg="把 AI 給的「條文區」貼到條文，「題目區」貼到題目。"; render(); window.scrollTo(0,0);
+      S.msg="把 AI 給的「條文區」貼到條文，然後按「依條文自動產生題目」。"; render(); window.scrollTo(0,0);
     });
   }
   else if(act==="recSave"){
