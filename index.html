@@ -429,6 +429,49 @@ td.nw,span.nw{white-space:nowrap}
   .ctab td:nth-child(3){flex:1 1 100%}
   .ctab select{max-width:none}
 }
+
+/* ---------- 目標確認單 ---------- */
+.gkpis{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+.gkpis.k4{grid-template-columns:repeat(4,minmax(0,1fr))}
+.gkpis.k3{grid-template-columns:repeat(3,minmax(0,1fr))}
+@media (max-width:560px){.gkpis.k4{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.gkpi{background:var(--surface-2);border-radius:10px;padding:8px 10px;min-width:0}
+.gkpi small{display:block;font-size:12px;color:var(--muted);font-weight:700}
+.gkpi b{font-size:22px;font-variant-numeric:tabular-nums;line-height:1.3}
+.gseg{display:flex;flex-wrap:wrap;background:var(--surface-2);border-radius:999px;padding:3px;gap:3px}
+.gseg button{flex:1 1 auto;font:inherit;font-size:14px;font-weight:700;border:0;border-radius:999px;padding:6px 10px;background:transparent;color:var(--muted);cursor:pointer;min-height:36px}
+.gseg button[aria-pressed="true"]{background:var(--accent);color:var(--accent-ink)}
+.gtb{border:1px solid var(--line);border-radius:10px;overflow-x:auto}
+.gtb table{border-collapse:collapse;width:100%;font-variant-numeric:tabular-nums}
+.gtb th,.gtb td{padding:7px 8px;text-align:right;font-size:14px;border-bottom:1px solid var(--line);white-space:nowrap}
+.gtb th{background:var(--surface-2);font-size:12px;color:var(--muted);font-weight:700}
+.gtb th:first-child,.gtb td:first-child{text-align:left;position:sticky;left:0;background:var(--surface)}
+.gtb th:first-child{background:var(--surface-2)}
+.gtb tr.gsum td{font-weight:800;background:var(--accent-soft);color:var(--accent);border-bottom:0}
+.gtb td.l,.gtb th.l{text-align:left}
+.gtb .bad{color:var(--seal);font-weight:800}
+.gchg{display:grid;grid-template-columns:auto minmax(0,1fr);gap:2px 12px;padding:10px 0;border-bottom:1px dashed var(--line)}
+.gchg:last-child{border-bottom:0;padding-bottom:0}
+.gchg b{font-size:16px}
+.gchg .ar{font-weight:800;color:var(--accent)}
+.gchg small{grid-column:2;color:var(--muted);font-size:13px}
+.panel.gcard{border:2px solid var(--info)}
+.gchk{display:flex;gap:10px;align-items:flex-start;font-size:15px;padding:8px 0;border-bottom:1px dashed var(--line);cursor:pointer}
+.gchk input{width:22px;height:22px;flex:none;margin:1px 0 0;accent-color:var(--accent)}
+.gerr{color:var(--seal);font-weight:700;font-size:14px}
+.gok{color:var(--ok);font-weight:700;font-size:14px}
+.gsplit{display:grid;grid-template-columns:minmax(0,1fr);gap:16px;align-items:start}
+@media (min-width:960px){.gsplit{grid-template-columns:minmax(0,1fr) minmax(0,1.15fr)}}
+.gsplit>*{min-width:0}
+.gfile{border:2px dashed var(--accent);background:var(--accent-soft);border-radius:var(--r);padding:14px;display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+.gfile input{font:inherit;max-width:100%}
+.gorder{display:flex;flex-wrap:wrap;gap:6px;align-items:center;font-size:14px}
+.gorder span{border-radius:8px;padding:4px 10px;font-weight:700;border:1.5px solid var(--line);background:var(--surface)}
+.gorder .t{border-color:var(--warn);background:var(--warn-soft);color:var(--warn)}
+.gorder .l{border-color:var(--info);background:var(--info-soft);color:var(--info)}
+.gorder .x{border-color:var(--seal);background:var(--seal-soft);color:var(--seal)}
+.gorder i{font-style:normal;color:var(--muted);font-weight:800}
+.gsig{height:30px;width:auto;display:block;background:#fff;border-radius:4px}
 </style>
 </head>
 <body>
@@ -467,6 +510,8 @@ function seedAnns(){ return []; }
 /* 正式上線時，把 Apps Script 的網址填在這裡。空白＝樣板模式，資料只存在這台裝置 */
 var API = "https://script.google.com/macros/s/AKfycbxLgpyHU21twksogFIhsp7vTU1lIAk5uu4HfR99TWoPUaeyxM5agNR9jnXMHdkIQBHSqQ/exec";
 var LIVE = !!API;
+/* 目標確認單：跟公告簽收共用同一個後端（同一個網址、同一份試算表）。API 空白＝示範模式，目標確認單不顯示 */
+var GOAL_API = API;
 var DEFAULT_STORES = STORES;
 var KEY = "ym-ack-v2", LKEY = "ym-ack-live";
 var L = {code:"", me:null, outbox:[]};
@@ -714,9 +759,10 @@ function vHome(){
   var me=mem.me, st=storeOf(me.store);
   h='<div class="narrow"><div class="panel who"><div><div class="small muted">簽收人</div><b>'+esc(me.name)+'</b>　<span class="muted">'+esc(st.name)+'</span></div><button id="btn-switch" class="btn quiet sm" data-act="switchUser">重新選擇</button></div>';
   h+='<h2>你的公告</h2>';
+  var gcH=gHomeCards(); h+=gcH;
   var isMine=function(raw){ var a0=compile(raw); return isDone(a0, rec(a0.id,pid(me.store,me.name))); };
   var list=published().slice().sort(function(x,y){ var dx=isMine(x)?1:0, dy=isMine(y)?1:0; return dx-dy || String(y.date).localeCompare(String(x.date)); });
-  if(!list.length) h+='<div class="panel muted">目前沒有需要簽收的公告。</div>';
+  if(!list.length && !gcH) h+='<div class="panel muted">目前沒有需要簽收的公告。</div>';
   else h+='<div class="small muted">還沒簽的排在前面。簽過的公告都留在這裡，隨時可以回來重看內容。</div>';
   list.forEach(function(raw){
     var a=compile(raw), r=rec(a.id,pid(me.store,me.name)), done=isDone(a,r);
@@ -827,7 +873,7 @@ function dueInfo(raw){
   var k=Math.round((d.getTime()-t.getTime())/86400000);
   return {n:k, md:Number(p[1])+"/"+Number(p[2])+"（"+"日一二三四五六".charAt(d.getDay())+"）", text:k>0?"還剩 "+k+" 天":k===0?"今天截止":"已逾期 "+(-k)+" 天", late:k<0};
 }
-var TABS=[["log","公告總覽"],["draft","① 起草公告"],["edit","② 編輯公告"],["status","③ 簽收狀況"],["leads","人員名單"],["sop","流程說明"]];
+var TABS=[["log","公告總覽"],["draft","① 起草公告"],["edit","② 編輯公告"],["status","③ 簽收狀況"],["goal","④ 目標確認單"],["leads","人員名單"],["sop","流程說明"]];
 function FREE_NOTE(){ var f=STORES.filter(function(s){ return isFree(s.id); }); return f.length ? '<div class="small muted">'+esc(f.map(function(s){ return s.name; }).join("、"))+'不受順序限制，公告一發布就可以簽。</div>' : ''; }
 
 /* ---------- 人員名單：新增、離職、改名、調單位、誰是率先簽收人 ---------- */
@@ -916,6 +962,7 @@ function vAdmin(){
   if(S.adminTab==="sop") return h+vSop();
   if(S.adminTab==="draft") return h+vDraft();
   if(S.adminTab==="leads") return h+vLeads();
+  if(S.adminTab==="goal") return h+vGoalAdmin();
   return h+vLog();
 }
 
@@ -1544,13 +1591,393 @@ function mountSig(id, onInk){
 }
 
 /* ---------- 繪製與事件 ---------- */
+
+/* ================= 目標確認單：總經理核定 → 區督導 → 五店店經理 ================= */
+var G_STORES=["鼎山","陽明","後昌","仁雄","凱旋"];
+var G_XLSX="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js";
+var GERR={who:"你不在這份目標確認單的確認名單裡。", ann:"這份目標確認單已經不在了，請重新整理。", gate1:"要等區督導確認之後才能開始。",
+  haslog:"已經有人確認過，不能修改或刪除。", form:"讀不到目標資料，請重新上傳 Excel。", big:"資料太大，存不進去，請聯絡系統管理員。"};
+function gErr(e){ var c=e&&e.code; return (c&&GERR[c]) || errText(e); }
+function gapi(action, data){
+  var d={}, k; for(k in (data||{})) d[k]=data[k];
+  d.action=action; if(L.code) d.code=L.code; if(S.pw) d.pw=S.pw;
+  return fetch(GOAL_API,{method:"POST", headers:{"Content-Type":"text/plain;charset=utf-8"}, body:JSON.stringify(d)})
+    .then(function(r){ return r.json(); })
+    .then(function(j){ if(!j||!j.ok){ var e=new Error((j&&j.err)||"server"); e.code=(j&&j.err)||"server"; e.msg=j&&j.msg; throw e; } return j; });
+}
+function gNum(v){ if(v===null||v===undefined||v==="") return ""; var n=Number(v); return isFinite(n)? n : String(v); }
+function gFmtN(v){ return typeof v==="number" ? v.toLocaleString("en-US") : esc(String(v==null?"":v)); }
+function gStr(v){ return String(v==null?"":v).trim(); }
+function gNoLead(c){ return G_STORES.filter(function(k){ return !(c.leads[k]&&c.leads[k].name); }); }
+function gNeed(c){ return G_STORES.filter(function(k){ return c.leads[k]&&c.leads[k].name; }); }
+function gUnitName(){ var st=mem.me?storeOf(mem.me.store):null; return st?st.name:""; }
+
+/* ---------- 讀 Excel：只讀看得到的分頁，不改原檔 ---------- */
+function gLoadXlsx(){
+  if(window.XLSX) return Promise.resolve(window.XLSX);
+  return new Promise(function(res,rej){ var s=document.createElement("script"); s.src=G_XLSX; s.onload=function(){ res(window.XLSX); }; s.onerror=function(){ rej(new Error("讀 Excel 的工具載入失敗，請檢查網路後再試一次。")); }; document.head.appendChild(s); });
+}
+function gParse(wb, X){
+  var info=(wb.Workbook&&wb.Workbook.Sheets)||[];
+  var names=wb.SheetNames.filter(function(n,i){ return !(info[i]&&info[i].Hidden); });
+  var grid=function(n){ return X.utils.sheet_to_json(wb.Sheets[n],{header:1,raw:true,defval:null,blankrows:true}); };
+  var out={month:"", period:"", cols:[], halves:[], stores:[], sup:null, changes:[]}, errs=[], A=function(r){ return gStr(r&&r[0]); };
+  names.forEach(function(n){
+    var rows=grid(n), a1=A(rows[0]), m;
+    if((m=a1.match(/(\d+)\s*月份目標\s*-\s*(\S+?店)/))){
+      var key=""; G_STORES.forEach(function(k){ if(m[2].indexOf(k)>=0) key=k; }); if(!key) return;
+      out.month=out.month||m[1];
+      var st={key:key, name:key+"店", coef:"", target:{}, tables:[]}, cm=A(rows[2]).match(/困難係數\s*([\d.]+)/); if(cm) st.coef=cm[1];
+      for(var i=0;i<rows.length;i++){
+        var c0=A(rows[i]);
+        if(c0==="店點" && rows[i+1]){ for(var j=1;j<rows[i].length;j++) if(gStr(rows[i][j])) st.target[gStr(rows[i][j])]=gNum(rows[i+1][j]); }
+        var tm=c0.match(/^【業績目標（(.+)）】$/);
+        if(tm && rows[i+1] && A(rows[i+1])==="姓名"){
+          var head=rows[i+1].slice(1).map(gStr).filter(function(x){return x;}), t={label:tm[1].replace(/\s+/g," "), rows:[], total:null};
+          if(!out.cols.length) out.cols=head;
+          for(var r=i+2;r<rows.length;r++){ var nm=A(rows[r]); if(!nm) break; var vals=head.map(function(_,q){ return gNum(rows[r][q+1]); }); if(nm==="店合計"){ t.total=vals; break; } t.rows.push([nm].concat(vals)); }
+          st.tables.push(t);
+        }
+      }
+      out.stores.push(st);
+    } else if((m=a1.match(/區督導\s*(\S+)/)) && /目標/.test(a1)){
+      var sup={name:m[1], rows:[]};
+      for(var i2=0;i2<rows.length;i2++) if(A(rows[i2])==="區督導最終目標" && rows[i2+1]){
+        var h2=rows[i2+1].slice(1).map(gStr).filter(function(x){return x;});
+        for(var r2=i2+2;r2<rows.length;r2++){ var lb=A(rows[r2]); if(!lb) break; sup.rows.push([lb].concat(h2.map(function(_,q){ return gNum(rows[r2][q+1]); }))); }
+        sup.cols=h2; break;
+      }
+      out.sup=sup;
+    } else if(/戰力異動紀錄/.test(a1)){
+      for(var i3=0;i3<rows.length;i3++) if(A(rows[i3])==="店點"){
+        var hd=rows[i3].map(function(x){ return gStr(x).replace(/\s|（.*?）|\(.*?\)/g,""); }), ix=function(k){ return hd.indexOf(k); };
+        for(var r3=i3+1;r3<rows.length;r3++){
+          var s0=A(rows[r3]); if(!s0 || s0==="合計") break;
+          var g=function(k){ var q=ix(k); return q<0?"":gStr(rows[r3][q]); };
+          var lr=g("上月職級"), tr=g("本月職級"), ll=g("上月戰力"), tl=g("本月戰力"), parts=[], isNew=/新進/.test(g("戰力異動"))||ll==="—"||ll==="-";
+          if(isNew) parts.push("新進"+(tr?"，"+tr:""));
+          else { if(lr && tr && lr!==tr) parts.push("職級 "+lr+" → "+tr); if(ll && tl && ll!==tl) parts.push("戰力 "+ll+" → "+tl); }
+          if(parts.length){ var sk=""; G_STORES.forEach(function(k){ if(s0.indexOf(k)>=0) sk=k; }); out.changes.push({store:sk||s0, name:g("姓名"), text:parts.join("；"), why:g("備註")}); }
+        }
+        break;
+      }
+    }
+  });
+  G_STORES.forEach(function(k){ if(!out.stores.some(function(s){return s.key===k;})) errs.push("找不到「"+k+"店」的分頁。"); });
+  out.stores.sort(function(a,b){ return G_STORES.indexOf(a.key)-G_STORES.indexOf(b.key); });
+  out.stores.forEach(function(st){
+    if(st.tables.length<3) errs.push(st.name+"：找不到全月、上半場、下半場三張個人目標表。");
+    st.tables.forEach(function(t){
+      if(!t.total){ errs.push(st.name+"「"+t.label+"」沒有「店合計」那一列。"); return; }
+      var blank=t.total.some(function(v){ return v===""; }) || t.rows.some(function(r){ return r.slice(1).some(function(v){ return v===""; }); });
+      if(blank){ errs.push(st.name+"「"+t.label+"」有數字讀不到（空白）。請用 Excel 打開這個檔案、存檔一次再上傳。"); return; }
+      out.cols.forEach(function(c,q){ var sum=0, num=true; t.rows.forEach(function(r){ if(typeof r[q+1]!=="number") num=false; else sum+=r[q+1]; });
+        if(num && typeof t.total[q]==="number" && Math.abs(sum-t.total[q])>0.001) errs.push(st.name+"「"+t.label+"」"+c+"：個人加總 "+sum+"，店合計卻是 "+t.total[q]+"。"); });
+    });
+    G_STORES.length && ["AQ","RT點"].forEach(function(k){ if(st.target[k]===undefined || st.target[k]==="") errs.push(st.name+"：讀不到店目標「"+k+"」。"); });
+    var full=st.tables[0]; if(full && full.total) out.cols.forEach(function(c,q){ var tv=st.target[c]; if(typeof tv==="number" && typeof full.total[q]==="number" && tv!==full.total[q]) errs.push(st.name+" "+c+"：店目標 "+tv+"，全月店合計卻是 "+full.total[q]+"。"); });
+  });
+  out.halves=(out.stores[0]?out.stores[0].tables:[]).map(function(t){ return t.label; });
+  var p1=(out.halves[1]||"").match(/(\d+\/\d+)\s*～/), p2=(out.halves[2]||"").match(/～\s*(\d+\/\d+)/); if(p1&&p2) out.period=p1[1]+"～"+p2[1];
+  if(!out.sup) errs.push("找不到「區督導」目標分頁。");
+  return {data:out, errs:errs};
+}
+
+/* ---------- 共用：表格、重點數字、異動 ---------- */
+function gHalfName(label){ return String(label||"").split(" ")[0] || label; }
+function gTable(cols, t){
+  if(!t) return '<div class="muted small">沒有資料。</div>';
+  var h='<div class="gtb"><table><tr><th>姓名</th>'+cols.map(function(c){ return '<th>'+esc(c)+'</th>'; }).join("")+'</tr>';
+  t.rows.forEach(function(r){ h+='<tr><td>'+esc(r[0])+'</td>'+r.slice(1).map(function(v){ return '<td>'+gFmtN(v)+'</td>'; }).join("")+'</tr>'; });
+  if(t.total) h+='<tr class="gsum"><td>店合計</td>'+t.total.map(function(v){ return '<td>'+gFmtN(v)+'</td>'; }).join("")+'</tr>';
+  return h+'</table></div>';
+}
+function gKpis(tg, cls){ var ks=["RT點","AQ","Device","保險"].filter(function(k){ return tg && tg[k]!==undefined; });
+  return '<div class="gkpis '+(cls||"")+'">'+ks.map(function(k){ return '<div class="gkpi"><small>'+(k==="RT點"?"RT 點":k)+'</small><b>'+gFmtN(tg[k])+'</b></div>'; }).join("")+'</div>'; }
+function gChanges(list, empty){
+  if(!list.length) return '<div class="muted">'+esc(empty||"本月職級、戰力都沒有異動。")+'</div>';
+  return list.map(function(c){ return '<div class="gchg"><b>'+esc(c.name)+'</b><span><span class="ar">'+esc(c.text)+'</span></span>'+(c.why?'<small>'+esc(c.why)+'</small>':'')+'</div>'; }).join("");
+}
+/* 一店（或督導）的完整內容；sel = 店 key 或 "sup" */
+function gBody(d, sel, half, ids){
+  var h="";
+  if(sel==="sup"){
+    var sp=d.sup||{rows:[]}, cols=sp.cols||d.cols;
+    h+='<div class="panel"><h2>區督導 '+esc(sp.name||"")+' 目標</h2><div class="gtb"><table><tr><th></th>'+cols.map(function(c){return '<th>'+esc(c)+'</th>';}).join("")+'</tr>'
+      +sp.rows.map(function(r){ return '<tr><td>'+esc(r[0])+'</td>'+r.slice(1).map(function(v){return '<td>'+gFmtN(v)+'</td>';}).join("")+'</tr>'; }).join("")+'</table></div></div>';
+    return h;
+  }
+  var st=(d.stores||[]).filter(function(s){ return s.key===sel; })[0]; if(!st) return '<div class="panel muted">沒有這家店的資料。</div>';
+  h+='<div class="panel"><h2>'+esc(st.name)+'目標（全月）</h2>'+gKpis(st.target,"k4")+'<div class="small muted">'+(st.coef?'困難係數 '+esc(st.coef)+'｜':'')+esc(d.halves.slice(1).join("・"))+'</div></div>';
+  var ti=Math.min(half||0, st.tables.length-1);
+  h+='<div class="panel"><h2>個人目標</h2><div class="gseg" role="group" aria-label="期間">'+st.tables.map(function(t,i){ return '<button id="'+ids+'-h'+i+'" data-act="gHalf" data-i="'+i+'" aria-pressed="'+(i===ti)+'">'+esc(gHalfName(t.label))+'</button>'; }).join("")+'</div>'
+    +'<div class="small muted">'+esc(st.tables[ti]?st.tables[ti].label:"")+'</div>'+gTable(d.cols, st.tables[ti])+'</div>';
+  var ch=(d.changes||[]).filter(function(c){ return c.store===st.key; });
+  h+='<div class="panel"><h2>本月職級／戰力異動　<span class="pill tag">'+esc(st.name)+' '+ch.length+' 人</span></h2>'+gChanges(ch)+'</div>';
+  return h;
+}
+function gSelTabs(d, sel, withSup){
+  var opts=(d.stores||[]).map(function(s){ return [s.key, s.key]; }); if(withSup && d.sup) opts.push(["sup","督導"]);
+  return '<div class="gseg" role="group" aria-label="單位">'+opts.map(function(o){ return '<button id="gsel-'+o[0]+'" data-act="gSel" data-k="'+o[0]+'" aria-pressed="'+(sel===o[0])+'">'+o[1]+'</button>'; }).join("")+'</div>';
+}
+
+/* ---------- 同仁入口 ---------- */
+function gLoadStaff(force){
+  if(!GOAL_API || !mem.me || (!force && S.gLoading)) return;
+  S.gLoading=true;
+  gapi("gBoot",{unit:gUnitName(), name:mem.me.name}).then(function(j){ S.goals=j; }).catch(function(e){ S.goals={forms:[], err:gErr(e)}; })
+    .then(function(){ S.gLoading=false; if(S.view==="home"||S.view==="goal") render(); });
+}
+function gChainLines(g, role, store){
+  var c=g.chain, h='<div class="chain">';
+  h+='<div class="ok"><span class="ic">✓</span><span>總經理 已核定　<span class="muted small">'+fmt(c.gmAt)+'</span></span></div>';
+  if(role==="top"){
+    h+= c.top.at ? '<div class="ok"><span class="ic">✓</span><span>你已於 '+fmt(c.top.at)+' 確認</span></div>' : '<div class="me"><span class="ic">★</span><span><b>輪到你確認</b>。你確認後，各店店經理才能開始。</span></div>';
+    var need=gNeed(c), n=need.filter(function(k){ return c.leads[k].at; }).length, nl=gNoLead(c);
+    h+='<div class="'+(n===need.length?'ok':'wait')+'"><span class="ic">'+(n===need.length?'✓':'…')+'</span><span>店經理已確認 <b>'+n+' / '+need.length+'</b></span></div>';
+    if(nl.length) h+='<div class="wait"><span class="ic">!</span><span>'+esc(nl.join("、"))+'店沒有店經理，<b>由你向同仁布達</b></span></div>';
+  } else {
+    h+= c.top.at ? '<div class="ok"><span class="ic">✓</span><span>區督導 '+esc(c.top.name)+' 已確認　<span class="muted small">'+fmt(c.top.at)+'</span></span></div>' : '<div class="wait"><span class="ic">…</span><span>區督導 '+esc(c.top.name)+' <b>還沒確認</b>，確認後你才能開始</span></div>';
+    var me=c.leads[store]||{};
+    h+= me.at ? '<div class="ok"><span class="ic">✓</span><span>你已於 '+fmt(me.at)+' 確認</span></div>' : (c.top.at?'<div class="me"><span class="ic">★</span><span><b>輪到你確認'+esc(store)+'店目標</b></span></div>':'');
+  }
+  return h+'</div>';
+}
+function gHomeCards(){
+  if(!GOAL_API || !mem.me) return "";
+  if(S.goals===undefined){ setTimeout(function(){ gLoadStaff(); },0); return ""; }
+  var j=S.goals||{forms:[]}; if(j.err) return '<div class="panel small gerr">目標確認單讀取失敗：'+esc(j.err)+'</div>';
+  var list=(j.forms||[]).slice().sort(function(a,b){ return (a.mineAt?1:0)-(b.mineAt?1:0); }), h="";
+  list.forEach(function(g){
+    var f=g.form, role=j.role, st=role==="lead"?(f.stores[0]||{}):null, done=!!g.mineAt, blocked=role==="lead" && !g.chain.top.at;
+    var di=f.due?dueInfo({due:f.due}):null;
+    h+='<div class="panel ann gcard"><div class="meta"><span class="pill" style="background:var(--info-soft);color:var(--info)">目標確認單</span>'+(done?'<span class="pill done">已確認 '+fmt(g.mineAt)+'</span>':blocked?'<span class="pill doing">等區督導確認</span>':'<span class="pill todo">輪到你</span>')+'</div>';
+    h+='<h2>'+esc(f.title)+'</h2><div class="small muted">期間 '+esc(f.period||"")+'</div>';
+    if(st){ var nc=(f.changes||[]).length; h+='<div class="gkpis k3"><div class="gkpi"><small>本店 RT 點</small><b>'+gFmtN(st.target["RT點"])+'</b></div><div class="gkpi"><small>AQ</small><b>'+gFmtN(st.target["AQ"])+'</b></div><div class="gkpi"><small>本店異動</small><b>'+nc+' 人</b></div></div>'; }
+    else { var sum=0; (f.stores||[]).forEach(function(s){ sum+=Number(s.target["RT點"])||0; }); h+='<div class="gkpis k3"><div class="gkpi"><small>五店 RT 點</small><b>'+gFmtN(sum)+'</b></div><div class="gkpi"><small>督導 RT 點</small><b>'+gFmtN(f.sup&&f.sup.rows[0]?f.sup.rows[0][(f.sup.cols||f.cols).indexOf("RT點")+1]:"")+'</b></div><div class="gkpi"><small>職級異動</small><b>'+(f.changes||[]).length+' 人</b></div></div>'; }
+    if(di && !done) h+='<div class="'+(di.late?'dueline late':'dueline')+'">請在 '+di.md+'前確認（'+di.text+'）</div>';
+    h+=gChainLines(g, role, st?st.key:"");
+    h+='<div class="row"><button id="gopen-'+f.id+'" class="btn '+(done?'ghost ':'')+'grow" data-act="gOpen" data-id="'+f.id+'"'+(blocked?' disabled':'')+'>'+(done?'重看目標內容':blocked?'等區督導確認後才能開始':'開始確認')+'</button></div></div>';
+  });
+  return h;
+}
+function vGoal(){
+  var j=S.goals||{forms:[]}, g=(j.forms||[]).filter(function(x){ return x.form.id===S.gId; })[0];
+  if(!g){ S.view="home"; return vHome(); }
+  var f=g.form, role=j.role, sel=S.gSel || (role==="lead"?(f.stores[0]||{}).key:(f.stores[0]||{}).key);
+  var h='<div class="narrow"><div class="row"><button class="btn ghost sm" data-act="nav" data-to="home">← 回首頁</button></div>';
+  h+='<div class="panel"><div class="meta"><span class="pill" style="background:var(--info-soft);color:var(--info)">目標確認單</span>'+(f.due?'<span>請在 '+esc(f.due.slice(5).replace("-","/"))+' 前確認</span>':'')+'</div><h1 style="font-size:22px;margin:0">'+esc(f.title)+'</h1><div class="small muted">營運管理部・期間 '+esc(f.period||"")+'</div>'+gChainLines(g, role, role==="lead"?sel:"")+'</div>';
+  if(role==="top") h+=gSelTabs(f, sel, true);
+  h+=gBody(f, sel, S.gHalf||0, "gv");
+  if(role==="top" && sel!=="sup"){}
+  if(g.mineAt){
+    h+='<div class="panel"><div class="gok">✓ 你已於 '+fmt(g.mineAt)+' 確認並簽名。</div></div>';
+  } else {
+    var nl0=gNoLead(g.chain);
+    var items = role==="top" ? ["我已看過五家店和區督導的 "+f.month+" 月目標","我已看過本月職級／戰力異動"].concat(nl0.length?["我會向"+nl0.join("、")+"店同仁布達本月目標"]:[])
+                             : ["我已看過"+sel+"店 "+f.month+" 月店目標和個人目標","我已看過本店職級／戰力異動","我會在店內跟同仁說明各自的目標"];
+    var all=items.every(function(_,i){ return (S.gChk||{})[i]; });
+    h+='<div class="panel"><h2>確認後簽名</h2>'+items.map(function(t,i){ return '<label class="gchk"><input type="checkbox" data-gchk="'+i+'"'+((S.gChk||{})[i]?' checked':'')+'><span>'+esc(t)+'</span></label>'; }).join("");
+    h+='<div class="signbox"><canvas id="gsig" aria-label="簽名區"></canvas><div class="hint" id="gsig-hint">請在這裡簽名</div></div>';
+    if(S.gMsg) h+='<div class="gerr">'+esc(S.gMsg)+'</div>';
+    h+='<div class="row"><button id="g-sclear" class="btn ghost" data-act="gSigClear">清除</button><button id="g-sign" class="btn grow" data-act="gSign" disabled data-all="'+(all?1:0)+'">'+(S.gBusy?'送出中…':'確認並簽名')+'</button></div>';
+    if(!all) h+='<div class="small muted">每一項都勾選、簽好名，才能送出。</div>';
+    h+='</div>';
+  }
+  return h+'</div>';
+}
+function gSignBtn(){ var b=document.getElementById("g-sign"); if(!b) return; var all=Object.keys(S.gChk||{}).filter(function(k){return S.gChk[k];}).length>=document.querySelectorAll("[data-gchk]").length; b.disabled=!(all && S.gInk) || !!S.gBusy; }
+function gDoSign(){
+  var cv=document.getElementById("gsig"); if(!cv || S.gBusy) return;
+  S.gBusy=true; S.gMsg=""; gSignBtn();
+  shrink(cv.toDataURL("image/png"), 360).then(function(sig){ return gapi("gSign",{unit:gUnitName(), name:mem.me.name, id:S.gId, sig:sig}); })
+    .then(function(){ S.gBusy=false; S.gChk={}; S.view="home"; S.goals=undefined; S.msg="已確認並簽名。"; render(); gLoadStaff(true); })
+    .catch(function(e){ S.gBusy=false; S.gMsg=gErr(e); render(); });
+}
+
+/* ---------- 後台：④ 目標確認單 ---------- */
+function gLoadAdmin(){
+  if(!GOAL_API || S.gALoading) return; S.gALoading=true; S.gAErr="";
+  gapi("gAdmin",{}).then(function(j){ S.gA=j; }).catch(function(e){ S.gAErr=gErr(e); S.gA=S.gA||null; }).then(function(){ S.gALoading=false; if(S.view==="admin"&&S.adminTab==="goal") render(); });
+}
+function gSigners(){
+  var a=S.gA||{}, h='<div class="gorder"><span class="t">① 總經理核定</span><i>→</i><span class="'+(a.top?'t':'x')+'">② 區督導 '+esc(a.top||"（未設定）")+'</span><i>→</i>';
+  G_STORES.forEach(function(k){ var n=(a.leads||{})[k]; h+= n ? '<span class="l">③ '+k+' '+esc(n)+'</span>' : '<span>'+k+'：沒有店經理，由督導布達</span>'; });
+  return h+'</div>';
+}
+function gFromLeads(){ /* 從人員名單的率先簽收人帶入 */
+  var top="", leads={}; STORES.forEach(function(s){ if(s.id===TOP_STORE) top=s.lead||s.staff[0]||""; G_STORES.forEach(function(k){ if(String(s.name).indexOf(k)>=0) leads[k]=s.lead||""; }); });
+  return {top:top, leads:leads};
+}
+function gStatusRows(f){
+  var c=f.chain, sigOf=function(role,unit){ var s=(f.sigs||[]).filter(function(x){ return x.role===role && (role==="top"||x.unit===unit); })[0]; return s&&s.sig?'<img class="gsig" alt="簽名" src="'+s.sig+'">':''; };
+  var row=function(n,u,name,at,sig){ return '<tr><td>'+n+'</td><td class="l">'+esc(u)+'</td><td class="l">'+esc(name||"（未設定）")+'</td><td class="l">'+(at?'<span class="pill done">✓ '+fmt(at)+'</span>':'<span class="pill doing">尚未確認</span>')+'</td><td class="l">'+sig+'</td></tr>'; };
+  var h='<div class="gtb"><table><tr><th>順序</th><th class="l">單位</th><th class="l">確認人</th><th class="l">狀態</th><th class="l">簽名</th></tr>';
+  h+=row("①","總經理","核定",f.gmAt,f.gmSig?'<img class="gsig" alt="總經理簽名" src="'+f.gmSig+'">':'');
+  h+=row("②","區督導",c.top.name,c.top.at,sigOf("top",""));
+  G_STORES.forEach(function(k){ var l=c.leads[k]||{}; if(l.name) h+=row("③",k+"店",l.name,l.at,sigOf("lead",k)); else h+='<tr><td>—</td><td class="l">'+k+'店</td><td class="l muted" colspan="3">沒有店經理，由區督導布達'+(c.top.at?'（督導已確認）':'')+'</td></tr>'; });
+  return h+'</table></div>';
+}
+function gGmPanel(f){
+  var a=S.gA||{}, d=f.data||{}, h='<div class="gsplit"><div class="panel"><h2>各店目標總表</h2><div class="gtb"><table><tr><th>單位</th><th>困難係數</th><th>AQ</th><th>RT點</th><th>Device</th><th>保險</th></tr>';
+  var tot={AQ:0,"RT點":0,Device:0,"保險":0};
+  (d.stores||[]).forEach(function(s){ h+='<tr><td>'+esc(s.key)+'</td><td>'+esc(s.coef)+'</td>'+["AQ","RT點","Device","保險"].map(function(k){ tot[k]+=Number(s.target[k])||0; return '<td>'+gFmtN(s.target[k])+'</td>'; }).join("")+'</tr>'; });
+  if(d.sup&&d.sup.rows[0]){ var sc=d.sup.cols||d.cols; h+='<tr><td>區督導</td><td>—</td>'+["AQ","RT點","Device","保險"].map(function(k){ return '<td>'+gFmtN(d.sup.rows[0][sc.indexOf(k)+1])+'</td>'; }).join("")+'</tr>'; }
+  h+='<tr class="gsum"><td>五店合計</td><td></td>'+["AQ","RT點","Device","保險"].map(function(k){ return '<td>'+gFmtN(tot[k])+'</td>'; }).join("")+'</tr></table></div>';
+  h+='<h2 style="margin-top:8px">本月職級／戰力異動（'+(d.changes||[]).length+' 人）</h2>'+gChanges((d.changes||[]).map(function(c){ return {name:c.store+"・"+c.name, text:c.text, why:c.why}; }))+'</div>';
+  h+='<div class="panel gmsign"><b>總經理核定</b><div class="small">核定後，區督導才能開始確認，接著是五家店的店經理。</div>'+gSigners();
+  if(a.gmSet && !S.gGmChange){
+    h+='<div class="small muted">看完目標後，輸入核定密碼，按「確定核定」。留存的簽名會自動放進這份確認單。</div>';
+    h+='<label class="f" for="g-pin">核定密碼<input type="password" inputmode="numeric" autocomplete="off" id="g-pin"></label>';
+    h+='<div class="row"><button id="g-approve" class="btn grow" data-act="gApprove" data-id="'+f.id+'">確定核定</button><button class="btn quiet sm" data-act="gGmClose">退回修改</button></div>';
+    h+='<div class="row"><button id="g-gmchg" class="btn quiet sm" data-act="gGmChange">更換留存的簽名</button></div>';
+  } else {
+    h+='<div class="small muted">'+(a.gmSet?'請簽下新的簽名，並輸入原本的核定密碼。':'第一次使用，請先留存簽名並設定核定密碼。之後每個月只要輸入密碼、按「確定核定」，簽名就會出現。')+'</div>';
+    h+='<div class="signbox"><canvas id="ggmsig" aria-label="總經理簽名區"></canvas><div class="hint" id="ggmsig-hint">總經理請在這裡簽名</div></div>';
+    h+='<label class="f" for="g-pin">'+(a.gmSet?'原本的核定密碼':'設定核定密碼（4 到 8 位數字，只有總經理知道）')+'<input type="password" inputmode="numeric" autocomplete="off" id="g-pin"></label>';
+    h+='<div class="row"><button class="btn quiet sm" data-act="gGmClear">清除</button><button id="g-gmsave" class="btn sm" data-act="gGmSave" disabled>留存簽名</button>'+(a.gmSet?'<button class="btn quiet sm" data-act="gGmCancel">取消</button>':'')+'</div>';
+  }
+  if(S.gGmMsg) h+='<div class="gerr">'+esc(S.gGmMsg)+'</div>';
+  return h+'</div></div>';
+}
+function vGoalAdmin(){
+  var h='';
+  if(!GOAL_API) return h+'<div class="panel"><h2>目標確認單要連上資料庫才能用</h2><p>現在是示範模式（還沒接資料庫），上線後這裡就能使用。</p></div>';
+  if(!S.gA){ if(!S.gALoading && !S.gAErr) setTimeout(gLoadAdmin,0); return h+'<div class="panel">'+(S.gAErr?'<div class="gerr">'+esc(S.gAErr)+'</div><div class="row"><button class="btn sm" data-act="gReload">再試一次</button></div>':'<span class="muted">讀取中…</span>')+'</div>'; }
+  if(S.gMsgA) h+='<div class="note" style="color:var(--ok);background:var(--ok-soft)">'+esc(S.gMsgA)+'</div>';
+  var a=S.gA, e=S.gEd;
+  if(e){
+    var d=e.data;
+    h+='<div class="row" style="justify-content:space-between;align-items:center"><div><div class="small muted">'+(e.id?'修改草稿':'新增目標確認單')+'</div><h2 style="margin:0">'+esc(e.title||"（還沒有標題）")+'</h2></div><button class="btn quiet sm" data-act="gCancel">取消</button></div>';
+    h+='<div class="gsplit"><div class="panel">'+secHead(1,"上傳這個月的目標 Excel 檔","hq");
+    h+='<div class="gfile"><input type="file" id="g-file" accept=".xlsx,.xlsm,.xls" aria-label="選擇目標 Excel 檔"><span class="small muted">只讀看得到的分頁，不會改到原檔</span></div>';
+    if(e.fileName) h+='<div class="small"><b>'+esc(e.fileName)+'</b></div>';
+    if(e.reading) h+='<div class="muted">讀取中…</div>';
+    if(e.errs&&e.errs.length) h+='<div class="gerr">'+e.errs.map(esc).join("<br>")+'</div>';
+    if(d){
+      h+='<div class="gtb"><table><tr><th>系統讀到的</th><th>RT 點</th><th>人數</th><th class="l">檢核</th></tr>';
+      d.stores.forEach(function(s){ var bad=(e.errs||[]).some(function(x){ return x.indexOf(s.name)===0; }); h+='<tr><td>'+esc(s.name)+'</td><td>'+gFmtN(s.target["RT點"])+'</td><td>'+(s.tables[0]?s.tables[0].rows.length:0)+'</td><td class="l">'+(bad?'<span class="bad">✕ 有誤</span>':'<span class="pill done">✓ 加總正確</span>')+'</td></tr>'; });
+      if(d.sup) h+='<tr><td>區督導 '+esc(d.sup.name)+'</td><td>'+gFmtN(d.sup.rows[0]?d.sup.rows[0][(d.sup.cols||d.cols).indexOf("RT點")+1]:"")+'</td><td>1</td><td class="l"><span class="pill done">✓</span></td></tr>';
+      h+='<tr><td>職級／戰力異動</td><td>—</td><td>'+d.changes.length+' 人</td><td class="l"><span class="pill done">✓</span></td></tr></table></div>';
+    }
+    h+=secHead(2,"基本資料","hq");
+    h+='<div class="row"><label class="f wide" for="g-title">標題<input type="text" id="g-title" data-g="title" value="'+esc(e.title)+'"></label></div>';
+    h+='<div class="row"><label class="f" for="g-due">截止日（哪一天前要確認完）<input type="date" id="g-due" data-g="due" value="'+esc(e.due||"")+'"></label></div>';
+    h+=secHead(3,"誰要確認、順序","hq")+gSigners();
+    if(!a.top) h+='<div class="gerr">還沒設定區督導。</div>';
+    h+='<div class="row"><button class="btn quiet sm" data-act="gFromLeads">從「人員名單」的率先簽收人帶入</button></div><div class="small muted">店經理以「人員名單」裡各門市的率先簽收人為準；區督導是「區督導」單位的率先簽收人。</div>';
+    var can=d && !(e.errs&&e.errs.length) && gStr(e.title);
+    h+='<div class="row"><button id="g-save" class="btn grow" data-act="gSave"'+(can&&!e.busy?'':' disabled')+'>'+(e.busy?'儲存中…':'存成草稿，送總經理核定')+'</button></div></div>';
+    h+='<div class="panel"><div class="small muted">預覽：選一家店，看店經理會看到的內容</div>';
+    if(d){ var sel=S.gSel||d.stores[0].key; h+=gSelTabs(d, sel, true)+'<div style="display:flex;flex-direction:column;gap:12px">'+gBody(d, sel, S.gHalf||0, "ga")+'</div>'; }
+    else h+='<div class="muted">上傳 Excel 後，這裡會出現各店內容。</div>';
+    h+='</div></div>';
+    return h;
+  }
+  h+='<div class="row" style="justify-content:space-between;align-items:center"><h2 style="margin:0">目標確認單</h2><div class="row"><button class="btn quiet sm" data-act="gReload">重新整理</button><button id="g-new" class="btn sm" data-act="gNew">新增本月目標確認單</button></div></div>';
+  h+='<div class="small muted">流程：上傳 Excel → 總經理核定 → 區督導確認 → 各店店經理確認。店經理只看得到自己店；沒有店經理的店由區督導布達。</div>';
+  if(!a.forms.length) h+='<div class="panel muted">還沒有目標確認單。</div>';
+  a.forms.forEach(function(f){
+    var signed=(f.sigs||[]).length, need=gNeed(f.chain), n=need.filter(function(k){ return f.chain.leads[k].at; }).length + (f.chain.top.at?1:0), tot=need.length+1;
+    h+='<div class="panel"><div class="meta">'+(f.status==="approved"?'<span class="pill done">總經理已核定 '+fmt(f.gmAt)+'</span><span class="pill tag">已確認 '+n+' / '+tot+'</span>':'<span class="pill draft">草稿・等總經理核定</span>')+(f.due?'<span>截止 '+esc(f.due)+'</span>':'')+'</div>';
+    h+='<h2>'+esc(f.title)+'</h2>';
+    if(f.status==="approved"){
+      h+=gStatusRows(f);
+      h+='<div class="row"><button class="btn sm" data-act="gCopy" data-id="'+f.id+'">複製未確認名單</button>'+(!signed?'<button class="btn quiet sm" data-act="gEdit" data-id="'+f.id+'">修改（要重新核定）</button>':'')+'</div>';
+    } else {
+      h+='<div class="row"><button id="g-gm-'+f.id+'" class="btn sm" data-act="gGmOpen" data-id="'+f.id+'">'+(S.gGm===f.id?'收合':'總經理核定')+'</button><button class="btn quiet sm" data-act="gEdit" data-id="'+f.id+'">修改</button>'
+        +(S.gDel===f.id?'<button class="btn sm" style="background:var(--seal)" data-act="gDelYes" data-id="'+f.id+'">確定刪除</button><button class="btn quiet sm" data-act="gDelNo">取消</button>':'<button class="btn quiet sm" data-act="gDelAsk" data-id="'+f.id+'">刪除</button>')+'</div>';
+      if(S.gGm===f.id) h+=gGmPanel(f);
+    }
+    if(S.gCopyId===f.id && S.gCopyText) h+='<textarea class="copyout" readonly>'+esc(S.gCopyText)+'</textarea>';
+    h+='</div>';
+  });
+  return h;
+}
+function gAfterRender(){
+  if(S.view==="goal"){ S.gInk=false; mountSig("gsig", function(){ S.gInk=true; var hn=document.getElementById("gsig-hint"); if(hn) hn.hidden=true; gSignBtn(); }); }
+  if(S.view==="admin" && S.adminTab==="goal"){ S.gGmInk=false; mountSig("ggmsig", function(){ S.gGmInk=true; var b=document.getElementById("g-gmsave"); if(b) b.disabled=false; var hn=document.getElementById("ggmsig-hint"); if(hn) hn.hidden=true; }); }
+}
+/* 點擊：回傳 true 代表已處理 */
+function gClick(act, t){
+  var id=t.getAttribute("data-id");
+  if(act==="gOpen"){ S.gId=id; S.gSel=""; S.gHalf=0; S.gChk={}; S.gMsg=""; S.view="goal"; render(); return true; }
+  if(act==="gSel"){ S.gSel=t.getAttribute("data-k"); S.gHalf=0; S.noScroll=true; render(); S.noScroll=false; return true; }
+  if(act==="gHalf"){ S.gHalf=Number(t.getAttribute("data-i"))||0; S.noScroll=true; render(); S.noScroll=false; return true; }
+  if(act==="gSigClear"){ S.noScroll=true; render(); S.noScroll=false; return true; }
+  if(act==="gSign"){ gDoSign(); return true; }
+  if(act==="gReload"){ S.gA=null; S.gAErr=""; S.gMsgA=""; gLoadAdmin(); render(); return true; }
+  if(act==="gNew"){ var y=new Date().getFullYear()-1911; S.gEd={id:null, title:"", due:"", data:null, errs:[], year:y}; S.gSel=""; S.gHalf=0; S.gMsgA=""; render(); return true; }
+  if(act==="gCancel"){ S.gEd=null; render(); return true; }
+  if(act==="gEdit"){ var f=S.gA.forms.filter(function(x){return x.id===id;})[0]; if(!f) return true; S.gEd={id:f.id, title:f.title, due:f.due, data:f.data, errs:[], fileName:"（沿用已上傳的資料，要換就重新選檔）"}; S.gSel=""; S.gHalf=0; render(); return true; }
+  if(act==="gFromLeads"){
+    var v=gFromLeads(); S.gMsgA="";
+    gapi("gSetSigners",v).then(function(j){ S.gA=j; S.gMsgA="已從人員名單帶入確認人。"; }).catch(function(e){ S.gMsgA=""; alertG(gErr(e)); }).then(function(){ render(); });
+    return true;
+  }
+  if(act==="gSave"){
+    var e=S.gEd; if(!e||!e.data) return true; e.busy=true; render();
+    gapi("gSaveForm",{form:{id:e.id, title:gStr(e.title), due:e.due||"", data:e.data}}).then(function(){ S.gEd=null; S.gMsgA="已存成草稿。請總經理在下面按「總經理核定」。"; S.gA=null; gLoadAdmin(); })
+      .catch(function(er){ e.busy=false; e.errs=[gErr(er)]; render(); });
+    return true;
+  }
+  if(act==="gDelAsk"){ S.gDel=id; render(); return true; }
+  if(act==="gDelNo"){ S.gDel=null; render(); return true; }
+  if(act==="gDelYes"){ gapi("gDelete",{id:id}).then(function(){ S.gDel=null; S.gMsgA="已刪除。"; S.gA=null; gLoadAdmin(); }).catch(function(e){ S.gDel=null; alertG(gErr(e)); render(); }); return true; }
+  if(act==="gGmOpen"){ S.gGm = S.gGm===id ? null : id; S.gGmMsg=""; S.gGmChange=false; S.noScroll=true; render(); S.noScroll=false; return true; }
+  if(act==="gGmClose"){ S.gGm=null; S.gGmMsg=""; render(); return true; }
+  if(act==="gGmChange"){ S.gGmChange=true; S.gGmMsg=""; S.noScroll=true; render(); S.noScroll=false; return true; }
+  if(act==="gGmCancel"){ S.gGmChange=false; S.gGmMsg=""; S.noScroll=true; render(); S.noScroll=false; return true; }
+  if(act==="gGmClear"){ S.noScroll=true; render(); S.noScroll=false; return true; }
+  if(act==="gGmSave"){
+    var pin=(document.getElementById("g-pin")||{}).value||"", cv=document.getElementById("ggmsig"); if(!cv||!S.gGmInk) return true;
+    if(!/^\d{4,8}$/.test(pin)){ S.gGmMsg=ERR.pinfmt; S.noScroll=true; render(); S.noScroll=false; return true; }
+    shrink(cv.toDataURL("image/png"), 360).then(function(sig){ return gapi("gGmSave",{pin:pin, sig:sig}); })
+      .then(function(){ S.gGmChange=false; S.gGmMsg=""; S.gA.gmSet=true; S.gMsgA="已留存總經理簽名。"; }).catch(function(e){ S.gGmMsg=gErr(e); }).then(function(){ S.noScroll=true; render(); S.noScroll=false; });
+    return true;
+  }
+  if(act==="gApprove"){
+    var pin2=(document.getElementById("g-pin")||{}).value||""; if(!pin2){ S.gGmMsg="請輸入核定密碼。"; S.noScroll=true; render(); S.noScroll=false; return true; }
+    t.disabled=true;
+    gapi("gGmApprove",{pin:pin2, id:id}).then(function(){ S.gGm=null; S.gGmMsg=""; S.gMsgA="總經理已核定。區督導現在可以開始確認了。"; S.gA=null; gLoadAdmin(); })
+      .catch(function(e){ S.gGmMsg=gErr(e); S.noScroll=true; render(); S.noScroll=false; });
+    return true;
+  }
+  if(act==="gCopy"){
+    var f2=S.gA.forms.filter(function(x){return x.id===id;})[0]; if(!f2) return true;
+    var c=f2.chain, miss=[]; if(!c.top.at) miss.push("區督導 "+c.top.name); gNeed(c).forEach(function(k){ var l=c.leads[k]; if(!l.at) miss.push(k+"店 "+l.name); });
+    var txt="【"+f2.title+"】還沒確認："+(miss.length?miss.join("、"):"（全部都確認了）")+(f2.due?"\n請在 "+f2.due+" 前到公告簽收系統確認。":"");
+    S.gCopyId=id; S.gCopyText=txt; try{ navigator.clipboard.writeText(txt); S.gMsgA="已複製未確認名單，可以直接貼到 LINE。"; }catch(_){ S.gMsgA="請長按下面的文字複製。"; }
+    render(); return true;
+  }
+  return false;
+}
+function alertG(msg){ S.gMsgA=""; if(S.gEd){ S.gEd.errs=[msg]; } else S.gAErr=msg; }
+function gInput(e){
+  var k=e.target.getAttribute && e.target.getAttribute("data-g"); if(k && S.gEd){ S.gEd[k]=e.target.value; var b=document.getElementById("g-save"); if(b) b.disabled=!(S.gEd.data && !(S.gEd.errs&&S.gEd.errs.length) && gStr(S.gEd.title)); return true; }
+  var c=e.target.getAttribute && e.target.getAttribute("data-gchk"); if(c!==null && c!==undefined){ S.gChk=S.gChk||{}; S.gChk[c]=e.target.checked; gSignBtn(); return true; }
+  return false;
+}
+function gFile(e){
+  if(!e.target || e.target.id!=="g-file" || !S.gEd) return false;
+  var file=e.target.files&&e.target.files[0]; if(!file) return true;
+  var ed=S.gEd; ed.reading=true; ed.errs=[]; ed.fileName=file.name; render();
+  Promise.all([gLoadXlsx(), file.arrayBuffer()]).then(function(r){
+    var X=r[0], wb=X.read(new Uint8Array(r[1]),{type:"array"}), p=gParse(wb, X);
+    ed.data=p.data; ed.errs=p.errs; ed.reading=false;
+    if(!gStr(ed.title) && p.data.month) ed.title=(ed.year||(new Date().getFullYear()-1911))+" 年 "+p.data.month+" 月 業績目標";
+    S.gSel=""; S.gHalf=0;
+  }).catch(function(er){ ed.reading=false; ed.data=null; ed.errs=["這個檔案讀不出來："+(er&&er.message||er)]; }).then(function(){ render(); });
+  return true;
+}
+
 function render(){
   if(timer){ clearInterval(timer); timer=null; }
   var v=S.view, html, gated=false;
   if(LIVE && v==="admin" && !S.adminOk){ html=vAdminGate(); gated=true; }
   else if(LIVE && v!=="admin" && S.boot!=="ok"){ html=vGate(); gated=true; }
   else if(v==="home") html=vHome(); else if(v==="read") html=vRead(); else if(v==="quiz") html=vQuiz();
-  else if(v==="fail") html=vFail(); else if(v==="sign") html=vSign(); else if(v==="done") html=vDone(); else if(v==="review") html=vReview(); else html=vAdmin();
+  else if(v==="fail") html=vFail(); else if(v==="sign") html=vSign(); else if(v==="done") html=vDone(); else if(v==="review") html=vReview(); else if(v==="goal") html=vGoal(); else html=vAdmin();
   view.innerHTML=html;
   document.getElementById("nav-staff").setAttribute("aria-pressed", String(v!=="admin"));
   document.getElementById("nav-admin").setAttribute("aria-pressed", String(v==="admin"));
@@ -1558,6 +1985,7 @@ function render(){
   if(v==="read") startDwell();
   if(v==="sign"){ S.hasInk=false; mountSig("sig", function(){ S.hasInk=true; var b=document.getElementById("btn-sign"); if(b) b.disabled=false; var hn=document.getElementById("sig-hint"); if(hn) hn.hidden=true; }); }
   if(v==="admin" && S.adminTab==="edit"){ paintSign(); paintPreview(); }
+  gAfterRender();
   if(v!=="admin" && !S.noScroll) window.scrollTo(0,0);
   S.noScroll=false;
   S.msg="";
@@ -1575,12 +2003,15 @@ function begin(annId){
 document.addEventListener("toggle",function(e){ if(e.target && e.target.id==="chainbox") S.chainOpen=e.target.open; }, true);
 window.addEventListener("beforeunload",function(e){ if((S.ed && S.ed.dirty) || S.sync){ e.preventDefault(); e.returnValue=""; } });
 document.addEventListener("input",function(e){
+  if(e.target.getAttribute && e.target.getAttribute("data-g") && gInput(e)) return;
   var f=e.target.getAttribute && e.target.getAttribute("data-ed");
   if(f && S.ed){ S.ed[f]=e.target.value; touch(); paintPreview(); }
   var rk=e.target.getAttribute && e.target.getAttribute("data-rec");
   if(rk){ if(!S.rec) S.rec={title:"",text:""}; S.rec[rk]=e.target.value; }
 });
 document.addEventListener("change",function(e){
+  if(gFile(e)) return;
+  if(e.target.getAttribute && e.target.getAttribute("data-gchk")!==null && gInput(e)) return;
   var chg=e.target.getAttribute && e.target.getAttribute("data-chg");
   if(chg==="adminAnn"){ S.adminAnn=e.target.value; S.copyText=null; render(); }
   else if(chg==="lead"){
@@ -1598,6 +2029,7 @@ document.addEventListener("change",function(e){
 document.addEventListener("click",function(e){
   var t=e.target.closest("[data-act]"); if(!t) return;
   var act=t.getAttribute("data-act"), a, ta;
+  if(/^g[A-Z]/.test(act) && gClick(act,t)) return;
   if(act==="nav"){
     S.view=t.getAttribute("data-to"); S.copyText=null;
     if(LIVE){ if(S.view==="admin"){ if(S.pw){ loadAdmin(); return; } } else if(L.code){ doBoot(); return; } }
@@ -1607,12 +2039,12 @@ document.addEventListener("click",function(e){
   else if(act==="pwGo"){ S.pw=String((document.getElementById("gate-pw")||{}).value||""); if(!S.pw){ S.adminErr="請輸入後台密碼。"; render(); return; } loadAdmin(); }
   else if(act==="reloadAdmin"){ loadAdmin(); }
   else if(act==="pwShow"){ var pi=document.getElementById("gate-pw"); if(pi){ var sh1=pi.type==="password"; pi.type=sh1?"text":"password"; t.textContent=sh1?"隱藏":"顯示"; pi.focus(); } }
-  else if(act==="refreshHome"){ if(LIVE) doBoot(); else render(); }
+  else if(act==="refreshHome"){ S.goals=undefined; if(LIVE) doBoot(); else render(); }
   else if(act==="syncRetry"){ if(S.sync) syncSave(S.sync.action, S.sync.payload, S.sync.onOk, S.sync.okMsg); }
   else if(act==="pickStore"){ S.pickStore=t.getAttribute("data-id"); S.pickName=null; S.noScroll=true; render(); }
   else if(act==="pickName"){ S.pickName=t.getAttribute("data-name"); S.noScroll=true; render(); }
-  else if(act==="confirmMe"){ if(S.pickStore&&S.pickName){ mem.me={store:S.pickStore, name:S.pickName}; save(); if(LIVE){ doBoot(); return; } render(); } }
-  else if(act==="switchUser"){ mem.me=null; S.pickStore=null; S.pickName=null; save(); render(); }
+  else if(act==="confirmMe"){ if(S.pickStore&&S.pickName){ mem.me={store:S.pickStore, name:S.pickName}; S.goals=undefined; save(); if(LIVE){ doBoot(); return; } render(); } }
+  else if(act==="switchUser"){ S.goals=undefined; mem.me=null; S.pickStore=null; S.pickName=null; save(); render(); }
   else if(act==="start"){ begin(t.getAttribute("data-id")); }
   else if(act==="receipt"){ S.A=ann(t.getAttribute("data-id")); S.view="done"; render(); }
   else if(act==="review"){ S.A=ann(t.getAttribute("data-id")); S.view="review"; render(); }
